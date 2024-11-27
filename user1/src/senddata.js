@@ -15,7 +15,10 @@ export default function datasend()
               const result = await response.json(); // Handle the server's response
               console.log('Response from server:', result);
             } catch (error) {
-              console.error('Error sending data:', error);
+              console.error('Error sending data: Type 121', error);
+              console.error('Error sending data: Type 121', error);
+              console.error('Error sending data: Type 121', error);
+
             }//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
