@@ -1,6 +1,6 @@
 export default function datasend()
  {
-      const senddata = async () => {
+      const sendData = async () => {
             const dataToSend = { text: 'Hello from Front' }; // Example data
           
             try {
