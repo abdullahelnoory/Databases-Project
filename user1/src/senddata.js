@@ -1,17 +1,15 @@
- 
- 
- 
- 
- 
- export default function datasend()
- {function senddata()
-    {
-        const sendData = async () => {
-            const dataToSend = { id: 1, task: "New Task" }; // Example data
+export default function datasend()
+ {
+      const senddata = async () => {
+            const dataToSend = { text: 'Hello from Front hello hello' }; // Example data
           
             try {
               const response = await fetch('http://localhost:6969/endpoint', {
-                data:"Hello"
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend),
               });
           
               const result = await response.json(); // Handle the server's response
@@ -20,7 +18,6 @@
               console.error('Error sending data:', error);
             }
           };
-    }
 
 return(
 <div className="da">
@@ -30,6 +27,4 @@ Hello front
 </div>
 
 );
-
-
  }
