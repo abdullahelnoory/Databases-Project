@@ -1,7 +1,7 @@
 export default function datasend()
  {
       const sendData = async () => {
-            const dataToSend = { text: 'Hello from Front' }; // Example data
+            const dataToSend = { text: 'Hello from Front' };
           
             try {
               const response = await fetch('http://localhost:6969/endpoint', {
@@ -12,16 +12,11 @@ export default function datasend()
                 body: JSON.stringify(dataToSend),
               });
           
-              const result = await response.json(); // Handle the server's response
+              const result = await response.json();
               console.log('Response from server:', result);
             } catch (error) {
-              console.error('Error sending data: Type 121', error);
-              console.error('Error sending data: Type 121', error);
-              console.error('Error sending data: Type 121', error);
-
-            }//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+              console.error('Error sending data:', error);
+            }
           };
 return(
 <div className="da">
