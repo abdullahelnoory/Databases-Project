@@ -4,14 +4,13 @@
  
  
  export default function datasend()
- {function senddata()
-    {
+ {
         const sendData = async () => {
-            const dataToSend = { id: 1, task: "New Task" }; // Example data
+            const dataToSend = { text:"Hello from front" }; // Example data
           
             try {
               const response = await fetch('http://localhost:6969/endpoint', {
-                data:"Hello"
+                dataToSend
               });
           
               const result = await response.json(); // Handle the server's response
@@ -20,11 +19,10 @@
               console.error('Error sending data:', error);
             }
           };
-    }
-
+    
 return(
 <div className="da">
-    <button onClick={senddata} className="button">
+    <button onClick={sendData} className="button">
 Hello front
     </button>
 </div>
