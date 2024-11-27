@@ -3,7 +3,7 @@
 import Nav1 from './nav.js';
 import './styles.css'
 import Grid from './griddriv.js'
-
+import But from './senddata'
 
 
 
@@ -18,6 +18,7 @@ function App() {
       Mname
     </h1>
   <Grid/>
+  <But/>
     </div>
     
 
