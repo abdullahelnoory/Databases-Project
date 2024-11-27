@@ -4,7 +4,6 @@ import { DataGrid } from '@mui/x-data-grid';
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   { field: 'name', headerName: 'Name', width: 150 },
- 
 ];
 
 export default function Griddriv() {
@@ -13,7 +12,7 @@ export default function Griddriv() {
   useEffect(() => {
     fetch('http://localhost:6969/data')
       .then((response) => response.json())
-      .then((data) => setRows(data))
+      .then((data) => setRows(data.data))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 

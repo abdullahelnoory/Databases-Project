@@ -1,12 +1,6 @@
-
-
 import Nav1 from './nav.js';
 import './styles.css'
 import Grid from './griddriv.js'
-
-
-
-
 
 function App() {
   return (
