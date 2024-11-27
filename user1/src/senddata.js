@@ -1,7 +1,7 @@
 export default function datasend()
  {
       const senddata = async () => {
-            const dataToSend = { text: 'Hello from Front hello hello' }; // Example data
+            const dataToSend = { text: 'Hello from Front' }; // Example data
           
             try {
               const response = await fetch('http://localhost:6969/endpoint', {
@@ -18,10 +18,9 @@ export default function datasend()
               console.error('Error sending data:', error);
             }
           };
-
 return(
 <div className="da">
-    <button onClick={senddata} className="button">
+    <button onClick={sendData} className="button">
 Hello front
     </button>
 </div>
