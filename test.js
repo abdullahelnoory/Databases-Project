@@ -43,47 +43,113 @@ app.post('/endpoint', (req, res) => {
   });
 });
 
+app.post('/register', async (req, res) => {
+  const { fname, mname, lname, job, ssn, email, password } = req.body;
+  const saltRounds = 10;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    let result;
+
+    switch (job) {
+      case "Admin":
+        result = await pool.query(
+          'INSERT INTO "Admin" VALUES ($1, $2, $3, $4, $5, $6)',
+          [ssn, email, fname, mname, lname, hashedPassword]
+        );
+        break;
+      case "Manager":
+        result = await pool.query(
+          'INSERT INTO "Manager" VALUES ($1, $2, $3, $4, $5, $6)',
+          [ssn, email, fname, mname, lname, hashedPassword]
+        );
+        break;
+      case "Driver":
+        result = await pool.query(
+          'INSERT INTO "Driver" VALUES ($1, $2, $3, $4, $5, $6, false)',
+          [ssn, email, fname, mname, lname, hashedPassword]
+        );
+        break;
+      /*case "Passenger":
+        result = await pool.query(
+          'INSERT INTO "Passenger" VALUES ($1, $2, $3, $4, $5)',
+          [email, fname, mname, lname, hashedPassword]
+        );
+        break;*/
+      default:
+        return res.json({ success: false, message: "Invalid job type" });
+    }
+
+    res.json({ Register: true, success: true });
+  } catch (error) {
+    console.error('Error connecting to the database:', error);
+
+    if (error.code === '23505') {
+      res.json({
+        success: false,
+        message: 'Duplicate entry detected',
+        details: error.detail,
+      });
+    } else if (error.code === '23503') {
+      res.json({
+        success: false,
+        message: 'Foreign key constraint violation',
+        details: error.detail,
+      });
+    } else if (error.code === '23514') {
+      res.json({
+        success: false,
+        message: 'Check constraint violated',
+        details: error.detail,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: 'Database error occurred',
+      });
+    }
+  }
+});
+
+
+
 app.post('/login', async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const saltRounds = 10
-  let hashedPassword = '';
-  bcrypt.hash(password, saltRounds, (err, hash) => {
-     if(err)
-     {
-        console.error(err);
-        return;
-     }
-     hashedPassword = hash;
-  });
-  try
-  {
-     const result1 = pool.query('select E-mail,Password from Admin where E-mail = "' + email + '" and Password = "' + hashedPassword + '"');
-     const result2 = pool.query('select E-mail,Password from Manager where E-mail = "' + email + '" and Password = "' + hashedPassword + '"');
-     const result3 = pool.query('select E-mail,Password from Driver where E-mail = "' + email + '" and Password = "' + hashedPassword + '"');
-     const result4 = pool.query('select E-mail,Password from Passenger where E-mail = "' + email + '" and Password = "' + hashedPassword + '"');
-     if(result1.rows.length() == 0 && result2.rows.length() == 0 && result3.rows.length() == 0 && result4.rows.length() == 0)
-     {
-        res.json({login : false , success : true});
-     }
 
-     if(result1.rows.length() == 1)
-     {
-        res.json({login : true, success : true, type : 1});
-     }
-     else if(result2.rows.length() == 1)
-     {
-         res.json({login : true, success : true, type : 2});
-     }
-     else if(result3.rows.length() == 1)
-     {
-          res.json({login : true, success : true, type : 3});
-     }
-     else if(result4.rows.length() == 1)
-     {
-          res.json({login : true, success : true, type : 4});
-     }
-  }catch (error) {
+  try {
+    const result1 = await pool.query('SELECT email, password FROM "Admin" WHERE email = $1', [email]);
+    const result2 = await pool.query('SELECT email, password FROM "Manager" WHERE email = $1', [email]);
+    const result3 = await pool.query('SELECT email, password FROM "Driver" WHERE email = $1', [email]);
+    //const result4 = await pool.query('SELECT email, password FROM "Passenger" WHERE email = $1', [email]);
+
+
+    let user = null;
+    let userType = null;
+
+    if (result1.rows.length === 1) {
+      user = result1.rows[0];
+      userType = 1;
+    } else if (result2.rows.length === 1) {
+      user = result2.rows[0];
+      userType = 2;
+    } else if (result3.rows.length === 1) {
+      user = result3.rows[0];
+      userType = 3;
+    }
+
+    if (!user) {
+      return res.json({ login: false, success: true });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (passwordMatch) {
+      res.json({ login: true, success: true, type: userType });
+    } else {
+      res.json({ login: false, success: true });
+    }
+  } catch (error) {
     console.error('Error connecting to the database:', error);
     res.status(500).json({
       success: false,
@@ -91,6 +157,8 @@ app.post('/login', async (req, res) => {
     });
   }
 });
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello from back end!');
