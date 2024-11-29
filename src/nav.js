@@ -7,7 +7,7 @@ export default  function navbar1()
   return (
     
  <nav className="Nav">
-    <a href="/" className="site Title" style={ {fontSize:"24px"}} >
+    <a href="/M" className="site Title" style={ {fontSize:"24px"}} >
     Manager
     </a>
     <ul>

@@ -7,28 +7,42 @@ import {BrowserRouter as Router,Route,Switch} from 'react-router-dom';
 import {useState} from 'react';
 import HomeM from './HomeM.js';
 import DriversList from './DriversList.js'
-
-
+import Login from './Login.js'
+import TripsM from './TripsM.js'
+import Mreq from './Mreq.js';
 function App() {
   return (
+    
     <Router>
     <div className="App">
-   <header>
-    <Nav1/>
-   </header>
-    <h1 className="Mname">
-      Mname
-    </h1>
+ 
     <Switch>
       <Route exact path="/">
-      <HomeM/>
+      <Login/>
+       <Switch>
+         <Route exact path="/M">
+         <HomeM/>
+          
+         <Route exact path="/DriversM">
+         <DriversList/>
+         </Route>
+
+         <Route exact path="/TripsM">
+         <TripsM/>
+         </Route>
+
+         <Route exact path="/TripsM">
+         <Mreq/>
+         </Route>
+
+         </Route>
+        
+       </Switch>
       </Route>
-      <Route exact path="/DriversM">
-      <DriversList/>
-      </Route>
+     
     </Switch>
   
-  <But/>
+  
     </div>
     </Router>
 
