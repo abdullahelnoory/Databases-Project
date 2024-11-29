@@ -17,12 +17,12 @@ export default  function navbar1()
         </a>
         </li>
         <li className="active">
-        <a href="/TripsM"> 
+        <a href="/M/TripsM"> 
         Trips
         </a>
         </li>
         <li className="active">
-        <a href="/Requests"> 
+        <a href="/M/Requests"> 
         comp3
         </a>
         </li>

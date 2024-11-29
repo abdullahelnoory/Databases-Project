@@ -5,7 +5,7 @@ import { DataGrid } from '@mui/x-data-grid';
 const columns = [
   { field: 'drivId', headerName: 'ID', width: 90 },
   { field: 'descripton', headerName: 'Requset', width: 150 },
-  { field: 'reqType', headerName: 'Requset', width: 150 },
+  { field: 'reqType', headerName: 'Type', width: 150 },
 ];
 
 export default function Mreq()
