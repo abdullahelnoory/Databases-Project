@@ -29,7 +29,7 @@ export default function Login()
         <div className='Login'>
 <form className="Login_box">
    
-    <div class="input-container">
+    <div className="input-container">
     <label > Username</label>
     <input value={forminput.email} type="text" onChange={(event) =>{
       
@@ -38,7 +38,7 @@ export default function Login()
     }>
     </input>
     </div>
-    <div class="input-container">
+    <div className="input-container">
     <label>Password</label>
     <input value={forminput.password} type="password" onChange={(event) =>{
       
