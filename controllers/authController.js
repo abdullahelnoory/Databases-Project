@@ -28,6 +28,12 @@ exports.register = async (req, res) => {
           [ssn, email, fname, mname, lname, hashedPassword]
         );
         break;
+      case "Passenger":
+        result = await pool.query(
+          'INSERT INTO "Passenger" VALUES ($1, $2, $3, $4, $5, $6)',
+          [ssn, email, req.body.age, fname, lname, hashedPassword]
+        );
+        break;
       default:
         return res.json({ success: false, message: "Invalid job type" });
     }
@@ -59,6 +65,7 @@ exports.login = async (req, res) => {
     const result1 = await pool.query('SELECT email, password FROM "Admin" WHERE email = $1', [email]);
     const result2 = await pool.query('SELECT email, password FROM "Manager" WHERE email = $1', [email]);
     const result3 = await pool.query('SELECT email, password FROM "Driver" WHERE email = $1', [email]);
+    const result4 = await pool.query('SELECT email, password FROM "Passenger" WHERE email = $1', [email]);
 
     let user = null;
     let userType = null;
@@ -72,6 +79,9 @@ exports.login = async (req, res) => {
     } else if (result3.rows.length === 1) {
       user = result3.rows[0];
       userType = 3;
+    } else if (result4.rows.length === 1) {
+      user = result4.rows[0];
+      userType = 4;
     }
     
     if (!user) {
