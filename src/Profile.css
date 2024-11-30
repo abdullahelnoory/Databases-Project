@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+.Submit {
+  display: flex;
+  font-variant: diagonal-fractions;
+  font-size: larger;
+  font-family: cursive;
+  color: rgb(249 249 249);
+  justify-content: center;
+  align-content: flex-start;
+  width: 50%;
+  height: 35px;
+  margin: 2px;
+  border-radius: 10px;
+  box-shadow: 0px 10px 5px rgba(0, 0, 0, 0.5);
+
+  border-color: rgb(92 60 21 / 0%);
+  background-color: rgb(39 39 52);
+}
+.Submit:hover {
+  box-shadow: -5px 3px 5px 0px;
+  cursor: pointer;
+  opacity: 90%;
+  transform: translatex(3px);
+  /* animation: mymove 2s infinite; */
+}
+
+@keyframes mymove {
+  50% {
+    rotate: y 90deg;
+  }
+}
+
+.profile {
+  display: flex;
+  flex-wrap: wrap;
+  width: 60%;
+  /* height: 300px; */
+  height: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.181);
+  justify-content: flex-start;
+  /* align-items: flex-start;
+  align-content: flex-start; */
+  flex-direction: row;
+}
+.Name,
+.Password,
+.Email,
+.SSN {
+  width: 80%;
+  height: 25px;
+  margin: 2px;
+  border-radius: 5px;
+  box-shadow: -5px 3px 5px 0px;
+  border-color: rgb(92 60 21 / 0%);
+  border-width: 0px;
+  padding: 0px;
+  border-style: none;
+}
+.input {
+  width: 40%;
+  height: 20%;
+  margin: 8px;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.Label {
+  font-variant: diagonal-fractions;
+  font-size: larger;
+  font-family: cursive;
+  color: rgb(39 39 52);
+}
+.Name:focus,
+.Password:focus,
+.Email:focus,
+.SSN:focus {
+  box-sizing: content-box;
+  outline: transparent solid 3px;
+  box-shadow: -5px 3px 5px 0px;
+  border-bottom: 3px solid rgb(0, 155, 245);
+}
