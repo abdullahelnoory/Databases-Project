@@ -1,7 +1,7 @@
 import "./Profile.css";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function Profile({ flagState, setFlagState }) {
+export default function Profile({ flagState }) {
   let [profileState, setProfileState] = useState({
     fName: "",
     mName: "",
@@ -9,13 +9,30 @@ export default function Profile({ flagState, setFlagState }) {
     Email: "",
     Pass: "",
     SSN: "",
+    RoleId: "",
   });
-
-  //setFlagState(flagState);
-
+  const handleAddUser = async () => {
+    try {
+      const result = await fetch("http://localhost:6969/RegisterPage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profileState),
+      });
+      const resultInjson = await result.json();
+      console.log(resultInjson);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
   return (
     <form
+      method="post"
       onSubmit={(event) => {
+        if (flagState == "-1") event.preventDefault();
+        setProfileState({ ...profileState, RoleId: flagState });
+        if (flagState == "2") setProfileState({ ...profileState, SSN: "" });
         event.preventDefault();
       }}
       className="profile"
@@ -104,7 +121,7 @@ export default function Profile({ flagState, setFlagState }) {
         ></input>
       </div>
 
-      {flagState === "Active" ? (
+      {flagState === "2" ? (
         <div className="input" style={{ visibility: "hidden" }}>
           <label className="Label" htmlFor="ssn">
             SSN
@@ -131,28 +148,22 @@ export default function Profile({ flagState, setFlagState }) {
             }}
             id="ssn"
             className="SSN"
+            required
             type="text"
           ></input>
         </div>
       )}
-      {/* 
-      <div className="input">
-        <label className="Label" htmlFor="ssn">
-          SSN
-        </label>
-        <input
-          value={profileState.SSN}
-          onChange={(event) => {
-            setProfileState({ ...profileState, SSN: event.target.value });
-          }}
-          id="ssn"
-          className="SSN"
-          type="text"
-        ></input>
-      </div> */}
 
       <div className="input">
-        <button className="Submit"> Sign UP</button>
+        <button
+          className="Submit"
+          onClick={(event) => {
+            handleAddUser();
+          }}
+        >
+          {" "}
+          Sign UP
+        </button>
       </div>
     </form>
   );

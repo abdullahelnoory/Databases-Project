@@ -4,7 +4,7 @@ import User from "./User.js";
 import { useState } from "react";
 import Profile from "./Profile.js";
 import imag from "./white_on_trans.png";
-export default function RegisterPage() {
+function RegisterPage() {
   let headStyle = {
     color: "#fff4f4db",
     width: "80%",
@@ -142,4 +142,4 @@ export default function RegisterPage() {
   );
 }
 
-
+export default RegisterPage;
