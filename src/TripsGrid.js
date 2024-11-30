@@ -10,21 +10,37 @@ const columns = [
   { field: 'Price', headerName: ' Price', width: 150 },
   { field: 'estimate time', headerName: ' Estimated Time', width: 150 }
 ];
+/*const hardcodedRows = [
+  { id: 1, Driver: 'John Doe', Source: 'New York', Destination: 'Boston', Price: 120, estimateTime: 180 },
+  { id: 2, Driver: 'Jane Smith', Source: 'Los Angeles', Destination: 'San Francisco', Price: 150, estimateTime: 300 },
+  { id: 3, Driver: 'Mike Johnson', Source: 'Houston', Destination: 'Dallas', Price: 100, estimateTime: 240 },
+  { id: 4, Driver: 'Emily Davis', Source: 'Chicago', Destination: 'Detroit', Price: 90, estimateTime: 210 },
+  { id: 5, Driver: 'Chris Brown', Source: 'Miami', Destination: 'Orlando', Price: 80, estimateTime: 200 },
+];*/
 
 export default function Tripslist()
-{
-    const [rows, setRows] = useState([]);
-
+{    const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [Rows, setRow] = useState([]);
+  const handleSelectionChange = (newSelectionModel) => {
+    setSelectedRowIds(newSelectionModel);
+  };
     useEffect(() => {
       fetch('http://localhost:6969/data')
         .then((response) => response.json())
-        .then((data) => setRows(data.data))
+        .then((data) => setRow(data.data))
         .catch((error) => console.error('Error fetching data:', error));
     }, []);
+    
+    
   
     return (
       <div style={{ height: '400', width: '100%' }}>
-        <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
+        <DataGrid rows={Rows} columns={columns} pageSize={5} checkboxSelection
+        onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)} />
+        <div style={{ marginTop: 20 }}>
+        <h3>Selected Row IDs:</h3>
+        <pre>{JSON.stringify(selectedRowIds, null, 2)}</pre>
+      </div>
       </div>
     );
 }

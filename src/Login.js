@@ -9,7 +9,7 @@ export default function Login()
         
       
         try {
-          const response = await fetch('http://localhost:6969/endpoint', {
+          const response = await fetch('http://localhost:6969/accounts/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

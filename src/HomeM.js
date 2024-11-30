@@ -22,7 +22,7 @@ export default function manager()
         Mname
         </h1>  
 
-        <Mreq/>
+        <TripsM/>
         <Switch>
                  <Route exact path="/DriversM">
                   <DriversList/>

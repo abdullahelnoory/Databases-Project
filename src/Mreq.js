@@ -8,6 +8,7 @@ const columns = [
   { field: 'reqType', headerName: 'Type', width: 150 },
 ];
 
+
 export default function Mreq()
 {
     const [rows, setRows] = useState([]);
@@ -25,9 +26,9 @@ export default function Mreq()
         <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
       </div>
       <button> Accept</button>
-      <buton>
+      <button>
         Reject
-      </buton>
+      </button>
       </div>
     );
 }
