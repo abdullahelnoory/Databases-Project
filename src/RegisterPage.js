@@ -25,7 +25,7 @@ function RegisterPage() {
     } else {
       if (state == event.target.id) {
         setPrevState(state);
-        setState(-1);
+        setState("-1");
       } else {
         setPrevState(state);
         setState(event.target.id);
@@ -121,7 +121,7 @@ function RegisterPage() {
               alignContent: "flex-start",
               height: "100%",
               flexWrap: "wrap",
-              backgroundColor: "rgb(39 39 52",
+              backgroundColor: "rgb(39 39 52)",
               borderRadius: "10px",
             }}
           >

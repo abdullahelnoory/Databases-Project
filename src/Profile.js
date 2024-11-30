@@ -3,22 +3,24 @@ import React, { useState, useEffect } from "react";
 
 export default function Profile({ flagState }) {
   let [profileState, setProfileState] = useState({
-    fName: "",
-    mName: "",
-    lName: "",
-    Email: "",
-    Pass: "",
-    SSN: "",
-    RoleId: "",
+    fname: "",
+    mname: "",
+    lname: "",
+    email: "",
+    password: "",
+    ssn: "",
+    job: "",
   });
+  let sendData = {};
+
   const handleAddUser = async () => {
     try {
-      const result = await fetch("http://localhost:6969/RegisterPage", {
+      const result = await fetch("http://localhost:6969/accounts/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(profileState),
+        body: JSON.stringify(sendData),
       });
       const resultInjson = await result.json();
       console.log(resultInjson);
@@ -27,25 +29,47 @@ export default function Profile({ flagState }) {
     }
   };
   return (
-    <form
-      method="post"
-      onSubmit={(event) => {
-        if (flagState == "-1") event.preventDefault();
-        setProfileState({ ...profileState, RoleId: flagState });
-        if (flagState == "2") setProfileState({ ...profileState, SSN: "" });
-        event.preventDefault();
-      }}
-      className="profile"
-    >
+    <form method="post" 
+    onSubmit={(event)=>{
+      switch (flagState) {
+        case "1": {
+          setProfileState({ ...profileState, job: "Admin" });
+          sendData = { ...profileState, job: "Admin" };
+          break;
+        }
+        case "2": {
+          setProfileState({ ...profileState, ssn: "", job: "Passenger" });
+          sendData = { ...profileState, ssn: "", job: "Passenger" };
+          break;
+        }
+        case "3": {
+          setProfileState({ ...profileState, job: "Manager" });
+          sendData = { ...profileState, job: "Manager" };
+          break;
+        }
+        case "4": {
+          setProfileState({ ...profileState, job: "Driver" });
+          sendData = { ...profileState, job: "Driver" };
+          break;
+        }
+        default:
+      }
+
+      event.preventDefault();
+  
+      handleAddUser();
+    }}
+    
+    className="profile">
       <div className="input">
         <label className="Label" htmlFor="fname">
           {" "}
           First Name
         </label>
         <input
-          value={profileState.fName}
+          value={profileState.fname}
           onChange={(event) => {
-            setProfileState({ ...profileState, fName: event.target.value });
+            setProfileState({ ...profileState, fname: event.target.value });
           }}
           id="fname"
           className="Name"
@@ -60,9 +84,9 @@ export default function Profile({ flagState }) {
           Middle Name
         </label>
         <input
-          value={profileState.mName}
+          value={profileState.mname}
           onChange={(event) => {
-            setProfileState({ ...profileState, mName: event.target.value });
+            setProfileState({ ...profileState, mname: event.target.value });
           }}
           id="mname"
           className="Name"
@@ -79,7 +103,7 @@ export default function Profile({ flagState }) {
         <input
           value={profileState.lName}
           onChange={(event) => {
-            setProfileState({ ...profileState, lName: event.target.value });
+            setProfileState({ ...profileState, lname: event.target.value });
           }}
           id="lname"
           className="Name"
@@ -94,9 +118,9 @@ export default function Profile({ flagState }) {
           E-mail
         </label>
         <input
-          value={profileState.Email}
+          value={profileState.email}
           onChange={(event) => {
-            setProfileState({ ...profileState, Email: event.target.value });
+            setProfileState({ ...profileState, email: event.target.value });
           }}
           id="email"
           className="Email"
@@ -110,9 +134,9 @@ export default function Profile({ flagState }) {
           Password
         </label>
         <input
-          value={profileState.Pass}
+          value={profileState.password}
           onChange={(event) => {
-            setProfileState({ ...profileState, Pass: event.target.value });
+            setProfileState({ ...profileState, password: event.target.value });
           }}
           id="pass"
           className="Password"
@@ -127,9 +151,9 @@ export default function Profile({ flagState }) {
             SSN
           </label>
           <input
-            value={profileState.SSN}
+            value={profileState.ssn}
             onChange={(event) => {
-              setProfileState({ ...profileState, SSN: event.target.value });
+              setProfileState({ ...profileState, ssn: event.target.value });
             }}
             id="ssn"
             className="SSN"
@@ -142,9 +166,9 @@ export default function Profile({ flagState }) {
             SSN
           </label>
           <input
-            value={profileState.SSN}
+            value={profileState.ssn}
             onChange={(event) => {
-              setProfileState({ ...profileState, SSN: event.target.value });
+              setProfileState({ ...profileState, ssn: event.target.value });
             }}
             id="ssn"
             className="SSN"
@@ -157,11 +181,7 @@ export default function Profile({ flagState }) {
       <div className="input">
         <button
           className="Submit"
-          onClick={(event) => {
-            handleAddUser();
-          }}
         >
-          {" "}
           Sign UP
         </button>
       </div>
