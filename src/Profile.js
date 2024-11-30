@@ -11,7 +11,7 @@ export default function Profile({ flagState, setFlagState }) {
     SSN: "",
   });
 
-  setFlagState(flagState);
+  //setFlagState(flagState);
 
   return (
     <form

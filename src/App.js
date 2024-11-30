@@ -9,7 +9,7 @@ import HomeM from './HomeM.js';
 import TripsM from './TripsM.js'
 import Mreq from './Mreq.js';
 import DriversList from './DriversList.js'
-
+import Regpage from './RegisterPage.js'
 import Login from './Login.js'
 
 function App() {
@@ -22,7 +22,9 @@ function App() {
       <Route exact path="/">
       <Login/>
       </Route> 
-
+      <Route exact path="/Signup">
+         <Regpage/>
+      </Route>
 
      <Route exact path="/M">
      <HomeM/>

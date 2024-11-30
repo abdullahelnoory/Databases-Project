@@ -50,9 +50,9 @@ export default function Login()
 <button onClick={sendData} className="button">
 Login
     </button>
-    <button onClick={sendData} className="button">
-Sign up
-    </button>
+    <a  className=" alink" href="/Signup"> 
+        Sign up
+    </a>
 
     </form>
     </div>
