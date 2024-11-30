@@ -23,7 +23,7 @@ export default  function navbar1()
         </li>
         <li className="active">
         <a href="/M/Requests"> 
-        comp3
+        Requests
         </a>
         </li>
     </ul>

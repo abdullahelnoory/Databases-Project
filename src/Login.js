@@ -50,6 +50,9 @@ export default function Login()
 <button onClick={sendData} className="button">
 Login
     </button>
+    <button onClick={sendData} className="button">
+Sign up
+    </button>
 
     </form>
     </div>

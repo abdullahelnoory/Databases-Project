@@ -1,24 +1,16 @@
 import Grid from './TripsGrid'
-
+import Nav1 from './nav.js';
 export default function TripsM()
 {
 
     return(
 <div>
-    <h1>Trips</h1>
+<header>
+        <Nav1/>
+        </header>
+        <h1 style={{margin:"1%"}}>Trips</h1>
     <Grid></Grid>
-    <button>
-        Add Trip
-    </button>
-    <button>
-        Set price
-    </button>
-    <button>
-        Set Source
-    </button>
-    <button>
-        Set Destination
-    </button>
+ 
 </div>
 
     );

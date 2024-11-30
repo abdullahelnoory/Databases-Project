@@ -31,9 +31,33 @@ export default function Tripslist()
         .catch((error) => console.error('Error fetching data:', error));
     }, []);
     
+  
+    const sendDataAddt = async () => {
+      const dataToSend = { text: 'Hello from Front' };
     
+      try {
+        const response = await fetch('http://localhost:6969/Managerupdatetrip', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToSend),
+        });
+    
+        const result = await response.json();
+        console.log('Response from server:', result);
+      } catch (error) {
+        console.error('Error sending data:', error);
+      }
+    };
+
+
+
+
+
   
     return (
+      <div className="List">
       <div style={{ height: '400', width: '100%' }}>
         <DataGrid rows={Rows} columns={columns} pageSize={5} checkboxSelection
         onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)} />
@@ -41,6 +65,17 @@ export default function Tripslist()
         <h3>Selected Row IDs:</h3>
         <pre>{JSON.stringify(selectedRowIds, null, 2)}</pre>
       </div>
+
+      <button className='button' onClick={sendDataAddt()}> 
+        Add Trip
+    </button>
+    <button className='button'>
+        Set price
+    </button>
+    <button className='button'>
+        Set Destination
+    </button>
+    </div>
       </div>
     );
 }
