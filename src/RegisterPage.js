@@ -18,10 +18,7 @@ function RegisterPage() {
   let [state, setState] = useState("-1");
   let [prevState, setPrevState] = useState("-1");
 
-  let [flagState, setFlagState] = useState("card");
-
   let x = (event) => {
-
     if (state == "-1") {
       setPrevState(state);
       setState(event.target.id);
@@ -114,12 +111,7 @@ function RegisterPage() {
             flexDirection: "row-reverse",
           }}
         >
-          {state === "2" ? (
-            <Profile flagState={"Active"} setFlagState={setFlagState} />
-          ) : (
-            <Profile flagState={"card"} setFlagState={setFlagState} />
-          )}
-
+          <Profile flagState={state} />
           <div
             style={{
               width: "30%",
