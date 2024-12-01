@@ -24,11 +24,11 @@ export default function Login() {
 
       if (result.type === "Admin") {
         history.push('/A');
-      } else if (result.type === "Manager"){
+      } else if (result.type === "Manager") {
         history.push('/M');
-      } else if (result.type === "Driver"){
+      } else if (result.type === "Driver") {
         history.push('/D');
-      } else if (result.type === "Passenger"){
+      } else if (result.type === "Passenger") {
         history.push('/P');
       }
 
