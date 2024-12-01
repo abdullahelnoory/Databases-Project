@@ -14,17 +14,17 @@ function RegisterPage() {
     color: "rgba(255, 244, 244, 0.86)",
     fontSize: "xx-large",
     fontFamily: "ui-sans-serif",
+    textAlign: "center",
   };
   let [state, setState] = useState("-1");
   let [prevState, setPrevState] = useState("-1");
 
   function updateCard(event) {
-  
     if (state === "-1") {
       setPrevState(state);
       setState(event.target.title);
     } else {
-      if (state ===event.target.title) {
+      if (state === event.target.title) {
         setPrevState(state);
         setState("-1");
       } else {
@@ -70,7 +70,11 @@ function RegisterPage() {
         title={user.title}
         id={user.id}
         classname={
-          user.title ===state ? (user.title === prevState ? "card" : "Active") : "card"
+          user.title === state
+            ? user.title === prevState
+              ? "card"
+              : "Active"
+            : "card"
         }
         role={user.role}
       />

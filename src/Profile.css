@@ -46,7 +46,19 @@
   /* align-items: flex-start;
   align-content: flex-start; */
   flex-direction: row;
+  /* ///////////////// */
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  border: 1px solid rgba(255, 255, 255, 1);
 }
+
+.profile:hover {
+  -webkit-backdrop-filter: blur(11px);
+  backdrop-filter: blur(4px);
+}
+
 .Name,
 .Password,
 .Email,
@@ -89,7 +101,8 @@
   font-variant: diagonal-fractions;
   font-size: larger;
   font-family: cursive;
-  color: rgb(39 39 52);
+  /* color: rgb(39 39 52); */
+  color: azure;
 }
 .Name:focus,
 .Password:focus,
