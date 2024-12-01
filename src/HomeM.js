@@ -18,7 +18,7 @@ export default function manager()
         <header>
         <Nav1/>
         </header>
-        <h1 className="Mname">
+        <h1 className="Mname" style={{margin:'15px'}}> 
         Mname
         </h1>  
 

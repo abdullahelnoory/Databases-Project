@@ -33,10 +33,10 @@ export default function Tripslist()
     
   
     const sendDataAddt = async () => {
-      const dataToSend = { text: 'Hello from Front' };
+      const dataToSend = { selectedRowIds };
     
       try {
-        const response = await fetch('http://localhost:6969/Managerupdatetrip', {
+        const response = await fetch('http://localhost:6969/ManagerCreatetrip', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -66,8 +66,8 @@ export default function Tripslist()
         <pre>{JSON.stringify(selectedRowIds, null, 2)}</pre>
       </div>
 
-      <button className='button' onClick={sendDataAddt()}> 
-        Add Trip
+      <button className='button'> 
+      <a  className='buttonlink' href="/AddTrip">Add Trip</a>
     </button>
     <button className='button'>
         Set price
