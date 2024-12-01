@@ -24,9 +24,11 @@ exports.register = async (req, res) => {
         break;
       case "Driver":
         result = await pool.query(
-          'INSERT INTO "Driver" VALUES ($1, $2, $3, $4, $5, $6, false)',
+          'INSERT INTO "Driver" VALUES ($1, $2, $3, $4, $5, $6, false);',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
+        await pool.query('INSERT INTO "Car" VALUES ($1, $2, $3, $4, $5, $6);',
+        [req.body.carLicense, req.body.numberOfSeats, req.body.airConditioning, req.body.carType, req.body.additionalPrice, ssn]);
         break;
       case "Passenger":
         result = await pool.query(
