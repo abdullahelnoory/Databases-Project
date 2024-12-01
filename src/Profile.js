@@ -1,19 +1,72 @@
 import "./Profile.css";
 import React, { useState, useEffect } from "react";
 
-export default function Profile({ flagState }) {
+export default function Profile({ currJob, prevJob }) {
+  let [ssnState, setSsnState] = useState("");
+  let [ageState, setAgeState] = useState("");
+  let [carState, setCarState] = useState("");
   let [profileState, setProfileState] = useState({
     fname: "",
     mname: "",
     lname: "",
     email: "",
     password: "",
-    ssn: "",
-    job: "",
   });
-  let sendData = {};
 
-  const handleAddUser = async () => {
+  useEffect(() => {
+    if (currJob !== prevJob) {
+      // setProfileState({
+      //   fname: "",
+      //   mname: "",
+      //   lname: "",
+      //   email: "",
+      //   password: "",
+      // });
+      if (currJob === "Passenger") setSsnState("");
+      setAgeState("");
+      setCarState("");
+    }
+  }, [currJob, prevJob]);
+  function handleSendData() {
+    let sendData = [];
+    switch (currJob) {
+      case "Admin": {
+        sendData = { ...profileState, job: currJob, ssn: ssnState };
+        break;
+      }
+      case "Passenger": {
+        sendData = { ...profileState, job: currJob, age: ageState };
+        break;
+      }
+      case "Manager": {
+        sendData = { ...profileState, job: currJob, ssn: ssnState };
+        break;
+      }
+      case "Driver": {
+        sendData = {
+          ...profileState,
+          job: currJob,
+          ssn: ssnState,
+          car: carState,
+        };
+        break;
+      }
+      default:
+    }
+    setProfileState({
+      fname: "",
+      mname: "",
+      lname: "",
+      email: "",
+      password: "",
+    });
+    setSsnState("");
+    setAgeState("");
+    setCarState("");
+    handleAddUser(sendData);
+  }
+
+  const handleAddUser = async (sendData) => {
     try {
       const result = await fetch("http://localhost:6969/accounts/register", {
         method: "POST",
@@ -29,38 +82,14 @@ export default function Profile({ flagState }) {
     }
   };
   return (
-    <form method="post" 
-    onSubmit={(event)=>{
-      switch (flagState) {
-        case "1": {
-          setProfileState({ ...profileState, job: "Admin" });
-          sendData = { ...profileState, job: "Admin" };
-          break;
-        }
-        case "2": {
-          setProfileState({ ...profileState, ssn: "", job: "Passenger" });
-          sendData = { ...profileState, ssn: "", job: "Passenger" };
-          break;
-        }
-        case "3": {
-          setProfileState({ ...profileState, job: "Manager" });
-          sendData = { ...profileState, job: "Manager" };
-          break;
-        }
-        case "4": {
-          setProfileState({ ...profileState, job: "Driver" });
-          sendData = { ...profileState, job: "Driver" };
-          break;
-        }
-        default:
-      }
-
-      event.preventDefault();
-  
-      handleAddUser();
-    }}
-    
-    className="profile">
+    <form
+      method="post"
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSendData();
+      }}
+      className="profile"
+    >
       <div className="input">
         <label className="Label" htmlFor="fname">
           {" "}
@@ -101,7 +130,7 @@ export default function Profile({ flagState }) {
           Last Name
         </label>
         <input
-          value={profileState.lName}
+          value={profileState.lname}
           onChange={(event) => {
             setProfileState({ ...profileState, lname: event.target.value });
           }}
@@ -145,18 +174,19 @@ export default function Profile({ flagState }) {
         ></input>
       </div>
 
-      {flagState === "2" ? (
-        <div className="input" style={{ visibility: "hidden" }}>
-          <label className="Label" htmlFor="ssn">
-            SSN
+      {currJob === "Passenger" ? (
+        <div className="input">
+          <label className="Label" htmlFor="age">
+            Age
           </label>
           <input
-            value={profileState.ssn}
+            value={ageState}
             onChange={(event) => {
-              setProfileState({ ...profileState, ssn: event.target.value });
+              setAgeState(event.target.value);
             }}
-            id="ssn"
-            className="SSN"
+            id="age"
+            className="Age"
+            required
             type="text"
           ></input>
         </div>
@@ -166,9 +196,9 @@ export default function Profile({ flagState }) {
             SSN
           </label>
           <input
-            value={profileState.ssn}
+            value={ssnState}
             onChange={(event) => {
-              setProfileState({ ...profileState, ssn: event.target.value });
+              setSsnState(event.target.value);
             }}
             id="ssn"
             className="SSN"
@@ -178,12 +208,28 @@ export default function Profile({ flagState }) {
         </div>
       )}
 
+      {currJob === "Driver" ? (
+        <div className="carInput">
+          <label className="Label" htmlFor="car">
+            Car ID
+          </label>
+          <input
+            value={carState}
+            onChange={(event) => {
+              setCarState(event.target.value);
+            }}
+            id="car"
+            className="Car"
+            required
+            type="text"
+          ></input>
+        </div>
+      ) : (
+        <div className="carInput" visibility="hidden"></div>
+      )}
+
       <div className="input">
-        <button
-          className="Submit"
-        >
-          Sign UP
-        </button>
+        <button className="Submit">Sign UP</button>
       </div>
     </form>
   );

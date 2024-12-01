@@ -18,20 +18,21 @@ function RegisterPage() {
   let [state, setState] = useState("-1");
   let [prevState, setPrevState] = useState("-1");
 
-  let x = (event) => {
-    if (state == "-1") {
+  function updateCard(event) {
+  
+    if (state === "-1") {
       setPrevState(state);
-      setState(event.target.id);
+      setState(event.target.title);
     } else {
-      if (state == event.target.id) {
+      if (state ===event.target.title) {
         setPrevState(state);
         setState("-1");
       } else {
         setPrevState(state);
-        setState(event.target.id);
+        setState(event.target.title);
       }
     }
-  };
+  }
 
   let users = [
     {
@@ -63,13 +64,13 @@ function RegisterPage() {
   let UsersList = users.map(function (user) {
     return (
       <User
-        onclick={x}
+        onclick={(event) => updateCard(event)}
         key={user.id}
         tabIndex={user.tabIndex}
         title={user.title}
         id={user.id}
         classname={
-          user.id == state ? (user.id == prevState ? "card" : "Active") : "card"
+          user.title ===state ? (user.title === prevState ? "card" : "Active") : "card"
         }
         role={user.role}
       />
@@ -111,7 +112,7 @@ function RegisterPage() {
             flexDirection: "row-reverse",
           }}
         >
-          <Profile flagState={state} />
+          <Profile currJob={state} prevJob={prevState} />
           <div
             style={{
               width: "30%",

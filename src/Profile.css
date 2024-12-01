@@ -24,6 +24,7 @@
   opacity: 90%;
   transform: translatex(3px);
   /* animation: mymove 2s infinite; */
+  background-color: rgb(54, 54, 203);
 }
 
 @keyframes mymove {
@@ -49,7 +50,9 @@
 .Name,
 .Password,
 .Email,
-.SSN {
+.SSN,
+.Age,
+.Car {
   width: 80%;
   height: 25px;
   margin: 2px;
@@ -60,9 +63,14 @@
   padding: 0px;
   border-style: none;
 }
-.input {
+.Car {
   width: 40%;
-  height: 20%;
+}
+
+.input,
+.carInput {
+  width: 40%;
+  height: 15%;
   margin: 8px;
   display: flex;
   flex-wrap: nowrap;
@@ -71,6 +79,12 @@
   justify-content: center;
   align-items: center;
 }
+
+.carInput {
+  width: 60%;
+  height: 15%;
+}
+
 .Label {
   font-variant: diagonal-fractions;
   font-size: larger;
@@ -80,7 +94,9 @@
 .Name:focus,
 .Password:focus,
 .Email:focus,
-.SSN:focus {
+.SSN:focus,
+.Age:focus,
+.Car:focus {
   box-sizing: content-box;
   outline: transparent solid 3px;
   box-shadow: -5px 3px 5px 0px;
