@@ -1,5 +1,5 @@
-const pool = require('../models/db');
-const bcrypt = require('bcrypt');
+const pool = require("../models/db");
+const bcrypt = require("bcrypt");
 
 exports.register = async (req, res) => {
   const { fname, mname, lname, job, ssn, email, password } = req.body;
@@ -27,8 +27,14 @@ exports.register = async (req, res) => {
           'INSERT INTO "Driver" VALUES ($1, $2, $3, $4, $5, $6, false);',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
-        await pool.query('INSERT INTO "Car" VALUES ($1, $2, $3, $4, $5, $6);',
-        [req.body.carLicense, req.body.numberOfSeats, req.body.airConditioning, req.body.carType, req.body.additionalPrice, ssn]);
+        await pool.query('INSERT INTO "Car" VALUES ($1, $2, $3, $4, $5, $6);', [
+          req.body.carLicense,
+          req.body.numberOfSeats,
+          req.body.airConditioning,
+          req.body.carType,
+          req.body.additionalPrice,
+          ssn,
+        ]);
         break;
       case "Passenger":
         result = await pool.query(
@@ -42,18 +48,18 @@ exports.register = async (req, res) => {
 
     res.json({ Register: true, success: true });
   } catch (error) {
-    console.error('Error connecting to the database:', error);
+    console.error("Error connecting to the database:", error);
 
-    if (error.code === '23505') {
+    if (error.code === "23505") {
       res.json({
         success: false,
-        message: 'Duplicate entry detected',
+        message: "Duplicate entry detected",
         details: error.detail,
       });
     } else {
       res.status(500).json({
         success: false,
-        message: 'Database error occurred',
+        message: "Database error occurred",
       });
     }
   }
@@ -64,10 +70,22 @@ exports.login = async (req, res) => {
   const password = req.body.password;
 
   try {
-    const result1 = await pool.query('SELECT email, password FROM "Admin" WHERE email = $1', [email]);
-    const result2 = await pool.query('SELECT email, password FROM "Manager" WHERE email = $1', [email]);
-    const result3 = await pool.query('SELECT email, password FROM "Driver" WHERE email = $1', [email]);
-    const result4 = await pool.query('SELECT email, password FROM "Passenger" WHERE email = $1', [email]);
+    const result1 = await pool.query(
+      'SELECT email, password FROM "Admin" WHERE email = $1',
+      [email]
+    );
+    const result2 = await pool.query(
+      'SELECT email, password FROM "Manager" WHERE email = $1',
+      [email]
+    );
+    const result3 = await pool.query(
+      'SELECT email, password FROM "Driver" WHERE email = $1',
+      [email]
+    );
+    const result4 = await pool.query(
+      'SELECT email, password FROM "Passenger" WHERE email = $1',
+      [email]
+    );
 
     let user = null;
     let userType = null;
@@ -85,7 +103,7 @@ exports.login = async (req, res) => {
       user = result4.rows[0];
       userType = 4;
     }
-    
+
     if (!user) {
       console.log("Login Failed, Wrong Email");
       return res.json({ login: false, success: true });
@@ -94,17 +112,17 @@ exports.login = async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (passwordMatch) {
-        console.log("Login Successful");
-        res.json({ login: true, success: true, type: userType });
+      console.log("Login Successful");
+      res.json({ login: true, success: true, type: userType });
     } else {
-        console.log("Login Failed, Wrong password");
-        res.json({ login: false, success: true });
+      console.log("Login Failed, Wrong password");
+      res.json({ login: false, success: true });
     }
   } catch (error) {
-    console.error('Error connecting to the database:', error);
+    console.error("Error connecting to the database:", error);
     res.status(500).json({
       success: false,
-      message: 'Database connection failed',
+      message: "Database connection failed",
     });
   }
 };
