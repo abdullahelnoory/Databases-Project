@@ -1,11 +1,11 @@
 
 import {useState} from 'react';
 import Nav1 from './nav.js';
-export default function AddTrip()
+export default function AddTrip(          )
 {
 
     const [forminput , setforminput] = useState({Source:"",
-        Destination:"", Price:""})
+        Destination:"", Price:"" ,user:"Manager", email:""})
     
         const sendData = async () => {
             
