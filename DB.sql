@@ -84,7 +84,8 @@ CREATE TABLE public."Manager" (
     fname character varying NOT NULL,
     mname character varying NOT NULL,
     lname character varying NOT NULL,
-    password character varying NOT NULL
+    password character varying NOT NULL,
+    "verifiedBy" integer
 );
 
 
@@ -162,6 +163,7 @@ ALTER TABLE public."Trip" OWNER TO postgres;
 --
 
 COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
+12341234	karimfarid@gmail.com	Karim	M	Farid	$2b$10$Ml8IV2WHxoDNTcqmz7rjeu2iJWgQ0KhsrByceKRtRrHj0V0N.DRym
 \.
 
 
@@ -188,9 +190,11 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, isprivate, "MSS
 -- Data for Name: Manager; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Manager" (ssn, email, fname, mname, lname, password) FROM stdin;
-1	karim@gmail.com	karim\n	z	farid	12341234
-2	farid@gmail.com	farid	z	ahem	12341234
+COPY public."Manager" (ssn, email, fname, mname, lname, password, "verifiedBy") FROM stdin;
+1	karim@gmail.com	karim\n	z	farid	12341234	\N
+2	farid@gmail.com	farid	z	ahem	12341234	\N
+12341234	12341234@gmail.com	Karim	M	Farid	$2b$10$QZzvKVbSPqamJaHD6BbtVuk20JvPpH4MuwOacJMdW6SRP3YaIJsO2	\N
+11223344	karimfarid2004@gmail.com	Karim	M	Farid	$2b$10$9cLO5Am23zVLYj3O0V.exuVs275ajgHUGx65p69HcAyKrQ9CgO.nG	\N
 \.
 
 
@@ -334,6 +338,14 @@ ALTER TABLE ONLY public."Car"
 
 ALTER TABLE ONLY public."Station"
     ADD CONSTRAINT "MSSN" FOREIGN KEY ("MSSN") REFERENCES public."Manager"(ssn) NOT VALID;
+
+
+--
+-- Name: Manager Manager_verifiedBy_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Manager"
+    ADD CONSTRAINT "Manager_verifiedBy_fkey" FOREIGN KEY ("verifiedBy") REFERENCES public."Admin"(ssn) NOT VALID;
 
 
 --

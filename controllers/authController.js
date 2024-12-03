@@ -92,16 +92,16 @@ exports.login = async (req, res) => {
 
     if (result1.rows.length === 1) {
       user = result1.rows[0];
-      userType = 1;
+      userType = "Admin";
     } else if (result2.rows.length === 1) {
       user = result2.rows[0];
-      userType = 2;
+      userType = "Manager";
     } else if (result3.rows.length === 1) {
       user = result3.rows[0];
-      userType = 3;
+      userType = "Driver";
     } else if (result4.rows.length === 1) {
       user = result4.rows[0];
-      userType = 4;
+      userType = "Passenger";
     }
 
     if (!user) {

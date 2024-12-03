@@ -16,8 +16,45 @@ exports.getStations = async (req, res) => {
   }
 };
 
+exports.getTrips = async (req, res) => {
+  const { mssn } = req.body;
+  try {
+    const managerResult = await pool.query(
+      'SELECT "StationID" FROM "Station" WHERE "MSSN" = $1',
+      [mssn]
+    );
+
+    if (managerResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Station not found",
+      });
+    }
+
+    const s_id = managerResult.rows[0].StationID;
+    const result = await pool.query(
+      'SELECT * FROM "Trip" WHERE "sourceStation" = $1',
+      [s_id]
+    );
+
+    console.log(result.rows);
+    
+    res.json({
+      data: result.rows,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};
+
 exports.createTrip = async (req, res) => {
-  const { mssn, price, date, dssn, estimatedtime, destinationStation } = req.body;
+  const { mssn, price, date, dssn, estimatedtime, destinationStation } =
+    req.body;
 
   try {
     const resultCount = await pool.query('SELECT COUNT(*) FROM "Trip"');
@@ -57,10 +94,16 @@ exports.createTrip = async (req, res) => {
 
 exports.getDrivers = async (req, res) => {
   const { mssn } = req.body;
+  console.log(req.body);
   try {
-    const result = await pool.query('SELECT * FROM "Driver" WHERE "MSSN" = $1', [
-      mssn,
-    ]);
+    const result = await pool.query(
+      'SELECT * FROM "Driver" WHERE "MSSN" = $1',
+      [mssn]
+    );
+    console.log({
+      data: result.rows,
+      success: true,
+    });
     res.json({
       data: result.rows,
       success: true,
