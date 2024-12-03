@@ -11,7 +11,7 @@ export default function Griddriv() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        mssn: 1                 // Manager ssn here
+        m_ssn: 1                 // Manager ssn here
       }),
     })
       .then((response) => response.json())

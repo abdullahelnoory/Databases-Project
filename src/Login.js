@@ -44,7 +44,7 @@ export default function Login() {
       <form className="Login_box">
 
         <div className="input-container">
-          <label > Username</label>
+          <label > Email</label>
           <input value={forminput.email} type="text" onChange={(event) => {
 
             setforminput({ ...forminput, email: event.target.value })

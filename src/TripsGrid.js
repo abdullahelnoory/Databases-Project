@@ -25,19 +25,19 @@ export default function Tripslist() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        mssn: 1, // Manager SSN here
+        m_ssn: 1, // Manager SSN here
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.data) {
           const transformedData = data.data.map((trip) => ({
-            id: trip.tripid,
+            id: trip.trip_id,
             Driver: trip.d_ssn,
-            Source: trip.sourceStation,
-            Destination: trip.destinationStation,
+            Source: trip.source_station,
+            Destination: trip.destination_station,
             Price: trip.price,
-            EstimatedTime: trip.estimatedtime,
+            EstimatedTime: trip.estimated_time,
           }));
           setRows(transformedData);
         }

@@ -1,17 +1,16 @@
 import NavA from './AdminNav'
 import SGrid from './StationsGridA';
 
-export default function StationsA()
-{
+export default function StationsA() {
 
 
-    return(
+    return (
         <div>
             <header>
-<NavA/>
-</header>
-<h1 style={{margin:"1%"}}>Stations</h1>
-<SGrid/>
+                <NavA />
+            </header>
+            <h1 style={{ margin: "1%" }}>Stations</h1>
+            <SGrid />
         </div>
 
 
