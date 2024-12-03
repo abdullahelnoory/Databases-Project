@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         break;
       case "Manager":
         result = await pool.query(
-          'INSERT INTO "Manager" VALUES ($1, $2, $3, $4, $5, $6)',
+          'INSERT INTO "Manager" VALUES ($1, $2, $3, $4, $5, $6,NULL)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
         break;
@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
       [email]
     );
     const result2 = await pool.query(
-      'SELECT email, password FROM "Manager" WHERE email = $1',
+      'SELECT email, password, "verifiedBy" FROM "Manager" WHERE email = $1',
       [email]
     );
     const result3 = await pool.query(
@@ -113,7 +113,10 @@ exports.login = async (req, res) => {
 
     if (passwordMatch) {
       console.log("Login Successful");
-      res.json({ login: true, success: true, type: userType });
+      if(userType == "Manager")
+        res.json({login: true, success: true, type: userType, verifiedBy : user.verifiedBy });
+      else
+        res.json({ login: true, success: true, type: userType });
     } else {
       console.log("Login Failed, Wrong password");
       res.json({ login: false, success: true });
