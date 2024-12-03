@@ -61,12 +61,14 @@ export default function Login() {
           }></input>
         </div>
 
-        <button onClick={sendData} className="button">
-          Login
-        </button>
-        <a className=" alink" href="/Signup">
-          Sign up
-        </a>
+        <div class="button-container">
+          <button onClick={sendData} className="button login">
+            Login
+          </button>
+          <a href="/Signup" className="button signup" style={{ textDecoration: 'none' }}>
+            Sign Up
+          </a>
+        </div>
 
       </form>
     </div>
