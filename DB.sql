@@ -38,16 +38,30 @@ CREATE TABLE public."Admin" (
 ALTER TABLE public."Admin" OWNER TO postgres;
 
 --
+-- Name: Attendance; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Attendance" (
+    d_ssn integer NOT NULL,
+    date date NOT NULL,
+    arrival_time character varying,
+    leave_time character varying
+);
+
+
+ALTER TABLE public."Attendance" OWNER TO postgres;
+
+--
 -- Name: Car; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Car" (
-    "CarLicense" character varying NOT NULL,
-    "NumberOfSeats" integer NOT NULL,
-    "AirConditioning" boolean DEFAULT false NOT NULL,
-    "CarType" character varying NOT NULL,
-    "AdditionalPrice" double precision,
-    "D_SSN" integer NOT NULL
+    car_license character varying NOT NULL,
+    number_of_seats integer NOT NULL,
+    air_conditioning boolean DEFAULT false NOT NULL,
+    car_type character varying NOT NULL,
+    additional_price double precision,
+    d_ssn integer NOT NULL
 );
 
 
@@ -64,15 +78,28 @@ CREATE TABLE public."Driver" (
     mname character varying NOT NULL,
     lname character varying NOT NULL,
     password character varying NOT NULL,
-    isprivate boolean NOT NULL,
-    "MSSN" integer,
+    is_private boolean DEFAULT false NOT NULL,
+    m_ssn integer,
     "Shift" character varying,
     "Salary" integer,
-    "S_ID" integer
+    "Station_ID" integer
 );
 
 
 ALTER TABLE public."Driver" OWNER TO postgres;
+
+--
+-- Name: Lost & Found; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Lost & Found" (
+    t_id integer NOT NULL,
+    item character varying NOT NULL,
+    quantity integer NOT NULL
+);
+
+
+ALTER TABLE public."Lost & Found" OWNER TO postgres;
 
 --
 -- Name: Manager; Type: TABLE; Schema: public; Owner: postgres
@@ -85,11 +112,25 @@ CREATE TABLE public."Manager" (
     mname character varying NOT NULL,
     lname character varying NOT NULL,
     password character varying NOT NULL,
-    "verifiedBy" integer
+    verified_by integer
 );
 
 
 ALTER TABLE public."Manager" OWNER TO postgres;
+
+--
+-- Name: Manager Finance; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Manager Finance" (
+    m_ssn integer NOT NULL,
+    date date NOT NULL,
+    salary double precision,
+    total_profit double precision
+);
+
+
+ALTER TABLE public."Manager Finance" OWNER TO postgres;
 
 --
 -- Name: Passenger; Type: TABLE; Schema: public; Owner: postgres
@@ -108,34 +149,34 @@ CREATE TABLE public."Passenger" (
 ALTER TABLE public."Passenger" OWNER TO postgres;
 
 --
--- Name: PrivateTrip; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Private Trip; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."PrivateTrip" (
-    "orderID" integer NOT NULL,
+CREATE TABLE public."Private Trip" (
+    order_id integer NOT NULL,
     source character varying NOT NULL,
     destination character varying NOT NULL,
     price double precision NOT NULL,
-    "estimatedTime" double precision NOT NULL,
+    estimated_time double precision NOT NULL,
     data character varying NOT NULL,
-    "D_SSN" integer NOT NULL,
-    "P_ID" integer NOT NULL
+    d_ssn integer NOT NULL,
+    p_id integer NOT NULL
 );
 
 
-ALTER TABLE public."PrivateTrip" OWNER TO postgres;
+ALTER TABLE public."Private Trip" OWNER TO postgres;
 
 --
 -- Name: Station; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Station" (
-    "StationID" integer NOT NULL,
-    "StationName" character varying NOT NULL,
-    "Street" character varying NOT NULL,
-    "ZipCode" character varying NOT NULL,
-    "Governorate" character varying NOT NULL,
-    "MSSN" integer
+    station_id integer NOT NULL,
+    station_name character varying NOT NULL,
+    street character varying NOT NULL,
+    zipcode character varying NOT NULL,
+    governorate character varying NOT NULL,
+    m_ssn integer
 );
 
 
@@ -146,17 +187,31 @@ ALTER TABLE public."Station" OWNER TO postgres;
 --
 
 CREATE TABLE public."Trip" (
-    tripid integer NOT NULL,
+    trip_id integer NOT NULL,
     price double precision NOT NULL,
     date character varying NOT NULL,
-    estimatedtime double precision NOT NULL,
+    estimated_time double precision NOT NULL,
     d_ssn integer NOT NULL,
-    "sourceStation" integer NOT NULL,
-    "destinationStation" integer NOT NULL
+    source_station integer NOT NULL,
+    destination_station integer NOT NULL
 );
 
 
 ALTER TABLE public."Trip" OWNER TO postgres;
+
+--
+-- Name: Vacation; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Vacation" (
+    m_ssn integer NOT NULL,
+    d_ssn integer NOT NULL,
+    date date NOT NULL,
+    status boolean DEFAULT false
+);
+
+
+ALTER TABLE public."Vacation" OWNER TO postgres;
 
 --
 -- Data for Name: Admin; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -164,6 +219,15 @@ ALTER TABLE public."Trip" OWNER TO postgres;
 
 COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 12341234	karimfarid@gmail.com	Karim	M	Farid	$2b$10$Ml8IV2WHxoDNTcqmz7rjeu2iJWgQ0KhsrByceKRtRrHj0V0N.DRym
+1234	abc@gmail.com	Karim	Farid	Zakzouk	$2b$10$ryDDev7xZ9o1K6RqJR.dUeDcOUl7hMIztcCLeSERvq5QcFKA4aXCe
+\.
+
+
+--
+-- Data for Name: Attendance; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
 \.
 
 
@@ -171,7 +235,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 -- Data for Name: Car; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Car" ("CarLicense", "NumberOfSeats", "AirConditioning", "CarType", "AdditionalPrice", "D_SSN") FROM stdin;
+COPY public."Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) FROM stdin;
 u53jf3g2	13	f	Toyota	15.5	53290520
 \.
 
@@ -180,9 +244,17 @@ u53jf3g2	13	f	Toyota	15.5	53290520
 -- Data for Name: Driver; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Driver" (ssn, email, fname, mname, lname, password, isprivate, "MSSN", "Shift", "Salary", "S_ID") FROM stdin;
+COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, "Shift", "Salary", "Station_ID") FROM stdin;
 53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	f	1	\N	696969	\N
 253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	f	1	9 - 6	696969	1
+\.
+
+
+--
+-- Data for Name: Lost & Found; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Lost & Found" (t_id, item, quantity) FROM stdin;
 \.
 
 
@@ -190,11 +262,18 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, isprivate, "MSS
 -- Data for Name: Manager; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Manager" (ssn, email, fname, mname, lname, password, "verifiedBy") FROM stdin;
+COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) FROM stdin;
 1	karim@gmail.com	karim\n	z	farid	12341234	\N
 2	farid@gmail.com	farid	z	ahem	12341234	\N
-12341234	12341234@gmail.com	Karim	M	Farid	$2b$10$QZzvKVbSPqamJaHD6BbtVuk20JvPpH4MuwOacJMdW6SRP3YaIJsO2	\N
-11223344	karimfarid2004@gmail.com	Karim	M	Farid	$2b$10$9cLO5Am23zVLYj3O0V.exuVs275ajgHUGx65p69HcAyKrQ9CgO.nG	\N
+123	asd@gmail.com	asd	aasd	asd	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	\N
+\.
+
+
+--
+-- Data for Name: Manager Finance; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Manager Finance" (m_ssn, date, salary, total_profit) FROM stdin;
 \.
 
 
@@ -208,10 +287,10 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 
 
 --
--- Data for Name: PrivateTrip; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: Private Trip; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."PrivateTrip" ("orderID", source, destination, price, "estimatedTime", data, "D_SSN", "P_ID") FROM stdin;
+COPY public."Private Trip" (order_id, source, destination, price, estimated_time, data, d_ssn, p_id) FROM stdin;
 1	ggg	eee	12.1	1.1	1aasd	53290520	593580643
 \.
 
@@ -220,7 +299,7 @@ COPY public."PrivateTrip" ("orderID", source, destination, price, "estimatedTime
 -- Data for Name: Station; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Station" ("StationID", "StationName", "Street", "ZipCode", "Governorate", "MSSN") FROM stdin;
+COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn) FROM stdin;
 1	Giza	giza street\n	1234	Cario	1
 2	6October\n	Mehwar	4321	Giza	2
 \.
@@ -230,10 +309,26 @@ COPY public."Station" ("StationID", "StationName", "Street", "ZipCode", "Governo
 -- Data for Name: Trip; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Trip" (tripid, price, date, estimatedtime, d_ssn, "sourceStation", "destinationStation") FROM stdin;
+COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station) FROM stdin;
 1	69.69	2024	100	53290520	1	2
 2	69.69	2024	100	53290520	1	2
 \.
+
+
+--
+-- Data for Name: Vacation; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
+\.
+
+
+--
+-- Name: Attendance Attendance_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Attendance"
+    ADD CONSTRAINT "Attendance_pkey" PRIMARY KEY (d_ssn, date);
 
 
 --
@@ -241,7 +336,23 @@ COPY public."Trip" (tripid, price, date, estimatedtime, d_ssn, "sourceStation", 
 --
 
 ALTER TABLE ONLY public."Car"
-    ADD CONSTRAINT "Car_pkey" PRIMARY KEY ("CarLicense");
+    ADD CONSTRAINT "Car_pkey" PRIMARY KEY (car_license);
+
+
+--
+-- Name: Lost & Found Lost & Found_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Lost & Found"
+    ADD CONSTRAINT "Lost & Found_pkey" PRIMARY KEY (t_id, item);
+
+
+--
+-- Name: Manager Finance Manager Finance_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Manager Finance"
+    ADD CONSTRAINT "Manager Finance_pkey" PRIMARY KEY (m_ssn, date);
 
 
 --
@@ -253,11 +364,11 @@ ALTER TABLE ONLY public."Passenger"
 
 
 --
--- Name: PrivateTrip PrivateTrip_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: Private Trip PrivateTrip_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."PrivateTrip"
-    ADD CONSTRAINT "PrivateTrip_pkey" PRIMARY KEY ("orderID");
+ALTER TABLE ONLY public."Private Trip"
+    ADD CONSTRAINT "PrivateTrip_pkey" PRIMARY KEY (order_id);
 
 
 --
@@ -265,7 +376,15 @@ ALTER TABLE ONLY public."PrivateTrip"
 --
 
 ALTER TABLE ONLY public."Station"
-    ADD CONSTRAINT "Station_pkey" PRIMARY KEY ("StationID");
+    ADD CONSTRAINT "Station_pkey" PRIMARY KEY (station_id);
+
+
+--
+-- Name: Vacation Vacation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Vacation"
+    ADD CONSTRAINT "Vacation_pkey" PRIMARY KEY (m_ssn, d_ssn, date);
 
 
 --
@@ -321,7 +440,15 @@ ALTER TABLE ONLY public."Manager"
 --
 
 ALTER TABLE ONLY public."Trip"
-    ADD CONSTRAINT trip_pkey PRIMARY KEY (tripid);
+    ADD CONSTRAINT trip_pkey PRIMARY KEY (trip_id);
+
+
+--
+-- Name: Attendance Attendance_D_SSN_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Attendance"
+    ADD CONSTRAINT "Attendance_D_SSN_fkey" FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
 
 
 --
@@ -329,7 +456,15 @@ ALTER TABLE ONLY public."Trip"
 --
 
 ALTER TABLE ONLY public."Car"
-    ADD CONSTRAINT "D_SSN_fkey" FOREIGN KEY ("D_SSN") REFERENCES public."Driver"(ssn) NOT VALID;
+    ADD CONSTRAINT "D_SSN_fkey" FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
+
+
+--
+-- Name: Lost & Found Lost & Found_T_ID_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Lost & Found"
+    ADD CONSTRAINT "Lost & Found_T_ID_fkey" FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id);
 
 
 --
@@ -337,7 +472,15 @@ ALTER TABLE ONLY public."Car"
 --
 
 ALTER TABLE ONLY public."Station"
-    ADD CONSTRAINT "MSSN" FOREIGN KEY ("MSSN") REFERENCES public."Manager"(ssn) NOT VALID;
+    ADD CONSTRAINT "MSSN" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) NOT VALID;
+
+
+--
+-- Name: Manager Finance Manager Finance_M_SSN_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Manager Finance"
+    ADD CONSTRAINT "Manager Finance_M_SSN_fkey" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) NOT VALID;
 
 
 --
@@ -345,7 +488,7 @@ ALTER TABLE ONLY public."Station"
 --
 
 ALTER TABLE ONLY public."Manager"
-    ADD CONSTRAINT "Manager_verifiedBy_fkey" FOREIGN KEY ("verifiedBy") REFERENCES public."Admin"(ssn) NOT VALID;
+    ADD CONSTRAINT "Manager_verifiedBy_fkey" FOREIGN KEY (verified_by) REFERENCES public."Admin"(ssn) NOT VALID;
 
 
 --
@@ -353,7 +496,23 @@ ALTER TABLE ONLY public."Manager"
 --
 
 ALTER TABLE ONLY public."Driver"
-    ADD CONSTRAINT "S_ID_fkey" FOREIGN KEY ("S_ID") REFERENCES public."Station"("StationID") NOT VALID;
+    ADD CONSTRAINT "S_ID_fkey" FOREIGN KEY ("Station_ID") REFERENCES public."Station"(station_id) NOT VALID;
+
+
+--
+-- Name: Vacation Vacation_D_SSN_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Vacation"
+    ADD CONSTRAINT "Vacation_D_SSN_fkey" FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
+
+
+--
+-- Name: Vacation Vacation_M_SSN_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Vacation"
+    ADD CONSTRAINT "Vacation_M_SSN_fkey" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) NOT VALID;
 
 
 --
@@ -361,23 +520,23 @@ ALTER TABLE ONLY public."Driver"
 --
 
 ALTER TABLE ONLY public."Driver"
-    ADD CONSTRAINT "fkey_MSSN" FOREIGN KEY ("MSSN") REFERENCES public."Manager"(ssn) NOT VALID;
+    ADD CONSTRAINT "fkey_MSSN" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) NOT VALID;
 
 
 --
--- Name: PrivateTrip fkey_P_ID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: Private Trip fkey_P_ID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."PrivateTrip"
-    ADD CONSTRAINT "fkey_P_ID" FOREIGN KEY ("P_ID") REFERENCES public."Passenger"(id) NOT VALID;
+ALTER TABLE ONLY public."Private Trip"
+    ADD CONSTRAINT "fkey_P_ID" FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) NOT VALID;
 
 
 --
--- Name: PrivateTrip fkey_d_ssn; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: Private Trip fkey_d_ssn; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."PrivateTrip"
-    ADD CONSTRAINT fkey_d_ssn FOREIGN KEY ("D_SSN") REFERENCES public."Driver"(ssn) NOT VALID;
+ALTER TABLE ONLY public."Private Trip"
+    ADD CONSTRAINT fkey_d_ssn FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
 
 
 --
@@ -393,7 +552,7 @@ ALTER TABLE ONLY public."Trip"
 --
 
 ALTER TABLE ONLY public."Trip"
-    ADD CONSTRAINT trip_destinationstation_fkey FOREIGN KEY ("destinationStation") REFERENCES public."Station"("StationID");
+    ADD CONSTRAINT trip_destinationstation_fkey FOREIGN KEY (destination_station) REFERENCES public."Station"(station_id);
 
 
 --
@@ -401,7 +560,7 @@ ALTER TABLE ONLY public."Trip"
 --
 
 ALTER TABLE ONLY public."Trip"
-    ADD CONSTRAINT trip_sourcestation_fkey FOREIGN KEY ("sourceStation") REFERENCES public."Station"("StationID");
+    ADD CONSTRAINT trip_sourcestation_fkey FOREIGN KEY (source_station) REFERENCES public."Station"(station_id);
 
 
 --

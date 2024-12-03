@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 exports.register = async (req, res) => {
   const { fname, mname, lname, job, ssn, email, password } = req.body;
   const saltRounds = 10;
+  console.log(res.body);
 
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -18,7 +19,7 @@ exports.register = async (req, res) => {
         break;
       case "Manager":
         result = await pool.query(
-          'INSERT INTO "Manager" VALUES ($1, $2, $3, $4, $5, $6,NULL)',
+          'INSERT INTO "Manager" VALUES ($1, $2, $3, $4, $5, $6, NULL)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
         break;
@@ -75,7 +76,7 @@ exports.login = async (req, res) => {
       [email]
     );
     const result2 = await pool.query(
-      'SELECT email, password, "verifiedBy" FROM "Manager" WHERE email = $1',
+      'SELECT email, password, verified_by FROM "Manager" WHERE email = $1',
       [email]
     );
     const result3 = await pool.query(
@@ -110,11 +111,11 @@ exports.login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
+    console.log(res.body);
     if (passwordMatch) {
       console.log("Login Successful");
-      if(userType == "Manager")
-        res.json({login: true, success: true, type: userType, verifiedBy : user.verifiedBy });
+      if (userType == "Manager")
+        res.json({ login: true, success: true, type: userType, verified_by: user.verified_by });
       else
         res.json({ login: true, success: true, type: userType });
     } else {

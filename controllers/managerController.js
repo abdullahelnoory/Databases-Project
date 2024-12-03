@@ -17,27 +17,26 @@ exports.getStations = async (req, res) => {
 };
 
 exports.getTrips = async (req, res) => {
-  const { mssn } = req.body;
+  const { m_ssn } = req.body;
   try {
     const managerResult = await pool.query(
-      'SELECT "StationID" FROM "Station" WHERE "MSSN" = $1',
-      [mssn]
+      'SELECT "station_id" FROM "Station" WHERE "m_ssn" = $1',
+      [m_ssn]
     );
 
+    
     if (managerResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Station not found",
       });
     }
-
-    const s_id = managerResult.rows[0].StationID;
+    
+    const s_id = managerResult.rows[0].station_id;
     const result = await pool.query(
-      'SELECT * FROM "Trip" WHERE "sourceStation" = $1',
+      'SELECT * FROM "Trip" WHERE "source_station" = $1',
       [s_id]
     );
-
-    console.log(result.rows);
     
     res.json({
       data: result.rows,
@@ -53,29 +52,29 @@ exports.getTrips = async (req, res) => {
 };
 
 exports.createTrip = async (req, res) => {
-  const { mssn, price, date, dssn, estimatedtime, destinationStation } =
+  const { m_ssn, price, date, d_ssn, estimated_time, destination_station } =
     req.body;
 
   try {
     const resultCount = await pool.query('SELECT COUNT(*) FROM "Trip"');
-    const tripid = parseInt(resultCount.rows[0].count) + 1;
+    const trip_id = parseInt(resultCount.rows[0].count) + 1;
 
     const managerResult = await pool.query(
-      'SELECT "StationID" FROM "Station" WHERE "MSSN" = $1',
-      [mssn]
+      'SELECT "station_id" FROM "Station" WHERE "m_ssn" = $1',
+      [m_ssn]
     );
-    const sourceStation = managerResult.rows[0].StationID;
+    const source_station = managerResult.rows[0].station_id;
 
     const result = await pool.query(
-      'INSERT INTO "Trip" ("tripid", "price", "date", "estimatedtime", "d_ssn", "sourceStation", "destinationStation") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', // Added RETURNING * to get the inserted row
+      'INSERT INTO "Trip" ("trip_id", "price", "date", "estimated_time", "d_ssn", "source_station", "destination_station") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', // Added RETURNING * to get the inserted row
       [
-        tripid,
+        trip_id,
         price,
         date,
-        estimatedtime,
-        dssn,
-        sourceStation,
-        destinationStation,
+        estimated_time,
+        d_ssn,
+        source_station,
+        destination_station,
       ]
     );
 
@@ -93,12 +92,12 @@ exports.createTrip = async (req, res) => {
 };
 
 exports.getDrivers = async (req, res) => {
-  const { mssn } = req.body;
+  const { m_ssn } = req.body;
   console.log(req.body);
   try {
     const result = await pool.query(
-      'SELECT * FROM "Driver" WHERE "MSSN" = $1',
-      [mssn]
+      'SELECT * FROM "Driver" WHERE "m_ssn" = $1',
+      [m_ssn]
     );
     console.log({
       data: result.rows,
@@ -119,7 +118,7 @@ exports.getDrivers = async (req, res) => {
 
 exports.getPrivateTrips = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM "PrivateTrip"'); // Add Vacations
+    const result = await pool.query('SELECT * FROM "Private Trip"'); // Add Vacations
     res.json({
       data: result.rows,
       success: true,
@@ -135,11 +134,11 @@ exports.getPrivateTrips = async (req, res) => {
 
 //works
 exports.fireDriver = async (req, res) => {
-  const { mssn, dssn } = req.body;
+  const { m_ssn, d_ssn } = req.body;
   try {
     const result = await pool.query(
-      'UPDATE "Driver" SET "MSSN" = NULL, "Shift" = NULL, "Salary" = NULL, "S_ID" = NULL WHERE "MSSN" = $1 AND "ssn" = $2',
-      [mssn, dssn]
+      'UPDATE "Driver" SET "m_ssn" = NULL, "shift" = NULL, "salary" = NULL, "s_id" = NULL WHERE "m_ssn" = $1 AND "ssn" = $2',
+      [m_ssn, d_ssn]
     );
     res.json({
       data: result.rows,
@@ -156,12 +155,12 @@ exports.fireDriver = async (req, res) => {
 
 //works
 exports.hireDriver = async (req, res) => {
-  const { mssn, dssn, shift, salary } = req.body;
+  const { m_ssn, d_ssn, shift, salary } = req.body;
 
   try {
     const managerResult = await pool.query(
-      'SELECT "StationID" FROM "Station" WHERE "MSSN" = $1',
-      [mssn]
+      'SELECT "StationID" FROM "Station" WHERE "m_ssn" = $1',
+      [m_ssn]
     );
 
     if (managerResult.rows.length === 0) {
@@ -171,11 +170,11 @@ exports.hireDriver = async (req, res) => {
       });
     }
 
-    const s_id = managerResult.rows[0].StationID;
+    const s_id = managerResult.rows[0].station_id;
 
     const result = await pool.query(
-      'UPDATE "Driver" SET "MSSN" = $1, "Shift" = $2, "Salary" = $3, "S_ID" = $4 WHERE "ssn" = $5',
-      [mssn, shift, salary, s_id, dssn]
+      'UPDATE "Driver" SET "m_ssn" = $1, "shift" = $2, "salary" = $3, "s_id" = $4 WHERE "ssn" = $5',
+      [m_ssn, shift, salary, s_id, d_ssn]
     );
 
     res.json({
@@ -193,12 +192,12 @@ exports.hireDriver = async (req, res) => {
 
 //works
 exports.updateDriverSalary = async (req, res) => {
-  const { mssn, dssn, newSalary } = req.body;
+  const { m_ssn, d_ssn, new_salary } = req.body;
 
   try {
     const result = await pool.query(
-      'UPDATE "Driver" SET "Salary" = $1 WHERE "MSSN" = $2 OR "ssn" = $3',
-      [newSalary, mssn, dssn]
+      'UPDATE "Driver" SET "Salary" = $1 WHERE "m_ssn" = $2 OR "ssn" = $3',
+      [new_salary, m_ssn, d_ssn]
     );
 
     if (result.rowCount === 0) {
