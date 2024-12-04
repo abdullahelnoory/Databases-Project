@@ -290,3 +290,66 @@ body {
   background-color: rgb(110, 197, 10);
 
 }
+
+/* Container for ComboBox */
+.combobox-container {
+  
+  margin-top: 0;
+ 
+}
+
+/* Label Styling */
+.combobox-container label {
+  align-items: left;
+  display: flex;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+/* ComboBox Styling */
+.styled-combobox {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  font-size: 16px;
+  color: #555;
+  cursor: pointer;
+  outline: none;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus State */
+.styled-combobox:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  background: #fff;
+}
+
+/* Disabled State */
+.styled-combobox:disabled {
+  background: #e9ecef;
+  cursor: not-allowed;
+  color: #999;
+}
+
+/* Dropdown Arrow */
+.styled-combobox::-ms-expand {
+  display: none;
+}
+.styled-combobox {
+  appearance: none; /* Removes default arrow */
+  background: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23000' d='M2 0L0 2h4z'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  background-size: 10px;
+}
+
+/* Options Styling */
+.styled-combobox option {
+  padding: 10px;
+  background: #fff;
+  color: #555;
+}

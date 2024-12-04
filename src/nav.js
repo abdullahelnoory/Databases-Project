@@ -6,7 +6,7 @@ export default function navbar1() {
       </a>
       <ul>
         <li className="active">
-          <a href="/DriversM">Drivers</a>
+          <a href="/M/DriversM">Drivers</a>
         </li>
         <li className="active">
           <a href="/M/TripsM">Trips</a>

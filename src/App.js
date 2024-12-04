@@ -15,6 +15,8 @@ import AddTrip from './AddTripM'
 import HomeA from './AHome.js'
 import AddStation from './AddStation.js'
 import StationA from './StationsA.js'
+import Adddriver from './Adddriver.js'
+
 function App() {
    return (
 
@@ -42,6 +44,11 @@ function App() {
                   <StationA />
                </Route>
 
+               <Route exact path ="/addDriver">
+               
+               <Adddriver/>
+               </Route>
+
 
 
 
@@ -59,7 +66,7 @@ function App() {
 
 
                <Route exact path="/DriversM">
-                  <DriversList />
+                  <DriversList/>
                </Route>
 
                <Route exact path="/M/TripsM">

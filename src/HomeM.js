@@ -22,20 +22,6 @@ export default function manager()
         Mname
         </h1>  
 
-        
-        <Switch>
-                 <Route exact path="/DriversM">
-                  <DriversList/>
-                  </Route>
-
-                  <Route exact path="/M/TripsM">
-                     <TripsM/>
-                  </Route>
-
-                   <Route exact path="/M/Requests">
-                     <Mreq/>
-                   </Route>
-                 </Switch>
         </div>
         
 

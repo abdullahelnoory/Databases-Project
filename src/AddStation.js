@@ -5,8 +5,8 @@ import NavA from './AdminNav'
 export default function AddTrip()
 {
 
-    const [forminput , setforminput] = useState({StationName:"",
-       Id :"", Street:"",Zip:"",Governorate:""})
+    const [forminput , setforminput] = useState({station_name:"",
+       statoin_id:"", station_street:"",station_zip:"",station_governorate:""})
     
         const sendData = async () => {
             
