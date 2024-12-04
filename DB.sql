@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.0
--- Dumped by pg_dump version 17.0
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -167,6 +167,20 @@ CREATE TABLE public."Private Trip" (
 ALTER TABLE public."Private Trip" OWNER TO postgres;
 
 --
+-- Name: Review; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Review" (
+    p_id integer NOT NULL,
+    t_id integer NOT NULL,
+    rate double precision NOT NULL,
+    comment character varying
+);
+
+
+ALTER TABLE public."Review" OWNER TO postgres;
+
+--
 -- Name: Station; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -266,6 +280,7 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 1	karim@gmail.com	karim\n	z	farid	12341234	\N
 2	farid@gmail.com	farid	z	ahem	12341234	\N
 123	asd@gmail.com	asd	aasd	asd	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	\N
+3257932	example412@gmail.com	fulan	ellan	elfulany	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	12341234
 \.
 
 
@@ -292,6 +307,14 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 
 COPY public."Private Trip" (order_id, source, destination, price, estimated_time, data, d_ssn, p_id) FROM stdin;
 1	ggg	eee	12.1	1.1	1aasd	53290520	593580643
+\.
+
+
+--
+-- Data for Name: Review; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Review" (p_id, t_id, rate, comment) FROM stdin;
 \.
 
 
@@ -436,6 +459,14 @@ ALTER TABLE ONLY public."Manager"
 
 
 --
+-- Name: Review pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Review"
+    ADD CONSTRAINT pkey PRIMARY KEY (p_id, t_id);
+
+
+--
 -- Name: Trip trip_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -472,7 +503,7 @@ ALTER TABLE ONLY public."Lost & Found"
 --
 
 ALTER TABLE ONLY public."Station"
-    ADD CONSTRAINT "MSSN" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) NOT VALID;
+    ADD CONSTRAINT "MSSN" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) ON UPDATE CASCADE NOT VALID;
 
 
 --
@@ -516,6 +547,14 @@ ALTER TABLE ONLY public."Vacation"
 
 
 --
+-- Name: Private Trip d_ssn_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Private Trip"
+    ADD CONSTRAINT d_ssn_fkey FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
+
+
+--
 -- Name: Driver fkey_MSSN; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -524,19 +563,27 @@ ALTER TABLE ONLY public."Driver"
 
 
 --
--- Name: Private Trip fkey_P_ID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: Private Trip p_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Private Trip"
-    ADD CONSTRAINT "fkey_P_ID" FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) NOT VALID;
+    ADD CONSTRAINT p_id_fkey FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
 
 
 --
--- Name: Private Trip fkey_d_ssn; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: Review p_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."Private Trip"
-    ADD CONSTRAINT fkey_d_ssn FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
+ALTER TABLE ONLY public."Review"
+    ADD CONSTRAINT p_id_fkey FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Review t_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Review"
+    ADD CONSTRAINT t_id_fkey FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -544,23 +591,23 @@ ALTER TABLE ONLY public."Private Trip"
 --
 
 ALTER TABLE ONLY public."Trip"
-    ADD CONSTRAINT trip_d_ssn_fkey FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn);
+    ADD CONSTRAINT trip_d_ssn_fkey FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
 
 
 --
--- Name: Trip trip_destinationstation_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Trip"
-    ADD CONSTRAINT trip_destinationstation_fkey FOREIGN KEY (destination_station) REFERENCES public."Station"(station_id);
-
-
---
--- Name: Trip trip_sourcestation_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: Trip trip_destination_station_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Trip"
-    ADD CONSTRAINT trip_sourcestation_fkey FOREIGN KEY (source_station) REFERENCES public."Station"(station_id);
+    ADD CONSTRAINT trip_destination_station_fkey FOREIGN KEY (destination_station) REFERENCES public."Station"(station_id) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
+
+
+--
+-- Name: Trip trip_source_station_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Trip"
+    ADD CONSTRAINT trip_source_station_fkey FOREIGN KEY (source_station) REFERENCES public."Station"(station_id) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
 
 
 --
