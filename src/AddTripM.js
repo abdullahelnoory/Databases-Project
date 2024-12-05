@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Nav1 from './nav.js';
-import axios from"axios"
-export default function AddTrip() {
+import axios from "axios";
 
+export default function AddTrip() {
   const [forminput, setforminput] = useState({
     destination_station: "", price: "", ssn: ""
-  })
+  });
 
   const sendData = async () => {
-
-
     try {
       const response = await fetch('http://localhost:6969/accounts/login', {
         method: 'POST',
@@ -25,58 +23,68 @@ export default function AddTrip() {
       console.error('Error sending data:', error);
     }
   };
-  const [departments, setDepartments] = useState([]);
-  
-  
-   
-  
-    useEffect(() => {
-      axios
-        .get("http://localhost:6969/manager/destination_station")
-        .then((response) => setDepartments(response.data))
-        .catch((error) => console.error("Error fetching data:", error));
-    }, []);
-  
-   
-  
-  
 
+  const [destinationStations, setDestinationStations] = useState([]);
 
-    return (
-      <div>
-        <header>
-          <Nav1 />
-        </header>
-        <h2 className="site_Title">Add Trip</h2>
-        <div className='Addtrip'>
+  useEffect(() => {
+    axios
+      .get("http://localhost:6969/manager/stations")
+      .then((response) => {
+        if (Array.isArray(response.data.data)) {
+          setDestinationStations(response.data.data);
+        } else {
+          console.error("Unexpected response format:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
-          <form className='Addtrip_box'>
-<div className="combobox-container">
-  <label>Destination</label>
-          <select className="styled-combobox"
+  return (
+    <div>
+      <header>
+        <Nav1 />
+      </header>
+      <h2 className="site_Title">Add Trip</h2>
+      <div className='Addtrip'>
+        <form className='Addtrip_box'>
+          <div className="combobox-container">
+            <label>Destination</label>
+            <select
+              className="styled-combobox"
               value={forminput.destination_station}
-              onChange={(event) => setforminput({ ...forminput, destination_station: event.target.value })}
-             
+              onChange={(event) =>
+                setforminput({ ...forminput, destination_station: event.target.value })
+              }
             >
               <option value="">-- Select Destination --</option>
-              {departments.map((dest) => (
-                <option key={dest.station_id} value={dest.station_name}>{dest.station_name}</option>
+              {destinationStations.map((station) => (
+                <option key={station.station_id} value={station.station_name}>
+                  {station.station_name}
+                </option>
               ))}
             </select>
-            </div>
-            
-            <div className="input-container">
-              <label>Price</label>
-              <input value={forminput.Price} type="text" onChange={(event) => {
+          </div>
 
-                setforminput({ ...forminput, Price: event.target.value })
+          <div className="input-container">
+            <label>Price</label>
+            <input
+              value={forminput.price}
+              type="text"
+              onChange={(event) =>
+                setforminput({ ...forminput, price: event.target.value })
               }
-              }></input>
-            </div>
-            <button className='button' onClick={sendData}>Submit</button>
+            />
+          </div>
 
-          </form>
-        </div>
+          <button
+            className='button'
+            type="button"
+            onClick={sendData}
+          >
+            Submit
+          </button>
+        </form>
       </div>
-    );
-  }
+    </div>
+  );
+}
