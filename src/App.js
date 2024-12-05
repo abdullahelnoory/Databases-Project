@@ -44,9 +44,9 @@ function App() {
                   <StationA />
                </Route>
 
-               <Route exact path ="/addDriver">
-               
-               <Adddriver/>
+               <Route exact path="/M/DriversM/addDriver">
+
+                  <Adddriver />
                </Route>
 
 
@@ -65,8 +65,8 @@ function App() {
                </Route>
 
 
-               <Route exact path="/DriversM">
-                  <DriversList/>
+               <Route exact path="/M/DriversM">
+                  <DriversList />
                </Route>
 
                <Route exact path="/M/TripsM">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 export default function Login() {
@@ -6,7 +6,18 @@ export default function Login() {
     email: "",
     password: ""
   })
+  const [userssn, setuserssn] = useState({
+    ssn: ""
+  })
   const history = useHistory();
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('userssn');
+    console.log(savedData);
+    if (savedData) {
+      setuserssn(JSON.parse(savedData));
+    }
+  }, []);
 
   const sendData = async (event) => {
     event.preventDefault();
@@ -20,7 +31,10 @@ export default function Login() {
       });
 
       const result = await response.json();
-      console.log(result.type);
+
+      setuserssn({ ...userssn, ssn: result.ssn })
+      localStorage.setItem('userssn', JSON.stringify({ ...userssn, ssn: result.ssn }));
+
 
       if (result.type === "Admin") {
         history.push('/A');
@@ -61,7 +75,7 @@ export default function Login() {
           }></input>
         </div>
 
-        <div class="button-container">
+        <div className="button-container">
           <button onClick={sendData} className="button login">
             Login
           </button>
@@ -69,7 +83,6 @@ export default function Login() {
             Sign Up
           </a>
         </div>
-
       </form>
     </div>
 
