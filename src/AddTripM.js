@@ -4,18 +4,28 @@ import axios from "axios";
 
 export default function AddTrip() {
   const [forminput, setforminput] = useState({
-    station_id: "", price: "", ssn: ""
+    destination_station: "", price: ""
   });
-  const storedData = JSON.parse(localStorage.getItem('userssn'));
-
+  const [userssn, setuserssn] = useState(() => {
+    const storedSSN = localStorage.getItem('userssn');
+    return storedSSN ? JSON.parse(storedSSN).ssn : '';
+  });
   const sendData = async () => {
     try {
-      const response = await fetch('http://localhost:6969/accounts/login', {
+      const currentDateTime = new Date().toISOString();
+
+      const payload = {
+        destination_station: forminput.destination_station,
+        price: forminput.price,
+        m_ssn: userssn,
+        date: currentDateTime
+      };
+      const response = await fetch('http://localhost:6969/manager/create-trips', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(forminput),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
@@ -24,31 +34,12 @@ export default function AddTrip() {
       console.error('Error sending data:', error);
     }
   };
-
-
-  const sendssn = async () => {
-    try {
-      const response = await fetch('http://localhost:6969/accounts/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(storedData),
-      });
-
-      const result = await response.json();
-      console.log('Response from server:', result);
-    } catch (error) {
-      console.error('Error sending data:', error);
-    }
-  };
-  
 
   const [destinationStations, setDestinationStations] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:6969/manager/stations")
+      .post("http://localhost:6969/manager/stations", { m_ssn: userssn })
       .then((response) => {
         if (Array.isArray(response.data.data)) {
           setDestinationStations(response.data.data);
@@ -57,10 +48,10 @@ export default function AddTrip() {
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [userssn]);
 
   return (
-    <div onLoad={sendssn}>
+    <div>
       <header>
         <Nav1 />
       </header>
@@ -71,14 +62,14 @@ export default function AddTrip() {
             <label>Destination</label>
             <select
               className="styled-combobox"
-              value={forminput.station_id}
+              value={forminput.destination_station}
               onChange={(event) =>
-                setforminput({ ...forminput,station_id: event.target.value })
+                setforminput({ ...forminput, destination_station: event.target.value })
               }
             >
               <option value="">-- Select Destination --</option>
               {destinationStations.map((station) => (
-                <option key={station.station_id} value={station.station_name}>
+                <option key={station.station_id} value={station.station_id}>
                   {station.station_name}
                 </option>
               ))}

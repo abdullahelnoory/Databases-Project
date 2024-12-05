@@ -4,6 +4,11 @@ import { DataGrid } from '@mui/x-data-grid';
 export default function Griddriv() {
   const [rows, setRows] = useState([]);
 
+  const [userssn, setuserssn] = useState(() => {
+    const storedSSN = localStorage.getItem('userssn');
+    return storedSSN ? JSON.parse(storedSSN).ssn : '';
+  });
+
   useEffect(() => {
     fetch('http://localhost:6969/manager/drivers', {
       method: 'POST',
@@ -11,7 +16,7 @@ export default function Griddriv() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        m_ssn: 1                 // Manager ssn here
+        m_ssn: userssn                 // Manager ssn here
       }),
     })
       .then((response) => response.json())

@@ -13,6 +13,11 @@ const columns = [
 export default function Tripslist() {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [rows, setRows] = useState([]);
+  
+  const [userssn, setuserssn] = useState(() => {
+    const storedSSN = localStorage.getItem('userssn');
+    return storedSSN ? JSON.parse(storedSSN).ssn : '';
+  });
 
   const handleSelectionChange = (newSelectionModel) => {
     setSelectedRowIds(newSelectionModel);
@@ -25,7 +30,7 @@ export default function Tripslist() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        m_ssn: 1, // Manager SSN here
+        m_ssn: userssn, // Manager SSN here
       }),
     })
       .then((response) => response.json())
