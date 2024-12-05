@@ -1,8 +1,9 @@
 const pool = require("../models/db");
 
 exports.getStations = async (req, res) => {
+  const { m_ssn } = req.body;
   try {
-    const result = await pool.query('SELECT * FROM "Station"');
+    const result = await pool.query('SELECT "station_id", "station_name" FROM "Station" WHERE m_ssn = $1', [m_ssn]);
     res.json({
       data: result.rows,
       success: true,

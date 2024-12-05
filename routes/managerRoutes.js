@@ -3,7 +3,7 @@ const router = express.Router();
 const driverController = require("../controllers/managerController");
 
 //Gets all stations in the Database
-router.get("/stations", driverController.getStations);
+router.post("/stations", driverController.getStations);
 
 //Gets all stations in the Database
 router.post("/trips", driverController.getTrips);

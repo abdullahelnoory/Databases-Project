@@ -69,22 +69,23 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  let ssn;
 
   try {
     const result1 = await pool.query(
-      'SELECT email, password FROM "Admin" WHERE email = $1',
+      'SELECT ssn, email, password FROM "Admin" WHERE email = $1',
       [email]
     );
     const result2 = await pool.query(
-      'SELECT email, password, verified_by FROM "Manager" WHERE email = $1',
+      'SELECT ssn, email, password, verified_by FROM "Manager" WHERE email = $1',
       [email]
     );
     const result3 = await pool.query(
-      'SELECT email, password FROM "Driver" WHERE email = $1',
+      'SELECT ssn, email, password FROM "Driver" WHERE email = $1',
       [email]
     );
     const result4 = await pool.query(
-      'SELECT email, password FROM "Passenger" WHERE email = $1',
+      'SELECT id, email, password FROM "Passenger" WHERE email = $1',
       [email]
     );
 
@@ -93,15 +94,19 @@ exports.login = async (req, res) => {
 
     if (result1.rows.length === 1) {
       user = result1.rows[0];
+      ssn = user.ssn
       userType = "Admin";
     } else if (result2.rows.length === 1) {
       user = result2.rows[0];
+      ssn = user.ssn
       userType = "Manager";
     } else if (result3.rows.length === 1) {
       user = result3.rows[0];
+      ssn = user.ssn
       userType = "Driver";
     } else if (result4.rows.length === 1) {
       user = result4.rows[0];
+      ssn = user.id
       userType = "Passenger";
     }
 
@@ -111,13 +116,12 @@ exports.login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log(res.body);
     if (passwordMatch) {
       console.log("Login Successful");
       if (userType == "Manager")
-        res.json({ login: true, success: true, type: userType, verified_by: user.verified_by });
+        res.json({ login: true, success: true, type: userType, user, ssn });
       else
-        res.json({ login: true, success: true, type: userType });
+        res.json({ login: true, success: true, type: userType, user, ssn });
     } else {
       console.log("Login Failed, Wrong password");
       res.json({ login: false, success: true });
