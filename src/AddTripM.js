@@ -4,8 +4,9 @@ import axios from "axios";
 
 export default function AddTrip() {
   const [forminput, setforminput] = useState({
-    destination_station: "", price: "", ssn: ""
+    station_id: "", price: "", ssn: ""
   });
+  const storedData = JSON.parse(localStorage.getItem('userssn'));
 
   const sendData = async () => {
     try {
@@ -24,6 +25,25 @@ export default function AddTrip() {
     }
   };
 
+
+  const sendssn = async () => {
+    try {
+      const response = await fetch('http://localhost:6969/accounts/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(storedData),
+      });
+
+      const result = await response.json();
+      console.log('Response from server:', result);
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+  };
+  
+
   const [destinationStations, setDestinationStations] = useState([]);
 
   useEffect(() => {
@@ -40,7 +60,7 @@ export default function AddTrip() {
   }, []);
 
   return (
-    <div>
+    <div onLoad={sendssn}>
       <header>
         <Nav1 />
       </header>
@@ -51,9 +71,9 @@ export default function AddTrip() {
             <label>Destination</label>
             <select
               className="styled-combobox"
-              value={forminput.destination_station}
+              value={forminput.station_id}
               onChange={(event) =>
-                setforminput({ ...forminput, destination_station: event.target.value })
+                setforminput({ ...forminput,station_id: event.target.value })
               }
             >
               <option value="">-- Select Destination --</option>
