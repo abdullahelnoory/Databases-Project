@@ -5,6 +5,7 @@ const port = 6969;
 
 const adminRoutes = require('./routes/adminRoutes')
 const managerRoutes = require('./routes/managerRoutes');
+const passengerRoutes = require('./routes/passengerRoutes')
 const authRoutes = require('./routes/authRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 
@@ -16,6 +17,7 @@ app.use('/manager', managerRoutes);
 app.use('/admin',adminRoutes)
 app.use('/accounts', authRoutes);
 app.use('/info', dataRoutes);
+app.use('/passenger', passengerRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello from back end!');
