@@ -1,8 +1,8 @@
-import DGrid from './griddriv.js'
-import Nav1 from './nav.js';
+import DGrid from './Components/driversgrid.js'
+import Nav1 from './Components/navbar.js';
 
 export default function DriversList() {
- 
+
 
    return (
       <div >
@@ -10,10 +10,8 @@ export default function DriversList() {
             <Nav1 />
          </header>
          <h1 style={{ margin: "1%" }}>Drivers</h1>
-         <div className="List">
-            <DGrid />
-          
-         </div>
+         <DGrid />
+
       </div>
 
    );

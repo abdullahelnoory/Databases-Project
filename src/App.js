@@ -1,21 +1,18 @@
-
 import './styles.css'
-import Grid from './griddriv.js'
-
 import But from './senddata';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { useState } from 'react';
-import HomeM from './HomeM.js';
-import TripsM from './TripsM.js'
-import Mreq from './Mreq.js';
-import DriversList from './DriversList.js'
-import Regpage from './RegisterPage.js'
-import Login from './Login.js'
-import AddTrip from './AddTripM'
-import HomeA from './AHome.js'
-import AddStation from './AddStation.js'
+import HomeM from './Pages/Manager/Home.js';
+import TripsM from './Pages/Manager/Trips.js'
+import Mreq from './Pages/Manager/Request.js';
+import DriversList from './Pages/Manager/Drivers.js'
+import Signup from './Pages/Signup.js'
+import Login from './Pages/Login.js'
+import AddTrip from './Pages/Manager/Add_Trip.js'
+import HomeA from './Pages/Admin/AHome.js'
+import AddStation from './Pages/Admin/AddStation.js'
 import StationA from './StationsA.js'
-import Adddriver from './Adddriver.js'
+import Adddriver from './Pages/Manager/Add_Driver.js'
 
 function App() {
    return (
@@ -29,7 +26,7 @@ function App() {
                </Route>
 
                <Route exact path="/Signup">
-                  <Regpage />
+                  <Signup />
                </Route>
 
                <Route exact path="/A">

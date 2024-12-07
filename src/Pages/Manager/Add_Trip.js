@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import Nav1 from './nav.js';
+import Nav1 from './Components/navbar.js';
 import axios from "axios";
 
 export default function AddTrip() {
   const [forminput, setforminput] = useState({
-    destination_station: "", price: ""
+    destination_station: "",
+    price: ""
   });
   const [userssn, setuserssn] = useState(() => {
     const storedSSN = localStorage.getItem('userssn');
     return storedSSN ? JSON.parse(storedSSN).ssn : '';
   });
+  const [successMessage, setSuccessMessage] = useState(""); // Added success message state
+  const [errorMessage, setErrorMessage] = useState(""); // Added error message state
+
   const sendData = async () => {
     try {
       const currentDateTime = new Date().toISOString();
@@ -20,6 +24,7 @@ export default function AddTrip() {
         m_ssn: userssn,
         date: currentDateTime
       };
+
       const response = await fetch('http://localhost:6969/manager/create-trips', {
         method: 'POST',
         headers: {
@@ -30,8 +35,18 @@ export default function AddTrip() {
 
       const result = await response.json();
       console.log('Response from server:', result);
+
+      if (result.success) {
+        setSuccessMessage('Trip added successfully!'); // Set success message
+        setErrorMessage(''); // Clear any previous error
+      } else {
+        setErrorMessage('Error: Could not add the trip.');
+        setSuccessMessage(''); // Clear success message if there is an error
+      }
     } catch (error) {
       console.error('Error sending data:', error);
+      setErrorMessage('An error occurred while adding the trip.');
+      setSuccessMessage(''); // Clear success message if there is an error
     }
   };
 
@@ -55,13 +70,13 @@ export default function AddTrip() {
       <header>
         <Nav1 />
       </header>
-      <h2 className="site_Title">Add Trip</h2>
-      <div className='Addtrip'>
-        <form className='Addtrip_box'>
-          <div className="combobox-container">
-            <label>Destination</label>
+      <h2 id="site_Title">Add Trip</h2>
+      <div id="Addtrip">
+        <form id="Addtrip_box">
+          <div id="combobox-container">
+            <label htmlFor="styled-combobox">Destination</label>
             <select
-              className="styled-combobox"
+              id="styled-combobox"
               value={forminput.destination_station}
               onChange={(event) =>
                 setforminput({ ...forminput, destination_station: event.target.value })
@@ -76,19 +91,37 @@ export default function AddTrip() {
             </select>
           </div>
 
-          <div className="input-container">
-            <label>Price</label>
+          <div id="input-container">
+            <label htmlFor="price">Price</label>
             <input
+              id="price"
               value={forminput.price}
-              type="text"
-              onChange={(event) =>
-                setforminput({ ...forminput, price: event.target.value })
-              }
+              type="number"
+              onChange={(event) => {
+                const value = event.target.value;
+                if (value >= 0 || value === "") {
+                  setforminput({ ...forminput, price: value });
+                }
+              }}
+              step="0.1"
+              min="0"
             />
           </div>
 
+          {successMessage && (
+            <div style={{ color: 'green', fontSize: '14px', marginTop: '10px' }}>
+              {successMessage}
+            </div>
+          )}
+
+          {errorMessage && (
+            <div style={{ color: 'red', fontSize: '14px', marginTop: '10px' }}>
+              {errorMessage}
+            </div>
+          )}
+
           <button
-            className='button'
+            id="button"
             type="button"
             onClick={sendData}
           >

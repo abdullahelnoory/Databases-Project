@@ -1,4 +1,4 @@
-import NavA from './AdminNav'
+import NavA from './Pages/Admin/AdminNav'
 import SGrid from './StationsGridA';
 
 export default function StationsA() {

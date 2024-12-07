@@ -1,5 +1,3 @@
-
-
 import {useState} from 'react';
 import NavA from './AdminNav'
 export default function AddTrip()

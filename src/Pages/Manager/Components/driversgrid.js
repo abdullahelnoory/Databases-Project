@@ -1,0 +1,171 @@
+import React, { useState, useEffect } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { useHistory } from 'react-router-dom';
+import './styles.css';
+
+export default function Griddriv() {
+  const [rows, setRows] = useState([]);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
+  const [newSalary, setNewSalary] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const history = useHistory();
+  
+  const [userssn, setuserssn] = useState(() => {
+    const storedSSN = localStorage.getItem('userssn');
+    console.log(storedSSN);
+    return storedSSN ? JSON.parse(storedSSN).ssn : '';
+  });
+
+  const handleSelectionChange = (newSelectionModel) => {
+    setSelectedRowIds(newSelectionModel);
+  };
+
+  useEffect(() => {
+    fetch('http://localhost:6969/manager/drivers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        m_ssn: userssn,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.data);
+        if (data.success) {
+          const transformedData = data.data.map((item, index) => ({
+            id: index,
+            ssn: item.ssn,
+            username: `${item.fname} ${item.lname}`,
+            salary: item.salary,
+          }));
+          setRows(transformedData);
+        } else {
+          console.error('Error in response:', data);
+        }
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  }, [userssn]);
+
+  const handleUpdateSalary = () => {
+    if (selectedRowIds.length === 0) {
+      setErrorMessage('Please select a driver first!');
+      setSuccessMessage('');
+      return;
+    }
+
+    const selectedDrivers = selectedRowIds.map((id) => rows.find((row) => row.id === id));
+
+    const updatedSalary = parseFloat(newSalary);
+    if (isNaN(updatedSalary) || updatedSalary <= 0) {
+      setErrorMessage('Please enter a valid salary');
+      setSuccessMessage('');
+      return;
+    }
+
+    selectedDrivers.forEach((driver) => {
+      fetch('http://localhost:6969/manager/update-salary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          m_ssn: userssn,
+          d_ssn: driver.ssn,
+          new_salary: updatedSalary,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            setRows((prevRows) =>
+              prevRows.map((row) =>
+                selectedRowIds.includes(row.id) ? { ...row, salary: updatedSalary } : row
+              )
+            );
+            setSuccessMessage('Salary updated successfully');
+            setErrorMessage('');
+          } else {
+            console.error('Error updating salary:', data);
+            setErrorMessage('Failed to update salary');
+            setSuccessMessage('');
+          }
+        })
+        .catch((error) => {
+          console.error('Error updating salary:', error);
+          setErrorMessage('Error updating salary');
+          setSuccessMessage('');
+        });
+    });
+  };
+  const columns = [
+    { field: 'ssn', headerName: 'SSN', width: 200 },
+    { field: 'username', headerName: 'Username', width: 300 },
+    { field: 'salary', headerName: 'Salary', width: 200 },
+  ];
+  return (
+    <div id="griddriv-container">
+      <div id="data-grid-container" className="grid-container">
+        <DataGrid
+          id="data-grid"
+          rows={rows}
+          columns={columns}
+          pageSize={5}
+          checkboxSelection
+          onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)}
+        />
+      </div>
+      <div id="selected-row-preview">
+        <h3>Selected Row ssn:</h3>
+        <pre>{JSON.stringify(selectedRowIds, null, 2)}</pre>
+      </div>
+
+      <div id="messages-container">
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
+      </div>
+
+      <div id="button-container">
+        <ul>
+          <li className="button-item">
+            <button
+              id="update-salary-btn"
+              className="button"
+              onClick={handleUpdateSalary}
+            >
+              Update Salary
+            </button>
+            <input
+              type="number"
+              id="new-salary-input"
+              placeholder="Enter new salary"
+              value={newSalary}
+              onChange={(e) => setNewSalary(e.target.value)}
+            />
+          </li>
+
+          <li className="button-item">
+            <button
+              id="add-driver-btn"
+              className="button"
+              onClick={() => history.push('/M/DriversM/addDriver')}
+            >
+              Add Driver
+            </button>
+          </li>
+
+          <li className="button-item">
+            <button
+              id="remove-driver-btn"
+              className="button"
+            >
+              Remove Driver
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+}

@@ -4,10 +4,15 @@
 }
 
 body {
-  margin: 0px;
-
+  font-family: 'Arial', sans-serif;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
-
 .App {
   height: 100vh;
   width: 100vw;
@@ -111,13 +116,11 @@ body {
 .Login {
   height: 100vh;
   width: 100vw;
-  background: #000000;
+  background: #ffffff;
   align-items: center;
   justify-content: center;
   display: flex;
   margin: 0px;
-
-
 }
 
 .Login button {
@@ -154,7 +157,7 @@ body {
   margin-bottom: 15px;
   text-align: left;
 }
-
+/**/
 .DriversList {
   height: 100vh;
   /* Full height of the viewport */

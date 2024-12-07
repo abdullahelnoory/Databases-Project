@@ -1,5 +1,5 @@
-import Grid from './TripsGrid'
-import Nav1 from './nav.js';
+import Grid from './Components/tripsgrid.js'
+import Nav1 from './Components/navbar.js';
 export default function TripsM() {
     const savedData = localStorage.getItem('forminput');
     console.log(savedData);
@@ -9,7 +9,7 @@ export default function TripsM() {
                 <Nav1 />
             </header>
             <h1 style={{ margin: "1%" }}>Trips</h1>
-            <Grid></Grid>
+            <Grid />
 
         </div>
 
