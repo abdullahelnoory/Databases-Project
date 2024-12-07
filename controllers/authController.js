@@ -1,46 +1,77 @@
 const pool = require("../models/db");
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 
 exports.register = async (req, res) => {
-  const { fname, mname, lname, job, ssn, email, password } = req.body;
+  const { fname, mname, lname, job, ssn, email, password, age, carDetails } = req.body;
   const saltRounds = 10;
-  console.log(res.body);
 
   try {
+    if (job !== "Passenger" && (isNaN(ssn) || ssn.trim() === "")) {
+      return res.status(400).json({ success: false, message: "SSN must be a valid number." });
+    }
+
+    if (job === "Passenger" && (isNaN(age) || age.trim() === "")) {
+      return res.status(400).json({ success: false, message: "Age must be a valid number." });
+    }
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     let result;
+
+    const emailCheck = await pool.query(`
+      SELECT email FROM "Passenger" WHERE email = $1
+      UNION
+      SELECT email FROM "Admin" WHERE email = $1
+      UNION
+      SELECT email FROM "Manager" WHERE email = $1
+      UNION
+      SELECT email FROM "Driver" WHERE email = $1
+    `, [email]);    if (emailCheck.rows.length > 0) {
+      return res.status(400).json({ success: false, message: "Email already exists" });
+    }
+
+    if (job !== "Passenger") {
+      const ssnCheck = await pool.query(`
+        SELECT ssn FROM "Admin" WHERE ssn = $1
+        UNION
+        SELECT ssn FROM "Manager" WHERE ssn = $1
+        UNION
+        SELECT ssn FROM "Driver" WHERE ssn = $1
+      `, [ssn]);      if (ssnCheck.rows.length > 0) {
+        return res.status(400).json({ success: false, message: "SSN already exists" });
+      }
+    }
 
     switch (job) {
       case "Admin":
         result = await pool.query(
-          'INSERT INTO "Admin" VALUES ($1, $2, $3, $4, $5, $6)',
+          'INSERT INTO "Admin" (ssn, email, fname, mname, lname, password) VALUES ($1, $2, $3, $4, $5, $6)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
         break;
       case "Manager":
         result = await pool.query(
-          'INSERT INTO "Manager" VALUES ($1, $2, $3, $4, $5, $6, NULL)',
+          'INSERT INTO "Manager" (ssn, email, fname, mname, lname, password, verified_by) VALUES ($1, $2, $3, $4, $5, $6, NULL)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
         break;
       case "Driver":
         result = await pool.query(
-          'INSERT INTO "Driver" VALUES ($1, $2, $3, $4, $5, $6, false);',
+          'INSERT INTO "Driver" (ssn, email, fname, mname, lname, password, is_private) VALUES ($1, $2, $3, $4, $5, $6, false)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
-        await pool.query('INSERT INTO "Car" VALUES ($1, $2, $3, $4, $5, $6);', [
-          req.body.carLicense,
-          req.body.numberOfSeats,
-          req.body.airConditioning,
-          req.body.carType,
-          req.body.additionalPrice,
-          ssn,
+        await pool.query('INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)', [
+          carDetails.car_license,
+          carDetails.number_of_seats,
+          carDetails.air_conditioning,
+          carDetails.car_type,
+          carDetails.additional_price,
+          ssn
         ]);
         break;
       case "Passenger":
         result = await pool.query(
-          'INSERT INTO "Passenger" VALUES ($1, $2, $3, $4, $5, $6)',
-          [ssn, email, req.body.age, fname, lname, hashedPassword]
+          'INSERT INTO "Passenger" (email, age, fname, lname, password) VALUES ($1, $2, $3, $4, $5)',
+          [email, age, fname, lname, hashedPassword]
         );
         break;
       default:
@@ -65,6 +96,8 @@ exports.register = async (req, res) => {
     }
   }
 };
+
+
 
 exports.login = async (req, res) => {
   const email = req.body.email;
@@ -116,6 +149,7 @@ exports.login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log({ login: true, success: true, type: userType, user, ssn });
     if (passwordMatch) {
       console.log("Login Successful");
       if (userType == "Manager")

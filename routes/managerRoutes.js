@@ -24,13 +24,16 @@ router.post("/fire", driverController.fireDriver);
 router.post("/hire", driverController.hireDriver);
 
 //Update a salary of a Driver using { mssn, dssn, newSalary }
-router.put("/update-salary", driverController.updateDriverSalary);
+router.post("/update-salary", driverController.updateDriverSalary);
 
 // get avaible drivers
+router.post("/available-drivers", driverController.getAvailableDrivers);
 
 // Update Price
+router.post("/update-price", driverController.updateTripPrice);
 
 // Update Destination
+router.post("/update-destination", driverController.updateTripDestination);
 
 // 
 
