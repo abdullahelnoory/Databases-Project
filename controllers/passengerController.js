@@ -47,3 +47,31 @@ exports.rateTrip = async (req, res) => {
         }
     }
 };
+
+exports.orderPrivateTrip = async (req, res) => {
+    const {source, destination, data, p_id} = req.body;
+    const query = 'insert into "Private Trip" (source, destination, data, p_id) values($1, $2, $3, $4)';
+    try
+    {
+        await pool.query(query, [source, destination, data, p_id]);
+        res.json({success : true, message : "Your request is recorded successfully!"});
+    }
+    catch(error)
+    {
+        if(error.code == "23503")
+        {
+            res.json({
+                success : false , 
+                message : "The inserted passenger or trip doesn't exist in the system!", 
+                details : error.detail});
+        }
+        else
+        {
+            console.error("Error connecting to the database:", error);
+            res.status(500).json({
+                success: false,
+                message: "Database connection failed",
+            });
+        }
+    }
+};
