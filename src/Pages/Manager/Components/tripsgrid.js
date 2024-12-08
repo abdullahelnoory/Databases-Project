@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import './styles.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import "./styles.css";
+import axios from "axios";
 
 const columns = [
-  { field: 'id', headerName: 'Trip ID', width: 90 },
-  { field: 'Driver', headerName: 'Driver Name', width: 150 },
-  { field: 'Source', headerName: 'Source Station', width: 150 },
-  { field: 'Destination', headerName: 'Destination Station', width: 150 },
-  { field: 'Price', headerName: 'Price', width: 150 },
-  { field: 'EstimatedTime', headerName: 'Estimated Time (mins)', width: 150 },
+  { field: "id", headerName: "Trip ID", width: 90 },
+  { field: "Driver", headerName: "Driver Name", width: 150 },
+  { field: "Source", headerName: "Source Station", width: 150 },
+  { field: "Destination", headerName: "Destination Station", width: 150 },
+  { field: "Price", headerName: "Price", width: 150 },
+  { field: "EstimatedTime", headerName: "Estimated Time (mins)", width: 150 },
 ];
 
 export default function Tripslist() {
@@ -16,10 +17,14 @@ export default function Tripslist() {
   const [rows, setRows] = useState([]);
   const [newPrice, setNewPrice] = useState('');
   const userssn = sessionStorage.getItem('ssn');
+  const [newdriver, setDriver] = useState("");
+  const [newDest, setNewDest] = useState(""); 
+  const [newDestName, setNewDestName] = useState(""); 
+
 
   const [statusMessage, setStatusMessage] = useState({
     message: '',
-    type: '', 
+    type: '',
   });
 
   const handleSelectionChange = (newSelectionModel) => {
@@ -33,16 +38,16 @@ export default function Tripslist() {
   const updatePrice = async () => {
     if (selectedRowIds.length === 0) {
       setStatusMessage({
-        message: 'Please select at least one trip to update the price.',
-        type: 'error',
+        message: "Please select at least one trip to update the price.",
+        type: "error",
       });
       return;
     }
 
     if (!newPrice || isNaN(newPrice) || newPrice <= 0) {
       setStatusMessage({
-        message: 'Please enter a valid price.',
-        type: 'error',
+        message: "Please enter a valid price.",
+        type: "error",
       });
       return;
     }
@@ -53,40 +58,177 @@ export default function Tripslist() {
     });
 
     try {
-      const response = await fetch('http://localhost:6969/manager/update-price', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          trips: updatedTrips,
-        }),
+      const response = await fetch(
+        "http://localhost:6969/manager/update-price",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            trips: updatedTrips,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            selectedRowIds.includes(row.id) ? { ...row, Price: newPrice } : row
+          )
+        );
+        setStatusMessage({
+          message: "Price updated successfully.",
+          type: "success",
+        });
+      } else {
+        setStatusMessage({
+          message: "Error updating price.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating price:", error);
+      setStatusMessage({
+        message: "An error occurred while updating the price.",
+        type: "error",
       });
+    }
+  };
+
+  const handleDestChange = (event) => {
+    setNewDest(event.target.value); // Store the destination id directly
+    setNewDestName(event.target.options[event.target.selectedIndex].text); // Store the destination name
+  };
+
+  const updateDest = async () => {
+    if (selectedRowIds.length === 0) {
+      setStatusMessage({
+        message: "Please select at least one trip to update the Dest.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (!newDest || newDest <= 0) { // Check if newDest is a valid id
+      setStatusMessage({
+        message: "Please select a valid Destination.",
+        type: "error",
+      });
+      return;
+    }
+
+    const updatedTrips = selectedRowIds.map((id) => {
+      const trip = rows.find((row) => row.id === id);
+      return { trip_id: trip.id, new_destination: newDest };
+    });
+
+    try {
+      const response = await fetch(
+        "http://localhost:6969/manager/update-destination",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            trips: updatedTrips,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setRows((prevRows) =>
+          prevRows.map((row) =>
+            selectedRowIds.includes(row.id)
+              ? { ...row, Destination: newDestName }
+              : row
+          )
+        );
+        setStatusMessage({
+          message: "Destination updated successfully.",
+          type: "success",
+        });
+      } else {
+        setStatusMessage({
+          message: "Error updating Destination.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating Destination:", error);
+      setStatusMessage({
+        message: "An error occurred while updating the Destination.",
+        type: "error",
+      });
+    }
+  };
+
+  const handleDriverChange = (event) => {
+    setDriver(event.target.value);
+  };
+
+  const updateDriver = async () => {
+    if (selectedRowIds.length === 0) {
+      setStatusMessage({
+        message: "Please select one trip to update the Driver.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (!newdriver || newdriver <= 0) {
+      setStatusMessage({
+        message: "Please select a valid Driver.",
+        type: "error",
+      });
+      return;
+    }
+
+    const updatedTrips = selectedRowIds.map((id) => {
+      const trip = rows.find((row) => row.id === id);
+      return { trip_id: trip.id, d_ssn: newdriver };
+    });
+
+    try {
+      const response = await fetch(
+        "http://localhost:6969/manager/set-trip-driver",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            trips: updatedTrips,
+          }),
+        }
+      );
 
       const data = await response.json();
       if (data.success) {
         setRows((prevRows) =>
           prevRows.map((row) =>
             selectedRowIds.includes(row.id)
-              ? { ...row, Price: newPrice }
+              ? { ...row, Driver: newdriver }
               : row
           )
         );
         setStatusMessage({
-          message: 'Price updated successfully.',
-          type: 'success',
+          message: "Driver updated successfully.",
+          type: "success",
         });
       } else {
         setStatusMessage({
-          message: 'Error updating price.',
-          type: 'error',
+          message: "Error updating Driver.",
+          type: "error",
         });
       }
     } catch (error) {
-      console.error('Error updating price:', error);
+      console.error("Error updating Driver:", error);
       setStatusMessage({
-        message: 'An error occurred while updating the price.',
-        type: 'error',
+        message: "An error occurred while updating the Driver.",
+        type: "error",
       });
     }
   };
@@ -94,10 +236,10 @@ export default function Tripslist() {
   useEffect(() => {
     if (!userssn) return;
 
-    fetch('http://localhost:6969/manager/trips', {
-      method: 'POST',
+    fetch("http://localhost:6969/manager/trips", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         m_ssn: userssn,
@@ -108,7 +250,7 @@ export default function Tripslist() {
         if (data.data) {
           const transformedData = data.data.map((trip) => ({
             id: trip.trip_id,
-            Driver: trip.d_ssn,
+            Driver: trip.driver_full_name,
             Source: trip.source_station,
             Destination: trip.destination_station,
             Price: trip.price,
@@ -117,45 +259,93 @@ export default function Tripslist() {
           setRows(transformedData);
         }
       })
-      .catch((error) => console.error('Error fetching data:', error));
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [userssn]);
+
+  const [destinationStations, setDestinationStations] = useState([]);
+
+  useEffect(() => {
+    axios
+      .post("http://localhost:6969/manager/stations", { m_ssn: userssn })
+      .then((response) => {
+        if (Array.isArray(response.data.data)) {
+          setDestinationStations(response.data.data);
+        } else {
+          console.error("Unexpected response format:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, [userssn]);
+
+  const [DriverStation, setDriverStations] = useState([]);
+
+  useEffect(() => {
+    axios
+      .post("http://localhost:6969/manager/available-drivers", { m_ssn: userssn })
+      .then((response) => {
+        if (Array.isArray(response.data.data)) {
+          setDriverStations(response.data.data);
+        } else {
+          console.error("Unexpected response format:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching data:", error));
   }, [userssn]);
 
   return (
     <div className="List">
-      <div style={{ height: 400, width: '100%' }}>
+      <div style={{ height: 400, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
           pageSize={5}
           checkboxSelection
-          onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)}
+          onRowSelectionModelChange={(newSelectionModel) =>
+            handleSelectionChange(newSelectionModel)
+          }
         />
         <div style={{ marginLeft: 40 }}>
           <h3>Selected Row IDs:</h3>
-          <pre style={{ whiteSpace: 'nowrap' }}>
-            {JSON.stringify(selectedRowIds, null, 2).replace(/\n/g, ' ')}
+          <pre style={{ whiteSpace: "nowrap" }}>
+            {JSON.stringify(selectedRowIds, null, 2).replace(/\n/g, " ")}
           </pre>
         </div>
+  
         <div id="messages-container">
           {statusMessage.message && (
-            <p className={statusMessage.type === 'error' ? 'error-message' : 'success-message'}>
+            <p
+              className={
+                statusMessage.type === "error"
+                  ? "error-message"
+                  : "success-message"
+              }
+            >
               {statusMessage.message}
             </p>
           )}
         </div>
-
-        <div id="button-container" style={{ marginTop: '20px' }}>
-          <ul style={{ display: 'flex', listStyle: 'none', padding: 0, margin: 0 }}>
-            <li style={{ marginRight: '10px' }}>
+  
+        <div id="button-container" style={{ marginTop: "20px" }}>
+          <ul
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+            }}
+          >
+            <li style={{ width: "23%" }}>
               <button
                 id="add-trip-btn"
                 className="button"
-                onClick={() => window.location.href = '/AddTrip'}
+                onClick={() => (window.location.href = "/AddTrip")}
               >
                 Add Trip
               </button>
             </li>
-            <li style={{ marginRight: '10px' }}>
+  
+            <li style={{ width: "23%" }}>
               <button
                 id="set-price-btn"
                 className="button"
@@ -174,20 +364,54 @@ export default function Tripslist() {
                 />
               </div>
             </li>
-            <li>
+  
+            <li style={{ width: "23%" }}>
               <button
-                id="set-destination-btn"
+                id="update-destination-btn"
                 className="button"
-                onClick={() => console.log('Set destination clicked')}
+                onClick={updateDest}
               >
                 Update Destination
               </button>
+              <select
+                id="styled-combobox"
+                value={newDest}
+                onChange={handleDestChange}
+              >
+                <option value="">-- Select Destination --</option>
+                {destinationStations.map((station) => (
+                  <option key={station.station_id} value={station.station_id}>
+                    {station.station_name}
+                  </option>
+                ))}
+              </select>
+            </li>
+  
+            <li style={{ width: "23%" }}>
+              <button
+                id="set-driver-btn"
+                className="button"
+                onClick={updateDriver}
+              >
+                Set Driver
+              </button>
+              <select
+                id="styled-combobox"
+                value={newdriver}
+                onChange={handleDriverChange}
+              >
+                <option value="">-- Select Driver --</option>
+                {DriverStation.map((driver) => (
+                  <option key={driver.ssn} value={driver.ssn}>
+                    {`${driver.fname} ${driver.lname}`}
+                  </option>
+                ))}
+              </select>
             </li>
           </ul>
         </div>
-
-
       </div>
     </div>
   );
+  
 }

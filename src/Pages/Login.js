@@ -38,13 +38,13 @@ export default function Login() {
         console.log('User Type:', result.type);
       
         if (result.type === 'Admin') {
-          history.push('/A');
+          history.push('/admin');
         } else if (result.type === 'Manager') {
-          history.push('/M');
+          history.push('/manager');
         } else if (result.type === 'Driver') {
-          history.push('/D');
+          history.push('/driver');
         } else if (result.type === 'Passenger') {
-          history.push('/P');
+          history.push('/passenger');
         }
       } else {
         setError(result.message || 'Login failed. Please check your email and password.');

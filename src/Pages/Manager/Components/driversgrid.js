@@ -9,13 +9,14 @@ export default function Griddriv() {
   const [newSalary, setNewSalary] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showWarning, setShowWarning] = useState(false);
   const history = useHistory();
   
   const userssn = sessionStorage.getItem('ssn');
 
-
   const handleSelectionChange = (newSelectionModel) => {
     setSelectedRowIds(newSelectionModel);
+    setShowWarning(false); 
   };
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function Griddriv() {
         }
       })
       .catch((error) => console.error('Error fetching data:', error));
-  }, [userssn]);
+  }, [userssn]); 
 
   const handleUpdateSalary = () => {
     if (selectedRowIds.length === 0) {
@@ -77,13 +78,9 @@ export default function Griddriv() {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            setRows((prevRows) =>
-              prevRows.map((row) =>
-                selectedRowIds.includes(row.id) ? { ...row, salary: updatedSalary } : row
-              )
-            );
             setSuccessMessage('Salary updated successfully');
             setErrorMessage('');
+            fetchDrivers();
           } else {
             console.error('Error updating salary:', data);
             setErrorMessage('Failed to update salary');
@@ -97,11 +94,86 @@ export default function Griddriv() {
         });
     });
   };
+
+  const handleRemoveDriver = () => {
+    if (selectedRowIds.length === 0) {
+      setShowWarning(true); // Show the warning if no driver is selected
+      setErrorMessage('Please select a driver first!');
+      setSuccessMessage('');
+      return;
+    }
+
+    const confirmRemoval = window.confirm('Are you sure you want to remove the selected driver(s)?');
+    
+    if (confirmRemoval) {
+      const selectedDrivers = selectedRowIds.map((id) => rows.find((row) => row.id === id));
+    
+      selectedDrivers.forEach((driver) => {
+        fetch('http://localhost:6969/manager/fire', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            m_ssn: userssn,
+            d_ssn: driver.ssn,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              setSuccessMessage('Driver(s) removed successfully');
+              setErrorMessage('');
+              // After successful removal, fetch the updated list of drivers
+              fetchDrivers();
+            } else {
+              console.error('Error Removing Driver:', data);
+              setErrorMessage('Failed to Remove Driver');
+              setSuccessMessage('');
+            }
+          })
+          .catch((error) => {
+            console.error('Error Removing Driver:', error);
+            setErrorMessage('Error Removing Driver');
+            setSuccessMessage('');
+          });
+      });
+    }
+  };
+
+  const fetchDrivers = () => {
+    fetch('http://localhost:6969/manager/drivers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        m_ssn: userssn,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          const transformedData = data.data.map((item, index) => ({
+            id: index,
+            ssn: item.ssn,
+            username: `${item.fname} ${item.lname}`,
+            salary: item.salary,
+          }));
+          setRows(transformedData);
+        } else {
+          console.error('Error in response:', data);
+        }
+      })
+      .catch((error) => console.error('Error fetching data:', error));
+  };
+
   const columns = [
     { field: 'ssn', headerName: 'SSN', width: 200 },
     { field: 'username', headerName: 'Username', width: 300 },
     { field: 'salary', headerName: 'Salary', width: 200 },
   ];
+
   return (
     <div id="griddriv-container">
       <div id="data-grid-container" className="grid-container">
@@ -114,6 +186,7 @@ export default function Griddriv() {
           onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)}
         />
       </div>
+
       <div id="selected-row-preview">
         <h3>Selected Row ssn:</h3>
         <pre>{JSON.stringify(selectedRowIds, null, 2)}</pre>
@@ -123,7 +196,6 @@ export default function Griddriv() {
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         {successMessage && <p className="success-message">{successMessage}</p>}
       </div>
-
       <div id="button-container">
         <ul>
           <li className="button-item">
@@ -157,6 +229,7 @@ export default function Griddriv() {
             <button
               id="remove-driver-btn"
               className="button"
+              onClick={handleRemoveDriver}
             >
               Remove Driver
             </button>

@@ -129,7 +129,9 @@ body {
 
 #add-trip-btn,
 #set-price-btn,
-#set-destination-btn {
+#set-destination-btn,
+#set-driver-btn,
+#update-destination-btn {
     padding: 12px 25px;
     font-size: 16px;
     cursor: pointer;
@@ -144,7 +146,9 @@ body {
 
 #add-trip-btn:hover,
 #set-price-btn:hover,
-#set-destination-btn:hover {
+#set-destination-btn:hover,
+#set-driver-btn:hover,
+#update-destination-btn:hover {
     background-color: #45a049;
     transform: scale(1.05);
 }
@@ -153,8 +157,6 @@ body {
     text-decoration: none;
     color: white;
 }
-
-
 
 #selected-row-preview {
     margin-left: 20px;
@@ -269,7 +271,6 @@ body {
     border-radius: 5px;
 }
 
-/* Container for the input field */
 .input-container {
     margin-top: 10px;
     display: flex;
@@ -277,7 +278,6 @@ body {
     align-items: flex-start;
   }
   
-  /* Input field styling */
   .input-container input {
     width: 200px;
     padding: 8px;
@@ -287,20 +287,17 @@ body {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   
-  /* Focused input field */
   .input-container input:focus {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     outline: none;
   }
   
-  /* Placeholder text styling */
   .input-container input::placeholder {
     color: #aaa;
     font-style: italic;
   }
   
-  /* General Styling */
 .List {
   padding: 20px;
   background-color: #f4f4f4;
@@ -407,3 +404,72 @@ body {
 .error-status {
   background-color: #f44336;
 }
+
+
+#combobox-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  align-items: flex-start;
+}
+
+/* Container Styling for Select Elements */
+#combobox-container select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* General styles for the combobox */
+#styled-combobox {
+  margin-left: 10px;
+  width: 100%; /* Full width */
+  padding: 10px; /* Padding for the options */
+  font-size: 16px; /* Text size */
+  color: #333; /* Text color */
+  border: 1px solid #ccc; /* Border around the combobox */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #f9f9f9; /* Background color */
+  appearance: none; /* Remove default arrow on modern browsers */
+  -webkit-appearance: none; /* Remove default arrow on Safari */
+  -moz-appearance: none; /* Remove default arrow on Firefox */
+  outline: none; /* Remove outline when focused */
+}
+
+/* Styling the dropdown arrow */
+#styled-combobox::after {
+  content: '▼'; /* Custom dropdown arrow */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px;
+  color: #555; /* Arrow color */
+}
+
+/* Styles for when the combobox is focused */
+#styled-combobox:focus {
+  border-color: #007bff; /* Blue border when focused */
+  background-color: #ffffff; /* White background when focused */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Focus shadow */
+}
+
+/* Additional styling for options */
+#styled-combobox option {
+  padding: 10px; /* Padding inside options */
+  font-size: 16px; /* Font size for options */
+  background-color: #ffffff; /* Option background */
+  color: #333; /* Option text color */
+}
+
+/* Hover effect for options */
+#styled-combobox option:hover {
+  background-color: #e9ecef; /* Hover background color */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
