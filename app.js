@@ -3,18 +3,19 @@ const cors = require('cors');
 const app = express();
 const port = 6969;
 
-const adminRoutes = require('./routes/adminRoutes')
+const adminRoutes = require('./routes/adminRoutes');
 const managerRoutes = require('./routes/managerRoutes');
-const passengerRoutes = require('./routes/passengerRoutes')
+const passengerRoutes = require('./routes/passengerRoutes');
+const driverRoutes = require('./routes/driverRoutes');
 const authRoutes = require('./routes/authRoutes');
 const dataRoutes = require('./routes/dataRoutes');
-
 
 app.use(express.json());
 app.use(cors());
 
 app.use('/manager', managerRoutes);
-app.use('/admin',adminRoutes)
+//app.use('/driver', driverRoutes);
+app.use('/admin', adminRoutes);
 app.use('/accounts', authRoutes);
 app.use('/info', dataRoutes);
 app.use('/passenger', passengerRoutes);

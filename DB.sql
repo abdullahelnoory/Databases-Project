@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 17.0
+-- Dumped by pg_dump version 17.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -353,6 +353,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 1234	abc@gmail.com	Karim	Farid	Zakzouk	$2b$10$ryDDev7xZ9o1K6RqJR.dUeDcOUl7hMIztcCLeSERvq5QcFKA4aXCe
 12341111	karimfarid2004@gmail.com	Karim	M	Farid	$2b$10$328dB.L3WUmpbKHRpymbMeD2S/BUAwIpi/0xjWTNIIyG1kEAZg4Pu
 112233	asdasdasd@gmail.com	Karim	M	Farid	$2b$10$wMcy.uyaLKlqUishzN/xD.5zHbRfAZm6okGUxojmjWJYvNklKVn56
+123321	abcabc@gmail.com	aaa	bbb	ccc	$2b$10$qrWFBzv.y5ZVBPymGpMEf.rieMMh.SyzrLhPYMo.c3D/aZYT02rRe
 \.
 
 
@@ -378,8 +379,8 @@ u53jf3g2	13	f	Toyota	15.5	53290520
 --
 
 COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, shift, salary, s_id, is_available) FROM stdin;
-53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	f	123	1111	12313	1	t
-253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	f	123	1111	12313	1	t
+253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	f	\N	\N	\N	\N	t
+53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	f	\N	\N	\N	\N	t
 \.
 
 
@@ -401,6 +402,12 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 3257932	example412@gmail.com	fulan	ellan	elfulany	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	12341234
 123	asd@gmail.com	asd	aasd	asd	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	\N
 111112222	asdasd@gmail.com	Karim	M	Farid	$2b$10$BfK/NKqgxvx/m4OvrxLamemuj6ibVyB8lwltAwfOG8gK9lWofjMzG	\N
+66996699	asdasdasdasd@gmail.com	asd	asd	asd	$2b$10$7udhqx5EHeqRtmbxdqwvLuAMlimMR3tKRJLx6V63KlMb6/qfw3yHG	\N
+123123	asdasd231sd@gmail.com	asd	asd	asd	$2b$10$AqUiyquTpDHFlbI2GrUSNOROlKyOnmZJhahva0DZEQ1m/DLu1B3v2	\N
+1231223	aasd1sd@gmail.com	asd	asd	asd	$2b$10$5LJZPYsBIbPf91RVyMPY5OJxEZHmEeI3oek3ZxwX3QURzQlFY5JGa	\N
+4332	asa@gmail.com	asd	asd	asd	$2b$10$QvyeCHkp/Rc2uq3sQCSI3.a2ExevvfAk6LfAsfo6k9VXlmT2qeNZS	\N
+12221222	karim1234@gmail.com	Karim	Farid	Zakzouk	$2b$10$T.Edi3soo3rmvtnMyIhGBOJ5h33cOAxAPEsmAaXxivmA/OVgde.Yq	\N
+11113333	aaa@gmail.com	aaa	aaa	aaa	$2b$10$aoKhO48RbnqXqFRSvpd3oOGRwONsBwf2Ohdp5BsMkMaTAuXHFASIK	\N
 \.
 
 
@@ -441,6 +448,10 @@ COPY public."Review" (p_id, t_id, rate, comment) FROM stdin;
 --
 
 COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn) FROM stdin;
+1	asd	asd	1234	asd	1231223
+3	6 october	giza	1234	1234	12221222
+4	aaa	aaa	aaa	aaa	11113333
+2	123	123	123	123	123
 \.
 
 
@@ -449,6 +460,13 @@ COPY public."Station" (station_id, station_name, street, zipcode, governorate, m
 --
 
 COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station) FROM stdin;
+2	12313	2024-12-08T17:15:56.426Z	\N	\N	4	2
+4	21313	2024-12-08T17:38:39.331Z	\N	253850923	2	3
+1	123123	2024-12-08T15:15:32.792Z	3	253850923	2	4
+6	21313	2024-12-08T17:38:39.626Z	\N	53290520	2	4
+5	21313	2024-12-08T17:38:39.474Z	\N	53290520	2	4
+3	21313	2024-12-08T17:38:37.511Z	\N	253850923	2	4
+7	213213	2024-12-08T18:55:45.588Z	\N	\N	2	3
 \.
 
 
@@ -478,7 +496,7 @@ SELECT pg_catalog.setval('public."Private Trip_order_id_seq"', 3, true);
 -- Name: Station_station_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Station_station_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."Station_station_id_seq"', 4, true);
 
 
 --

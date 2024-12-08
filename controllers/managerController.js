@@ -19,20 +19,19 @@ exports.getStations = async (req, res) => {
 
 exports.getTrips = async (req, res) => {
   const { m_ssn } = req.body;
-  console.log(req.body);
 
   try {
     const result1 = await pool.query(
       `SELECT t.trip_id, t.d_ssn, ts1.station_name AS source_station, ts2.station_name AS destination_station,
-              t.price, t.estimated_time
+              t.price, t.estimated_time, 
+              CONCAT(d.fname, ' ', d.lname) AS driver_full_name
        FROM "Trip" t
        JOIN "Station" ts1 ON t.source_station = ts1.station_id
        JOIN "Station" ts2 ON t.destination_station = ts2.station_id
        JOIN "Manager" m ON ts1.m_ssn = m.ssn
+       LEFT JOIN "Driver" d ON t.d_ssn = d.ssn
        WHERE m.ssn = $1`, [m_ssn]
     );
-    console.log(result1.rows);
-
 
     if (result1.rows.length === 0) {
       return res.status(404).json({
@@ -53,6 +52,7 @@ exports.getTrips = async (req, res) => {
     });
   }
 };
+
 
 exports.createTrip = async (req, res) => {
   const { m_ssn, price, date, d_ssn, estimated_time, destination_station } =
@@ -96,16 +96,11 @@ exports.createTrip = async (req, res) => {
 
 exports.getDrivers = async (req, res) => {
   const { m_ssn } = req.body;
-  console.log(req.body);
   try {
     const result = await pool.query(
       'SELECT * FROM "Driver" WHERE "m_ssn" = $1',
       [m_ssn]
     );
-    console.log({
-      data: result.rows,
-      success: true,
-    });
     res.json({
       data: result.rows,
       success: true,
@@ -121,7 +116,7 @@ exports.getDrivers = async (req, res) => {
 
 exports.getPrivateTrips = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM "Private Trip"'); // Add Vacations
+    const result = await pool.query('SELECT * FROM "Private Trip"'); 
     res.json({
       data: result.rows,
       success: true,
@@ -159,7 +154,6 @@ exports.fireDriver = async (req, res) => {
 //works
 exports.hireDriver = async (req, res) => {
   const { m_ssn, d_ssn, shift, salary } = req.body;
-  console.log(req.body);
 
   try {
     const driverResult = await pool.query(
@@ -194,7 +188,7 @@ exports.hireDriver = async (req, res) => {
     if (managerResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Station not found",
+        message: "Station not found for the provided manager",
       });
     }
 
@@ -206,8 +200,9 @@ exports.hireDriver = async (req, res) => {
     );
 
     res.json({
-      data: result.rows,
       success: true,
+      message: 'Driver hired successfully!',
+      data: result.rows,
     });
   } catch (error) {
     console.error("Error connecting to the database:", error);
@@ -217,6 +212,7 @@ exports.hireDriver = async (req, res) => {
     });
   }
 };
+
 
 
 exports.updateDriverSalary = async (req, res) => {
@@ -302,30 +298,62 @@ exports.updateTripPrice = async (req, res) => {
 };
 
 exports.updateTripDestination = async (req, res) => {
-  const { m_ssn, new_destination, trip_id } = req.body;
+  const { trips } = req.body; 
 
   try {
-    const result = await pool.query(
-      `UPDATE trips SET destination = $1 WHERE trip_id = $2 RETURNING *`,
-      [new_destination, trip_id]
-    );
+    for (let trip of trips) {
+      const { m_ssn, new_destination, trip_id } = trip;
 
-    if (result.rows.length > 0) {
-      return res.status(200).json({
-        success: true,
-        message: "Trip destination updated successfully."
-      });
-    } else {
-      return res.status(404).json({
-        success: false,
-        message: "Trip not found."
-      });
+      const result = await pool.query(
+        `UPDATE "Trip" SET destination_station = $1 WHERE trip_id = $2 RETURNING *`,
+        [new_destination, trip_id]
+      );
+
+      if (result.rows.length === 0) {
+        console.log(`Trip with ID ${trip_id} not found.`);
+      }
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "All trips' destinations updated successfully."
+    });
   } catch (error) {
-    console.error("Error updating trip destination:", error);
+    console.error("Error updating trip destinations:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later."
     });
   }
 };
+
+
+exports.updateTripDriver = async (req, res) => {
+  const { trips } = req.body;
+
+  try {
+    for (let trip of trips) {
+      const { d_ssn, trip_id } = trip;
+      const result = await pool.query(
+        `UPDATE "Trip" SET d_ssn = $1 WHERE trip_id = $2 RETURNING *`,
+        [d_ssn, trip_id]
+      );
+
+      if (result.rows.length === 0) {
+        console.log(`Trip with ID ${trip_id} not found.`);
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Driver assigned to all trips successfully."
+    });
+  } catch (error) {
+    console.error("Error assigning driver to trips:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later."
+    });
+  }
+};
+

@@ -1,8 +1,9 @@
 const pool = require("../models/db");
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
-  const { fname, mname, lname, job, ssn, email, password, age, carDetails } = req.body;
+  const { fname, mname, lname, job, ssn, email, password, age, carDetails, stationDetails} = req.body;
   const saltRounds = 10;
 
   try {
@@ -15,7 +16,6 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    let result;
 
     const emailCheck = await pool.query(`
       SELECT email FROM "Passenger" WHERE email = $1
@@ -25,7 +25,9 @@ exports.register = async (req, res) => {
       SELECT email FROM "Manager" WHERE email = $1
       UNION
       SELECT email FROM "Driver" WHERE email = $1
-    `, [email]);    if (emailCheck.rows.length > 0) {
+    `, [email]);
+
+    if (emailCheck.rows.length > 0) {
       return res.status(400).json({ success: false, message: "Email already exists" });
     }
 
@@ -36,11 +38,14 @@ exports.register = async (req, res) => {
         SELECT ssn FROM "Manager" WHERE ssn = $1
         UNION
         SELECT ssn FROM "Driver" WHERE ssn = $1
-      `, [ssn]);      if (ssnCheck.rows.length > 0) {
+      `, [ssn]);
+
+      if (ssnCheck.rows.length > 0) {
         return res.status(400).json({ success: false, message: "SSN already exists" });
       }
     }
 
+    let result;
     switch (job) {
       case "Admin":
         result = await pool.query(
@@ -53,20 +58,20 @@ exports.register = async (req, res) => {
           'INSERT INTO "Manager" (ssn, email, fname, mname, lname, password, verified_by) VALUES ($1, $2, $3, $4, $5, $6, NULL)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
+        await pool.query(
+          'INSERT INTO "Station" (station_name, street, zipcode, governorate, m_ssn ) VALUES ($1, $2, $3, $4, $5)',
+          [stationDetails.station_name, stationDetails.street, stationDetails.zipcode, stationDetails. governorate, ssn]
+        );
         break;
       case "Driver":
         result = await pool.query(
           'INSERT INTO "Driver" (ssn, email, fname, mname, lname, password, is_private) VALUES ($1, $2, $3, $4, $5, $6, false)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
-        await pool.query('INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)', [
-          carDetails.car_license,
-          carDetails.number_of_seats,
-          carDetails.air_conditioning,
-          carDetails.car_type,
-          carDetails.additional_price,
-          ssn
-        ]);
+        await pool.query(
+          'INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)',
+          [carDetails.car_license, carDetails.number_of_seats, carDetails.air_conditioning, carDetails.car_type, carDetails.additional_price, ssn]
+        );
         break;
       case "Passenger":
         result = await pool.query(
@@ -75,7 +80,7 @@ exports.register = async (req, res) => {
         );
         break;
       default:
-        return res.json({ success: false, message: "Invalid job type" });
+        return res.status(400).json({ success: false, message: "Invalid job type" });
     }
 
     res.json({ Register: true, success: true });
@@ -83,7 +88,7 @@ exports.register = async (req, res) => {
     console.error("Error connecting to the database:", error);
 
     if (error.code === "23505") {
-      res.json({
+      res.status(400).json({
         success: false,
         message: "Duplicate entry detected",
         details: error.detail,
@@ -149,15 +154,21 @@ exports.login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log({ login: true, success: true, type: userType, user, ssn });
+    
     if (passwordMatch) {
-      console.log("Login Successful");
-      if (userType == "Manager")
-        res.json({ login: true, success: true, type: userType, user, ssn });
-      else
-        res.json({ login: true, success: true, type: userType, user, ssn });
+      const token = jwt.sign(
+        { ssn: ssn, userType: userType },
+        'your_secret_key', 
+        { expiresIn: '1h' }
+      );      
+      res.json({
+        login: true,
+        success: true,
+        token: token,
+        type: userType,
+        ssn: ssn
+      });
     } else {
-      console.log("Login Failed, Wrong password");
       res.json({ login: false, success: true });
     }
   } catch (error) {
