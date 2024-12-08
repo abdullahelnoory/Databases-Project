@@ -100,6 +100,54 @@ export default function Griddriv() {
         });
     });
   };
+
+   
+  const handleRemoveDriver = () => {
+    if (selectedRowIds.length === 0) {
+      setErrorMessage('Please select a driver first!');
+      setSuccessMessage('');
+      return;
+    }
+
+    const selectedDrivers = selectedRowIds.map((id) => rows.find((row) => row.id === id));
+
+    selectedDrivers.forEach((driver) => {
+      fetch('http://localhost:6969/manager/remove-driver', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          m_ssn: userssn,
+          d_ssn: driver.ssn,
+          
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+           }  else {
+            console.error('Error Removing Driver :', data);
+            setErrorMessage('Failed to Remove Driver');
+            setSuccessMessage('');
+          }
+        })
+        .catch((error) => {
+          console.error('Error  Removing Driver:', error);
+          setErrorMessage('Error Removing Driver Back');
+          setSuccessMessage('');
+        });
+    });
+  };
+
+
+
+
+
+
+
+
+
   const columns = [
     { field: 'ssn', headerName: 'SSN', width: 200 },
     { field: 'username', headerName: 'Username', width: 300 },
@@ -158,12 +206,16 @@ export default function Griddriv() {
 
           <li className="button-item">
             <button
-              id="remove-driver-btn"
+              id="update-salary-btn"
               className="button"
+              onClick={handleRemoveDriver}
             >
-              Remove Driver
+              Remove
             </button>
+          
           </li>
+            
+          
         </ul>
       </div>
     </div>
