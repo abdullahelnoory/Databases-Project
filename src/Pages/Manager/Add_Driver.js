@@ -1,39 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import Nav2 from './Components/navbar';
-import axios from 'axios';
-import "./styles.css"
+import "./styles.css";
 
 export default function Adddriver() {
   const [forminput, setforminput] = useState({
-    is_private: "",
     d_ssn: "",
     salary: "",
     shift: "",
-    m_ssn: "", // Initially empty
+    m_ssn: "",
   });
-  const [userssn, setUserSSN] = useState("");
+  const userssn = sessionStorage.getItem('ssn');
+  const [message, setMessage] = useState(""); // For both success and error messages
 
-  // UseEffect to get userssn from localStorage and set m_ssn
-  useEffect(() => {
-    const savedData = localStorage.getItem('userssn');
-    if (savedData) {
-      console.log(savedData);
-      const user = JSON.parse(savedData);
-      setUserSSN(user.ssn); // Assuming the saved data contains the ssn key
-    }
-  }, []);
-
-  // UseEffect to set the m_ssn when userssn is available
   useEffect(() => {
     if (userssn) {
       setforminput((prevState) => ({
         ...prevState,
-        m_ssn: userssn, // Set m_ssn to the retrieved userssn
+        m_ssn: userssn,
       }));
     }
   }, [userssn]);
 
+  const validateForm = () => {
+    for (let key in forminput) {
+      if (forminput[key].trim() === "") {
+        console.log(`Validation failed at ${key}: ${forminput[key]}`);
+        return "Please fill in all fields.";
+      }
+    }
+    return null;
+  };
+
   const sendData = async () => {
+    const validationError = validateForm();
+    if (validationError) {
+      setMessage({ type: 'error', text: validationError });
+      return; // Prevent form submission if validation fails
+    }
+
+    // Clear previous messages before sending data
+    setMessage("");
+
     try {
       const response = await fetch('http://localhost:6969/manager/hire', {
         method: 'POST',
@@ -44,9 +51,14 @@ export default function Adddriver() {
       });
 
       const result = await response.json();
-      console.log('Response from server:', result);
+      if (result.success) {
+        setMessage({ type: 'success', text: 'Driver hired successfully!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || "An error occurred." });
+      }
     } catch (error) {
       console.error('Error sending data:', error);
+      setMessage({ type: 'error', text: "An error occurred while sending the data." });
     }
   };
 
@@ -90,6 +102,12 @@ export default function Adddriver() {
               }}
             />
           </div>
+
+          {message && (
+            <div className={`message ${message.type}`}>
+              {message.text}
+            </div>
+          )}
 
           <button id="button" type="button" onClick={sendData}>
             Submit

@@ -7,12 +7,10 @@ export default function AddTrip() {
     destination_station: "",
     price: ""
   });
-  const [userssn, setuserssn] = useState(() => {
-    const storedSSN = localStorage.getItem('userssn');
-    return storedSSN ? JSON.parse(storedSSN).ssn : '';
-  });
-  const [successMessage, setSuccessMessage] = useState(""); // Added success message state
-  const [errorMessage, setErrorMessage] = useState(""); // Added error message state
+  const userssn = sessionStorage.getItem('ssn');
+  
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const sendData = async () => {
     try {
@@ -37,16 +35,16 @@ export default function AddTrip() {
       console.log('Response from server:', result);
 
       if (result.success) {
-        setSuccessMessage('Trip added successfully!'); // Set success message
-        setErrorMessage(''); // Clear any previous error
+        setSuccessMessage('Trip added successfully!'); 
+        setErrorMessage(''); 
       } else {
         setErrorMessage('Error: Could not add the trip.');
-        setSuccessMessage(''); // Clear success message if there is an error
+        setSuccessMessage('');
       }
     } catch (error) {
       console.error('Error sending data:', error);
       setErrorMessage('An error occurred while adding the trip.');
-      setSuccessMessage(''); // Clear success message if there is an error
+      setSuccessMessage('');
     }
   };
 

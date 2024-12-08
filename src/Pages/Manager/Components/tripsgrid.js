@@ -15,13 +15,11 @@ export default function Tripslist() {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [rows, setRows] = useState([]);
   const [newPrice, setNewPrice] = useState('');
-  const [userssn, setuserssn] = useState(() => {
-    const storedSSN = localStorage.getItem('userssn');
-    return storedSSN ? JSON.parse(storedSSN).ssn : '';
-  });
+  const userssn = sessionStorage.getItem('ssn');
+
   const [statusMessage, setStatusMessage] = useState({
     message: '',
-    type: '', // 'success' or 'error'
+    type: '', 
   });
 
   const handleSelectionChange = (newSelectionModel) => {

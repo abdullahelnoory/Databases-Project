@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import imag from "../images/SwiftRoute.png";
 
-
 function RegisterPage() {
   const history = useHistory();
 
@@ -24,11 +23,17 @@ function RegisterPage() {
       car_type: "",
       additional_price: "",
     },
+    stationDetails: {
+      station_name: "",
+      street: "",
+      zipcode: "",
+      governorate: "",
+      m_ssn: "",
+    },
   });
 
   const [error, setError] = useState("");
   const roles = ["Admin", "Passenger", "Manager", "Driver"];
-
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -46,7 +51,16 @@ function RegisterPage() {
         ...formInput,
         carDetails: {
           ...formInput.carDetails,
-          [carField]: type === "checkbox" ? checked : value
+          [carField]: type === "checkbox" ? checked : value,
+        },
+      });
+    } else if (name.startsWith("stationDetails.")) {
+      const stationField = name.split(".")[1];
+      setFormInput({
+        ...formInput,
+        stationDetails: {
+          ...formInput.stationDetails,
+          [stationField]: value,
         },
       });
     } else {
@@ -86,7 +100,6 @@ function RegisterPage() {
       setError("An error occurred. Please try again later.");
     }
   };
-
 
   return (
     <div id="RegisterPage">
@@ -197,7 +210,7 @@ function RegisterPage() {
             <input
               type="text"
               name="carDetails.car_license"
-              value={formInput.carDetails.car_license}
+              value={formInput.car_details.car_license}
               onChange={handleChange}
               placeholder="Car License"
               required
@@ -234,12 +247,54 @@ function RegisterPage() {
           </div>
         )}
 
+        {formInput.job === "Manager" && (
+          <div className="stationDetails">
+            <h3>Station Details</h3>
+            <input
+              type="text"
+              name="stationDetails.station_name"
+              value={formInput.stationDetails.station_name}
+              onChange={handleChange}
+              placeholder="Station Name"
+              required
+            />
+            <input
+              type="text"
+              name="stationDetails.street"
+              value={formInput.stationDetails.street}
+              onChange={handleChange}
+              placeholder="Street"
+              required
+            />
+            <input
+              type="text"
+              name="stationDetails.zipcode"
+              value={formInput.stationDetails.zipcode}
+              onChange={handleChange}
+              placeholder="Zipcode"
+              required
+            />
+            <input
+              type="text"
+              name="stationDetails.governorate"
+              value={formInput.stationDetails.governorate}
+              onChange={handleChange}
+              placeholder="Governorate"
+              required
+            />
+          </div>
+        )}
+
         <div className="submit-button-container">
           <button type="submit">Sign Up</button>
+        </div>
+
+        <div className="login-link">
+          <p>Already have an account? <a href="/">Login here</a></p>
         </div>
       </form>
     </div>
   );
-};
+}
 
 export default RegisterPage;

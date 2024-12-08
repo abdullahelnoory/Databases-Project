@@ -136,3 +136,26 @@ h2 {
     width: auto;
     margin: 0 5px 0 0;
 }
+
+/* Station Details Section */
+.stationDetails {
+    margin: auto;
+    padding: 0;
+}
+
+/* Station Details Title */
+.stationDetails h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Station Details Input */
+.stationDetails input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

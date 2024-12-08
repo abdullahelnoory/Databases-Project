@@ -11,11 +11,8 @@ export default function Griddriv() {
   const [successMessage, setSuccessMessage] = useState('');
   const history = useHistory();
   
-  const [userssn, setuserssn] = useState(() => {
-    const storedSSN = localStorage.getItem('userssn');
-    console.log(storedSSN);
-    return storedSSN ? JSON.parse(storedSSN).ssn : '';
-  });
+  const userssn = sessionStorage.getItem('ssn');
+
 
   const handleSelectionChange = (newSelectionModel) => {
     setSelectedRowIds(newSelectionModel);
