@@ -356,3 +356,38 @@ exports.updateTripDriver = async (req, res) => {
   }
 };
 
+exports.checkManagerVerified = async (req, res) => {
+  const { m_ssn } = req.body;
+
+  try {
+    const result = await pool.query(
+      'SELECT "verified_by", CONCAT("fname", \' \', "mname", \' \', "lname") AS fullName FROM "Manager" WHERE "ssn" = $1',
+      [m_ssn]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Manager not found",
+      });
+    }
+
+    const { verified_by, fullName } = result.rows[0];
+
+    const isVerified = verified_by !== null;
+
+    res.json({
+      success: true,
+      data: {
+        isVerified,
+        fullName,
+      },
+    });
+  } catch (error) {
+    console.error("Error checking manager verification:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};

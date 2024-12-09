@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/manager', managerRoutes);
-//app.use('/driver', driverRoutes);
+app.use('/driver', driverRoutes);
 app.use('/admin', adminRoutes);
 app.use('/accounts', authRoutes);
 app.use('/info', dataRoutes);

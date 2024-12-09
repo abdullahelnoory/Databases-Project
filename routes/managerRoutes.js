@@ -38,6 +38,8 @@ router.post("/update-destination", managerController.updateTripDestination);
 // Set Driver for a trip
 router.post("/set-trip-driver", managerController.updateTripDriver);
 
+router.post("/check-verified", managerController.checkManagerVerified);
+
 
 // 
 

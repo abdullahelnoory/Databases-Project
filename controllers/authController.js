@@ -108,6 +108,7 @@ exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   let ssn;
+  let verifiedBy = null; // Variable to hold verified_by for Manager
 
   try {
     const result1 = await pool.query(
@@ -132,19 +133,20 @@ exports.login = async (req, res) => {
 
     if (result1.rows.length === 1) {
       user = result1.rows[0];
-      ssn = user.ssn
+      ssn = user.ssn;
       userType = "Admin";
     } else if (result2.rows.length === 1) {
       user = result2.rows[0];
-      ssn = user.ssn
+      ssn = user.ssn;
+      verifiedBy = user.verified_by; // Store the verified_by value
       userType = "Manager";
     } else if (result3.rows.length === 1) {
       user = result3.rows[0];
-      ssn = user.ssn
+      ssn = user.ssn;
       userType = "Driver";
     } else if (result4.rows.length === 1) {
       user = result4.rows[0];
-      ssn = user.id
+      ssn = user.id;
       userType = "Passenger";
     }
 
@@ -154,20 +156,27 @@ exports.login = async (req, res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    
+
     if (passwordMatch) {
       const token = jwt.sign(
         { ssn: ssn, userType: userType },
-        'your_secret_key', 
+        'your_secret_key',
         { expiresIn: '1h' }
-      );      
-      res.json({
+      );
+
+      const response = {
         login: true,
         success: true,
         token: token,
         type: userType,
         ssn: ssn
-      });
+      };
+
+      if (userType === "Manager") {
+        response.verified_by = verifiedBy; // Include verified_by for Managers
+      }
+
+      res.json(response);
     } else {
       res.json({ login: false, success: true });
     }
@@ -179,6 +188,7 @@ exports.login = async (req, res) => {
     });
   }
 };
+
 
 exports.changePassword = async (req, res) => {
   const { ssn, currentPassword, newPassword } = req.body;
