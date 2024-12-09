@@ -1,5 +1,4 @@
-
-import ANav from'./AdminNav';
+import ANav from'./Components/navbar';
 
 export default function Adminhome()
 {

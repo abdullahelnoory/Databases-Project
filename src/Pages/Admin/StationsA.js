@@ -1,5 +1,5 @@
-import NavA from './AdminNav'
-import SGrid from './StationsGridA';
+import NavA from './Components/navbar';
+import SGrid from './Components/StationsGrid';
 
 export default function StationsA() {
 
@@ -9,7 +9,7 @@ export default function StationsA() {
             <header>
                 <NavA />
             </header>
-            <h1 style={{ margin: "1%" }}>Stations</h1>
+            <h1 id="site_Title">Stations</h1>
             <SGrid />
         </div>
 

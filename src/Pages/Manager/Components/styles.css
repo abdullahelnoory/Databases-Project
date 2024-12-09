@@ -229,6 +229,8 @@ body {
     width: 200px;
     margin-top: 10px;
     box-sizing: border-box;
+    flex-direction: column; /* Stack items vertically */
+  align-items: flex-start;
 }
 
 .button:hover {
@@ -344,6 +346,7 @@ body {
 }
 
 #button-container ul {
+  gap: 10px;
   display: flex;
   list-style: none;
   padding: 0;
@@ -385,9 +388,6 @@ body {
   border-radius: 5px;
   font-size: 16px;
   margin-bottom: 100px;
-
-  
-
 }
 
 .input-container input:focus {

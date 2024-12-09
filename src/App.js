@@ -1,6 +1,5 @@
 import './styles.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { useState } from 'react';
 import ManagerHome from './Pages/Manager/Home.js';
 import ManagerTrips from './Pages/Manager/Trips.js';
 import ManagerRequests from './Pages/Manager/Request.js';
@@ -8,19 +7,18 @@ import ManagerDrivers from './Pages/Manager/Drivers.js';
 import Signup from './Pages/Signup.js';
 import Login from './Pages/Login.js';
 import ManagerAddTrip from './Pages/Manager/Add_Trip.js';
-import AdminHome from './Pages/Admin/AHome.js';
-import AdminAddStation from './Pages/Admin/AddStation.js';
-import AdminStations from './Pages/Admin/StationsA.js';
+import AdminHome from './Pages/Admin/Home.js';
+import AdminAddStation from './Pages/Admin/Add_Station.js';
+import AdminStations from './Pages/Admin/Stations.js';
 import ManagerAddDriver from './Pages/Manager/Add_Driver.js';
 import PrivateRoute from './PrivateRoute';
-import ChangePassword from './Pages/ChangePassword'; // Import ChangePassword component
+import ChangePassword from './Pages/ChangePassword';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Switch>
-          {/* Public Routes */}
           <Route exact path="/">
             <Login />
           </Route>

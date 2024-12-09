@@ -18,8 +18,8 @@ export default function Tripslist() {
   const [newPrice, setNewPrice] = useState('');
   const userssn = sessionStorage.getItem('ssn');
   const [newdriver, setDriver] = useState("");
-  const [newDest, setNewDest] = useState(""); 
-  const [newDestName, setNewDestName] = useState(""); 
+  const [newDest, setNewDest] = useState("");
+  const [newDestName, setNewDestName] = useState("");
 
 
   const [statusMessage, setStatusMessage] = useState({
@@ -310,7 +310,7 @@ export default function Tripslist() {
             {JSON.stringify(selectedRowIds, null, 2).replace(/\n/g, " ")}
           </pre>
         </div>
-  
+
         <div id="messages-container">
           {statusMessage.message && (
             <p
@@ -324,7 +324,7 @@ export default function Tripslist() {
             </p>
           )}
         </div>
-  
+
         <div id="button-container" style={{ marginTop: "20px" }}>
           <ul
             style={{
@@ -344,16 +344,20 @@ export default function Tripslist() {
                 Add Trip
               </button>
             </li>
-  
-            <li style={{ width: "23%" }}>
+
+            <li style={{ width: "23%", display: "flex", flexDirection: "column"}}>
               <button
                 id="set-price-btn"
                 className="button"
                 onClick={updatePrice}
+                style={{
+                  width: "100%", // Make the button take up full width
+                  boxSizing: "border-box", // Ensure padding is included in the width
+                }}
               >
                 Update Price
               </button>
-              <div className="input-container">
+              <div className="input-container" id="update-input" style={{ width: "100%"}}>
                 <input
                   type="number"
                   value={newPrice}
@@ -361,10 +365,20 @@ export default function Tripslist() {
                   placeholder="Enter new price"
                   min="0"
                   step="0.1"
+                  style={{
+                    width: "100%", // Make the input field match the button's width
+                    padding: "10px",
+                    boxSizing: "border-box", // Ensure consistent width
+                    fontSize: "16px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    margin: "auto",
+                    marginTop: "0px",
+                  }}
                 />
               </div>
             </li>
-  
+
             <li style={{ width: "23%" }}>
               <button
                 id="update-destination-btn"
@@ -386,7 +400,7 @@ export default function Tripslist() {
                 ))}
               </select>
             </li>
-  
+
             <li style={{ width: "23%" }}>
               <button
                 id="set-driver-btn"
@@ -413,5 +427,5 @@ export default function Tripslist() {
       </div>
     </div>
   );
-  
+
 }
