@@ -33,10 +33,17 @@ export default function Login() {
         sessionStorage.setItem('ssn', result.ssn);
         sessionStorage.setItem('userType', result.type); 
         
+        if (result.type === 'Manager') {
+          const isVerified = result.verified_by !== null && result.verified_by !== undefined && result.verified_by !== '';
+          sessionStorage.setItem('verified', isVerified);
+        }
+        
+
         console.log('Token:', result.token);
         console.log('SSN:', result.ssn);
         console.log('User Type:', result.type);
-      
+        console.log('Verified By:', result.verified_by);
+
         if (result.type === 'Admin') {
           history.push('/admin');
         } else if (result.type === 'Manager') {
