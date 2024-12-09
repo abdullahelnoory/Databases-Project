@@ -14,10 +14,11 @@ exports.verify = async (req, res) => {
 };
 
 exports.addStation = async (req, res) => {
-  const { station_id, station_name, street, zipcode, governorate, m_ssn } = req.body;
-  const query = 'insert into "Station" values($1,$2,$3,$4,$5,$6)';
+  const { station_name, street, zipcode, governorate, m_ssn } = req.body;
+  const query = 'insert into "Station" ("station_name", "street", "zipcode", "governorate") values($1,$2,$3,$4)';
+  console.log(req.body);
   try {
-    await pool.query(query, [station_id, station_name, street, zipcode, governorate, m_ssn]);
+    await pool.query(query, [station_name, street, zipcode, governorate]);
     res.json({ success: true });
   }
   catch (err) {
@@ -38,19 +39,36 @@ exports.addStation = async (req, res) => {
 };
 
 exports.removeStation = async (req, res) => {
-  const s_name = req.body.s_name;
-  const query = 'delete from "Station" where station_name = $1';
-  try {
-    const result = pool.query(query, [s_name]);
-    if (result.rowCount > 0)
-      res.json({ success: true, message: "Successfully removed a station" });
-    else
-      res.json({ success: true, message: "There isn't any station with this name!" });
+  const station_ids = req.body.stationIds; 
 
+  const query = `DELETE FROM "Station" WHERE station_id = $1`;
+
+  try {
+    for (const id of station_ids) {
+      await pool.query(query, [id]);
+    }
+
+    res.json({ success: true, message: "Stations deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting stations:", err);
+    res.status(500).json({ success: false, message: "An error occurred while deleting stations." });
   }
-  catch (err) {
-    res.json({ success: false });
-    console.log(err);
+};
+
+exports.getStations = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM "Station"');
+    res.json({
+      data: result.rows,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
   }
-}
+};
+
 
