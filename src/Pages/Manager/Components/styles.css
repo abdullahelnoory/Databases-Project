@@ -285,6 +285,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 4px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    
   }
   
   .input-container input:focus {
@@ -383,6 +384,10 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
+  margin-bottom: 100px;
+
+  
+
 }
 
 .input-container input:focus {
@@ -440,6 +445,10 @@ body {
   outline: none; /* Remove outline when focused */
 }
 
+.margin-right10{
+  margin-right: 10px;
+}
+
 /* Styling the dropdown arrow */
 #styled-combobox::after {
   content: '▼'; /* Custom dropdown arrow */
@@ -473,3 +482,72 @@ body {
   cursor: pointer; /* Pointer cursor on hover */
 }
 
+/* Dropdown Container */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+/* Dropdown Button */
+.dropdown-btn {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  width: 100%; /* Ensure dropdown width is consistent */
+}
+
+/* Dropdown Items */
+.dropdown-item {
+  padding: 10px 15px;
+  color: #2c3e50;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  width: 100%; /* Make items span the full width */
+  height: 40px; /* Ensure consistent height for all items */
+  box-sizing: border-box; /* Include padding in height calculation */
+}
+
+.dropdown-item:hover {
+  background-color: rgb(52, 152, 219);
+  cursor: pointer;
+}
+
+/* Remove default button styles in dropdown-item */
+.dropdown-item button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  width: 100%;
+  text-align: center; /* Center align text */
+  height: 100%; /* Ensure button takes full height */
+  padding: 0;
+}

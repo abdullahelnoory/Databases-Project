@@ -12,13 +12,15 @@ import AdminHome from './Pages/Admin/AHome.js';
 import AdminAddStation from './Pages/Admin/AddStation.js';
 import AdminStations from './Pages/Admin/StationsA.js';
 import ManagerAddDriver from './Pages/Manager/Add_Driver.js';
-import PrivateRoute from './PrivateRoute'; 
+import PrivateRoute from './PrivateRoute';
+import ChangePassword from './Pages/ChangePassword'; // Import ChangePassword component
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Switch>
+          {/* Public Routes */}
           <Route exact path="/">
             <Login />
           </Route>
@@ -37,6 +39,10 @@ function App() {
           <PrivateRoute exact path="/manager/drivers" component={ManagerDrivers} requiredRole="Manager" />
           <PrivateRoute exact path="/manager/trips" component={ManagerTrips} requiredRole="Manager" />
           <PrivateRoute exact path="/manager/requests" component={ManagerRequests} requiredRole="Manager" />
+
+          <Route exact path="/change-password">
+            <ChangePassword />
+          </Route>
         </Switch>
       </div>
     </Router>

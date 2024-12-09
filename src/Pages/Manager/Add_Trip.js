@@ -75,6 +75,7 @@ export default function AddTrip() {
             <label htmlFor="styled-combobox">Destination</label>
             <select
               id="styled-combobox"
+              className='margin-right10'
               value={forminput.destination_station}
               onChange={(event) =>
                 setforminput({ ...forminput, destination_station: event.target.value })

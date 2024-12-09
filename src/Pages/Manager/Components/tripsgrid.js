@@ -339,7 +339,7 @@ export default function Tripslist() {
               <button
                 id="add-trip-btn"
                 className="button"
-                onClick={() => (window.location.href = "/AddTrip")}
+                onClick={() => (window.location.href = "/manager/trips/add")}
               >
                 Add Trip
               </button>

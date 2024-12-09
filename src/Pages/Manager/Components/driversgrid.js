@@ -219,7 +219,7 @@ export default function Griddriv() {
             <button
               id="add-driver-btn"
               className="button"
-              onClick={() => history.push('/M/DriversM/addDriver')}
+              onClick={() => history.push('/manager/drivers/add')}
             >
               Add Driver
             </button>
