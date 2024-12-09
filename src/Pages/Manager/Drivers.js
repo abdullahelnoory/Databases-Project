@@ -9,7 +9,7 @@ export default function DriversList() {
          <header>
             <Nav1 />
          </header>
-         <h1 style={{ margin: "1%" }}>Drivers</h1>
+         <h1 style={{ margin: "1%" , textAlign: "center"}}>Drivers</h1>
          <DGrid />
 
       </div>

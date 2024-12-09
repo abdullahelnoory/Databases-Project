@@ -7,7 +7,7 @@ export default function MreqList() {
       <header>
         <Nav1 /> 
       </header>
-      <h1 style={{ margin: "1%" }}>Requests</h1> 
+      <h1 style={{ margin: "1%" , textAlign: "center"}}>Requests</h1> 
       <Mreq />
     </div>
   );

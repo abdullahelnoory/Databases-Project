@@ -8,7 +8,7 @@ export default function TripsM() {
             <header>
                 <Nav1 />
             </header>
-            <h1 style={{ margin: "1%" }}>Trips</h1>
+            <h1 style={{ margin: "1%", textAlign: "center" }}>Trips</h1>
             <Grid />
 
         </div>
