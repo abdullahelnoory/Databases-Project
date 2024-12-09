@@ -243,7 +243,6 @@ exports.updateDriverSalary = async (req, res) => {
 
 exports.getAvailableDrivers = async (req, res) => {
   const { m_ssn } = req.body;
-
   try {
     const result = await pool.query('SELECT "ssn", "fname", "lname", "salary" FROM "Driver" WHERE "is_available" = true AND m_ssn = $1', [m_ssn]);
 

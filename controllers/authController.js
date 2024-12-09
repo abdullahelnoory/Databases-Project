@@ -179,3 +179,59 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+exports.changePassword = async (req, res) => {
+  const { ssn, currentPassword, newPassword } = req.body;
+  console.log(req.body);
+
+  try {
+    // Query to find user by ssn
+    const userQuery = `
+      SELECT "ssn", "email", "password" FROM "Admin" WHERE ssn = $1
+      UNION
+      SELECT "ssn", email, "password" FROM "Manager" WHERE ssn = $1
+      UNION
+      SELECT "ssn", email, "password" FROM "Driver" WHERE ssn = $1
+      UNION
+      SELECT "id" AS ssn, email, "password" FROM "Passenger" WHERE id = $1
+    `;
+    const result = await pool.query(userQuery, [ssn]);
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ success: false, message: "User not found" });
+    }
+
+    const user = result.rows[0];
+
+    // Verify current password
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(400).json({ success: false, message: "Current password is incorrect" });
+    }
+
+    // Hash the new password
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Separate queries for each table
+    const updateQueries = [
+      `UPDATE "Admin" SET password = $1 WHERE ssn = $2`,
+      `UPDATE "Manager" SET password = $1 WHERE ssn = $2`,
+      `UPDATE "Driver" SET password = $1 WHERE ssn = $2`,
+      `UPDATE "Passenger" SET password = $1 WHERE id = $2`
+    ];
+
+    // Execute each update query individually
+    for (const query of updateQueries) {
+      await pool.query(query, [hashedNewPassword, ssn]);
+    }
+
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database error occurred while updating password",
+    });
+  }
+};
