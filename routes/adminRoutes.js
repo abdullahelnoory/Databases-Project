@@ -6,5 +6,6 @@ router.post('/verify',adminController.verify);
 router.post('/addStation',adminController.addStation);
 router.post('/removeStation',adminController.removeStation);
 router.get('/getStations',adminController.getStations);
+router.get('/getUnverifiedManagers',adminController.getUnverifiedManagers);
 
 module.exports = router;

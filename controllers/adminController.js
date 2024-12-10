@@ -71,4 +71,24 @@ exports.getStations = async (req, res) => {
   }
 };
 
+exports.getUnverifiedManagers = async (req, res) => {
+  try
+  {
+     const query = 'SELECT ssn,fname,mname,lname FROM "Manager" WHERE verified_by is null';
+     const result = await pool.query(query);
+     res.json({
+        data : result.rows,
+        success : true
+     });
+  }
+  catch(error)
+  {
+    console.error("Error connecting to the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+}
+
 
