@@ -13,7 +13,7 @@ import AdminStations from './Pages/Admin/Stations.js';
 import ManagerAddDriver from './Pages/Manager/Add_Driver.js';
 import PrivateRoute from './PrivateRoute';
 import ChangePassword from './Pages/ChangePassword';
-
+import AdminRequests from './Pages/Admin/Components/Reqestsgrid.js'
 function App() {
   return (
     <Router>
@@ -30,7 +30,7 @@ function App() {
           <PrivateRoute exact path="/admin" component={AdminHome} requiredRole="Admin" />
           <PrivateRoute exact path="/admin/stations/add" component={AdminAddStation} requiredRole="Admin" />
           <PrivateRoute exact path="/admin/stations" component={AdminStations} requiredRole="Admin" />
-
+          <PrivateRoute exact path="/admin/requests" component={AdminRequests} requiredRole="Admin" />
           <PrivateRoute exact path="/manager" component={ManagerHome} requiredRole="Manager" />
           <PrivateRoute exact path="/manager/drivers/add" component={ManagerAddDriver} requiredRole="Manager" />
           <PrivateRoute exact path="/manager/trips/add" component={ManagerAddTrip} requiredRole="Manager" />
