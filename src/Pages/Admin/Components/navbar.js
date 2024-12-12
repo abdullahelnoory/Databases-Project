@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import "./styles.css"
+import "./styles.css";
+
 export default function NavbarA() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -12,6 +13,10 @@ export default function NavbarA() {
 
   const handleChangePassword = () => {
     window.location.href = '/change-password';
+  };
+
+  const handleCreateAdmin = () => {
+    window.location.href = 'admin/create-admin';
   };
 
   const toggleDropdown = () => {
@@ -31,7 +36,7 @@ export default function NavbarA() {
         </li>
         <li>
           <a href="/admin/requests" className="nav-btn">
-          Requests
+            Requests
           </a>
         </li>
         <li>
@@ -45,6 +50,11 @@ export default function NavbarA() {
                   <button onClick={handleChangePassword} className="dropdown-item">
                     Change Password
                   </button>
+                </li>
+                <li>
+                  <a href="/admin/create-admin" className="dropdown-item" id="create-admin-link">
+                    Create Admin
+                  </a>
                 </li>
                 <li>
                   <button onClick={handleLogout} className="dropdown-item">

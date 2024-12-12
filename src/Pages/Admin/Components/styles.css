@@ -349,3 +349,23 @@ body {
     height: 100%;
     padding: 0;
 }
+#create-admin-link {
+    text-align: center;
+    padding: 10px 15px;
+    color: #2c3e50;
+    text-decoration: none;
+    border: 1px solid #2c3e50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+}
+
+#create-admin-link:hover {
+    background-color: rgb(52, 152, 219);
+    cursor: pointer;
+}

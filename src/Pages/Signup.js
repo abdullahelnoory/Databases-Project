@@ -1,7 +1,7 @@
-import "../Styles/Signup.css";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import imag from "../images/SwiftRoute.png";
+import "../Styles/Signup.css";
 
 function RegisterPage() {
   const history = useHistory();
@@ -14,7 +14,7 @@ function RegisterPage() {
     password: "",
     confirmPassword: "",
     job: "Passenger",
-    age: "", 
+    age: "",
     ssn: "",
     carDetails: {
       car_license: "",
@@ -33,7 +33,7 @@ function RegisterPage() {
   });
 
   const [error, setError] = useState("");
-  const roles = ["Admin", "Passenger", "Manager", "Driver"];
+  const roles = ["Passenger", "Manager", "Driver"];
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -111,6 +111,8 @@ function RegisterPage() {
 
         <div className="input-container">
           <input
+            style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
             type="text"
             name="fname"
             value={formInput.fname}
@@ -119,6 +121,8 @@ function RegisterPage() {
             required
           />
           <input
+            style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
             type="text"
             name="mname"
             value={formInput.mname}
@@ -126,6 +130,8 @@ function RegisterPage() {
             placeholder="Middle Name"
           />
           <input
+            style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
             type="text"
             name="lname"
             value={formInput.lname}
@@ -136,6 +142,7 @@ function RegisterPage() {
         </div>
         <div className="input-container">
           <input
+            style={{ width: "100%", margin: "0", marginBottom: "10px" }}
             type="email"
             name="email"
             value={formInput.email}
@@ -144,6 +151,8 @@ function RegisterPage() {
             required
           />
           <input
+            style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
             type="password"
             name="password"
             value={formInput.password}
@@ -154,6 +163,8 @@ function RegisterPage() {
         </div>
         <div className="input-container">
           <input
+            style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
             type="password"
             name="confirmPassword"
             value={formInput.confirmPassword}
@@ -165,6 +176,8 @@ function RegisterPage() {
         <div className="input-container">
           <label htmlFor="job">Role:</label>
           <select
+                      style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
             id="job"
             name="job"
             value={formInput.job}
@@ -181,6 +194,8 @@ function RegisterPage() {
         {formInput.job === "Passenger" && (
           <div className="input-container">
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="number"
               name="age"
               value={formInput.age}
@@ -191,9 +206,11 @@ function RegisterPage() {
           </div>
         )}
 
-        {(formInput.job === "Admin" || formInput.job === "Manager" || formInput.job === "Driver") && (
+        {(formInput.job === "Manager" || formInput.job === "Driver") && (
           <div className="input-container">
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="ssn"
               value={formInput.ssn}
@@ -208,14 +225,18 @@ function RegisterPage() {
           <div className="carDetails">
             <h3>Car Details</h3>
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="carDetails.car_license"
-              value={formInput.car_details.car_license}
+              value={formInput.carDetails.car_license}
               onChange={handleChange}
               placeholder="Car License"
               required
             />
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="number"
               name="carDetails.number_of_seats"
               value={formInput.carDetails.number_of_seats}
@@ -224,6 +245,8 @@ function RegisterPage() {
               required
             />
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="checkbox"
               name="carDetails.air_conditioning"
               checked={formInput.carDetails.air_conditioning}
@@ -231,6 +254,8 @@ function RegisterPage() {
             />
             <label>Air Conditioning</label>
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="carDetails.car_type"
               value={formInput.carDetails.car_type}
@@ -238,6 +263,8 @@ function RegisterPage() {
               placeholder="Car Type"
             />
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="carDetails.additional_price"
               value={formInput.carDetails.additional_price}
@@ -251,6 +278,8 @@ function RegisterPage() {
           <div className="stationDetails">
             <h3>Station Details</h3>
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="stationDetails.station_name"
               value={formInput.stationDetails.station_name}
@@ -259,6 +288,8 @@ function RegisterPage() {
               required
             />
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="stationDetails.street"
               value={formInput.stationDetails.street}
@@ -267,6 +298,8 @@ function RegisterPage() {
               required
             />
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="stationDetails.zipcode"
               value={formInput.stationDetails.zipcode}
@@ -275,6 +308,8 @@ function RegisterPage() {
               required
             />
             <input
+              style={{ width: "100%", margin: "0", marginBottom: "10px" }}
+
               type="text"
               name="stationDetails.governorate"
               value={formInput.stationDetails.governorate}
@@ -286,7 +321,8 @@ function RegisterPage() {
         )}
 
         <div className="submit-button-container">
-          <button type="submit">Sign Up</button>
+          <button
+            type="submit">Sign Up</button>
         </div>
 
         <div className="login-link">

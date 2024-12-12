@@ -60,6 +60,7 @@ h2 {
 
 /* Input Container */
 .input-container {
+    margin: 0;
     margin-bottom: 15px;
 }
 
@@ -68,7 +69,7 @@ h2 {
 .input-container select {
     width: 100%;
     padding: 10px;
-    margin: 5px 0;
+    margin: 0;  
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
@@ -76,7 +77,9 @@ h2 {
 
 /* Select Box Styling */
 .input-container select {
+    margin: 10px;
     background-color: #f9f9f9;
+
 }
 
 /* Error Message Styling */

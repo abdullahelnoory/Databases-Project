@@ -37,7 +37,6 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     sessionStorage.clear();
-    alert('You have been logged out successfully!');
     window.location.href = '/';
   };
 
