@@ -27,7 +27,7 @@ export default function Navbar() {
         }
       } catch (error) {
         console.error("Error checking manager verification:", error);
-        setIsVerified(false); // Set to false if there's an error
+        setIsVerified(false);
       }
     };
 
