@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
-  const { fname, mname, lname, job, ssn, email, password, age, carDetails, stationDetails} = req.body;
+  const { fname, mname, lname, job, ssn, email, password, age, carDetails, stationDetails } = req.body;
   const saltRounds = 10;
 
   try {
@@ -58,20 +58,26 @@ exports.register = async (req, res) => {
           'INSERT INTO "Manager" (ssn, email, fname, mname, lname, password, verified_by) VALUES ($1, $2, $3, $4, $5, $6, NULL)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
-        await pool.query(
-          'INSERT INTO "Station" (station_name, street, zipcode, governorate, m_ssn ) VALUES ($1, $2, $3, $4, $5)',
-          [stationDetails.station_name, stationDetails.street, stationDetails.zipcode, stationDetails. governorate, ssn]
-        );
+
+        if (stationDetails) {
+          await pool.query(
+            'INSERT INTO "Station" (station_name, street, zipcode, governorate, m_ssn ) VALUES ($1, $2, $3, $4, $5)',
+            [stationDetails.station_name, stationDetails.street, stationDetails.zipcode, stationDetails.governorate, ssn]
+          );
+        }
         break;
       case "Driver":
         result = await pool.query(
           'INSERT INTO "Driver" (ssn, email, fname, mname, lname, password, is_private) VALUES ($1, $2, $3, $4, $5, $6, false)',
           [ssn, email, fname, mname, lname, hashedPassword]
         );
-        await pool.query(
-          'INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)',
-          [carDetails.car_license, carDetails.number_of_seats, carDetails.air_conditioning, carDetails.car_type, carDetails.additional_price, ssn]
-        );
+
+        if (carDetails) {
+          await pool.query(
+            'INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)',
+            [carDetails.car_license, carDetails.number_of_seats, carDetails.air_conditioning, carDetails.car_type, carDetails.additional_price, ssn]
+          );
+        }
         break;
       case "Passenger":
         result = await pool.query(
