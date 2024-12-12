@@ -75,3 +75,47 @@ exports.orderPrivateTrip = async (req, res) => {
         }
     }
 };
+
+exports.requestTrip = async (req, res) => {
+    const {p_id, t_id} = req;
+    const query1 = 'select number_of_seats from "Car" c,"Driver" d,"Trip" t where c.d_ssn = d.ssn and d.ssn = t.d_ssn and t.trip_id = $1';
+    const query2 = 'select count(*) from "Passenger Trip" where t_id = $1';
+    const query3 = 'insert into "Passenger Trip" values($1, $2)';
+    try
+    {
+        const result1 = await pool.query(query1, [t_id]);
+        if(result1.rows.length == 0)
+            res.json({success : true, message : "This trip is not found!"});
+        const number_of_seats = result1.rows[0].number_of_seats;
+        const result2 = await pool.query(query2,[t_id]);
+        if(result2.rows[0].count < number_of_seats)
+        {
+            await pool.query(query3,[p_id, t_id]);
+            res.json({success : true, message : "The trip is requested successfully!"});
+        }
+        else
+            res.json({success : true, message : "Sorry, the trip is full now!"});
+    }
+    catch(error)
+    {
+        if(error.code == "23503")
+            {
+                res.json({
+                    success : false , 
+                    message : "The inserted passenger or trip doesn't exist in the system!", 
+                    details : error.detail});
+            }
+            else
+            {
+                console.error("Error connecting to the database:", error);
+                res.status(500).json({
+                    success: false,
+                    message: "Database connection failed",
+                });
+            }
+    }
+};
+
+ exports.getMyTrips = async (req, res) => {
+    
+ };

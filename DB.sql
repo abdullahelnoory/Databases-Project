@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.0
--- Dumped by pg_dump version 17.0
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -90,6 +90,18 @@ CREATE TABLE public."Driver" (
 ALTER TABLE public."Driver" OWNER TO postgres;
 
 --
+-- Name: Favourite Trip; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Favourite Trip" (
+    p_id integer NOT NULL,
+    t_id integer NOT NULL
+);
+
+
+ALTER TABLE public."Favourite Trip" OWNER TO postgres;
+
+--
 -- Name: Lost & Found; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -148,6 +160,18 @@ CREATE TABLE public."Passenger" (
 
 
 ALTER TABLE public."Passenger" OWNER TO postgres;
+
+--
+-- Name: Passenger Trip; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Passenger Trip" (
+    p_id integer NOT NULL,
+    t_id integer NOT NULL
+);
+
+
+ALTER TABLE public."Passenger Trip" OWNER TO postgres;
 
 --
 -- Name: Passenger_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -385,6 +409,14 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_s
 
 
 --
+-- Data for Name: Favourite Trip; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Favourite Trip" (p_id, t_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: Lost & Found; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -424,6 +456,14 @@ COPY public."Manager Finance" (m_ssn, date, salary, total_profit) FROM stdin;
 --
 
 COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
+\.
+
+
+--
+-- Data for Name: Passenger Trip; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Passenger Trip" (p_id, t_id) FROM stdin;
 \.
 
 
@@ -523,6 +563,14 @@ ALTER TABLE ONLY public."Car"
 
 
 --
+-- Name: Favourite Trip Favourite Trip_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Favourite Trip"
+    ADD CONSTRAINT "Favourite Trip_pkey" PRIMARY KEY (p_id, t_id);
+
+
+--
 -- Name: Lost & Found Lost & Found_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -536,6 +584,14 @@ ALTER TABLE ONLY public."Lost & Found"
 
 ALTER TABLE ONLY public."Manager Finance"
     ADD CONSTRAINT "Manager Finance_pkey" PRIMARY KEY (m_ssn, date);
+
+
+--
+-- Name: Passenger Trip Passenger Trip_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Passenger Trip"
+    ADD CONSTRAINT "Passenger Trip_pkey" PRIMARY KEY (p_id, t_id);
 
 
 --
@@ -760,6 +816,38 @@ ALTER TABLE ONLY public."Vacation"
 
 ALTER TABLE ONLY public."Vacation"
     ADD CONSTRAINT "fkey_Vacation_M_SSN" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
+
+
+--
+-- Name: Passenger Trip fkey_p_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Passenger Trip"
+    ADD CONSTRAINT fkey_p_id FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Favourite Trip fkey_p_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Favourite Trip"
+    ADD CONSTRAINT fkey_p_id FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Passenger Trip fkey_t_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Passenger Trip"
+    ADD CONSTRAINT fkey_t_id FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: Favourite Trip fkey_t_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Favourite Trip"
+    ADD CONSTRAINT fkey_t_id FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
