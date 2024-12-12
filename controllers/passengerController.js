@@ -77,10 +77,10 @@ exports.orderPrivateTrip = async (req, res) => {
 };
 
 exports.requestTrip = async (req, res) => {
-    const {p_id, t_id} = req;
+    const {p_id, t_id} = req.body;
     const query1 = 'select number_of_seats from "Car" c,"Driver" d,"Trip" t where c.d_ssn = d.ssn and d.ssn = t.d_ssn and t.trip_id = $1';
     const query2 = 'select count(*) from "Passenger Trip" where t_id = $1';
-    const query3 = 'insert into "Passenger Trip" values($1, $2)';
+    const query3 = 'insert into "Passenger Trip" values($1, $2,false)';
     try
     {
         const result1 = await pool.query(query1, [t_id]);
@@ -117,5 +117,47 @@ exports.requestTrip = async (req, res) => {
 };
 
  exports.getMyTrips = async (req, res) => {
-    
+    const p_id = req.body.p_id;
+    const query = 'select s.station_name as source,d.station_name as destination from "Trip" t,"Passenger Trip" pt,"Station" s, "Station" d where t.trip_id = pt.t_id and s.station_id = t.source_station and d.station_id = t.destination_station and pt.p_id = $1';
+    try
+    {
+        const result = await pool.query(query,[p_id]);
+        res.json({success : true, data : result.rows});
+    } 
+    catch(error)
+    {
+        console.error("Error connecting to the database:", error);
+                res.status(500).json({
+                    success: false,
+                    message: "Database connection failed",
+                });
+    }  
+ };
+
+ exports.setFavouriteTrip = async (req, res) => {
+    const {p_id, t_id, isFavourite} = req.body;
+    const query = 'update "Passenger Trip" set is_favourite = $1 where p_id = $2 and t_id = $3';
+    try
+    {
+        await pool.query(query,[isFavourite,p_id,t_id]);
+        res.json({success : true , Message : "The operation is done successfully!"});
+    }
+    catch(error)
+    {
+        if(error.code == "23503")
+            {
+                res.json({
+                    success : false , 
+                    message : "The passenger or the trip doesn't exist in the system!", 
+                    details : error.detail});
+            }
+            else
+            {
+                console.error("Error connecting to the database:", error);
+                res.status(500).json({
+                    success: false,
+                    message: "Database connection failed",
+                });
+            }
+    }
  };

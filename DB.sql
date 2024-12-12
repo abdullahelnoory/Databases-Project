@@ -90,18 +90,6 @@ CREATE TABLE public."Driver" (
 ALTER TABLE public."Driver" OWNER TO postgres;
 
 --
--- Name: Favourite Trip; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."Favourite Trip" (
-    p_id integer NOT NULL,
-    t_id integer NOT NULL
-);
-
-
-ALTER TABLE public."Favourite Trip" OWNER TO postgres;
-
---
 -- Name: Lost & Found; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -167,7 +155,8 @@ ALTER TABLE public."Passenger" OWNER TO postgres;
 
 CREATE TABLE public."Passenger Trip" (
     p_id integer NOT NULL,
-    t_id integer NOT NULL
+    t_id integer NOT NULL,
+    is_favourite boolean NOT NULL
 );
 
 
@@ -409,14 +398,6 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_s
 
 
 --
--- Data for Name: Favourite Trip; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Favourite Trip" (p_id, t_id) FROM stdin;
-\.
-
-
---
 -- Data for Name: Lost & Found; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -456,6 +437,7 @@ COPY public."Manager Finance" (m_ssn, date, salary, total_profit) FROM stdin;
 --
 
 COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
+3	example123@gmail.com	20	Abdullah	Elnoory	$2b$10$JmwL6oaxFdK4Ljl74RI5ke6LJ2w/qkJcM7FLJrUYF6UBTZbLsK8eW
 \.
 
 
@@ -463,7 +445,8 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 -- Data for Name: Passenger Trip; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Passenger Trip" (p_id, t_id) FROM stdin;
+COPY public."Passenger Trip" (p_id, t_id, is_favourite) FROM stdin;
+3	1	t
 \.
 
 
@@ -522,7 +505,7 @@ COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
 -- Name: Passenger_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Passenger_id_seq"', 2, true);
+SELECT pg_catalog.setval('public."Passenger_id_seq"', 3, true);
 
 
 --
@@ -560,14 +543,6 @@ ALTER TABLE ONLY public."Attendance"
 
 ALTER TABLE ONLY public."Car"
     ADD CONSTRAINT "Car_pkey" PRIMARY KEY (car_license);
-
-
---
--- Name: Favourite Trip Favourite Trip_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Favourite Trip"
-    ADD CONSTRAINT "Favourite Trip_pkey" PRIMARY KEY (p_id, t_id);
 
 
 --
@@ -827,26 +802,10 @@ ALTER TABLE ONLY public."Passenger Trip"
 
 
 --
--- Name: Favourite Trip fkey_p_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Favourite Trip"
-    ADD CONSTRAINT fkey_p_id FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: Passenger Trip fkey_t_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Passenger Trip"
-    ADD CONSTRAINT fkey_t_id FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: Favourite Trip fkey_t_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Favourite Trip"
     ADD CONSTRAINT fkey_t_id FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
