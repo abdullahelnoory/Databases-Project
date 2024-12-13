@@ -69,12 +69,11 @@ exports.createTrip = async (req, res) => {
     const source_station = managerResult.rows[0].station_id;
 
     const result = await pool.query(
-      'INSERT INTO "Trip" ("trip_id", "price", "date", "estimated_time", "d_ssn", "source_station", "destination_station") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', // Added RETURNING * to get the inserted row
+      'INSERT INTO "Trip" ("trip_id", "price", "date", "d_ssn", "source_station", "destination_station") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', // Added RETURNING * to get the inserted row
       [
         trip_id,
         price,
         date,
-        estimated_time,
         d_ssn,
         source_station,
         destination_station,

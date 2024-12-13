@@ -169,6 +169,7 @@ exports.login = async (req, res) => {
         'your_secret_key',
         { expiresIn: '1h' }
       );
+      console.log("Login Successful");
 
       const response = {
         login: true,

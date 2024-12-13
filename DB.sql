@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 17.0
+-- Dumped by pg_dump version 17.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -193,8 +193,8 @@ CREATE TABLE public."Private Trip" (
     source character varying(255) NOT NULL,
     destination character varying(255) NOT NULL,
     price double precision,
-    estimated_time double precision,
-    data character varying(255),
+    estimated_time double precision DEFAULT 1,
+    date character varying(255),
     d_ssn integer,
     p_id integer NOT NULL
 );
@@ -322,8 +322,8 @@ ALTER SEQUENCE public."Trip_trip_id_seq" OWNED BY public."Trip".trip_id;
 CREATE TABLE public."Vacation" (
     m_ssn integer NOT NULL,
     d_ssn integer NOT NULL,
-    date date NOT NULL,
-    status boolean DEFAULT false
+    date timestamp without time zone NOT NULL,
+    status text DEFAULT false
 );
 
 
@@ -367,6 +367,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 12341111	karimfarid2004@gmail.com	Karim	M	Farid	$2b$10$328dB.L3WUmpbKHRpymbMeD2S/BUAwIpi/0xjWTNIIyG1kEAZg4Pu
 112233	asdasdasd@gmail.com	Karim	M	Farid	$2b$10$wMcy.uyaLKlqUishzN/xD.5zHbRfAZm6okGUxojmjWJYvNklKVn56
 123321	abcabc@gmail.com	aaa	bbb	ccc	$2b$10$qrWFBzv.y5ZVBPymGpMEf.rieMMh.SyzrLhPYMo.c3D/aZYT02rRe
+123456789	YousefAdel@gmail.com	Yousef	Adel	A	$2b$10$P75kVjS.nBlLY/g.Nkoe4uXge.U0s0ckdSbo1LqOlVkZ4phhW3GAS
 \.
 
 
@@ -375,6 +376,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 --
 
 COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
+121	2024-12-13	7:53 PM	5:00:00 PM
 \.
 
 
@@ -384,6 +386,8 @@ COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
 
 COPY public."Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) FROM stdin;
 u53jf3g2	13	f	Toyota	15.5	53290520
+1123	123	t	nissan	3	321
+test4test4	123	t	nissan	33	121
 \.
 
 
@@ -392,8 +396,10 @@ u53jf3g2	13	f	Toyota	15.5	53290520
 --
 
 COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, shift, salary, s_id, is_available) FROM stdin;
-253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	f	\N	\N	\N	\N	t
-53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	f	\N	\N	\N	\N	t
+253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	t	\N	\N	\N	\N	t
+121	aref@gmail.com	Karim	M	Farid	$2b$10$pIP6QZKK/bYlxuUsO21n0eM2V4J.UAZo1L8.kzIR7054uFCjpwzoy	t	\N	\N	\N	\N	t
+321	qwerasdf@gmail.com	Karim	M	Farid	$2b$10$Eai9dYoFAxHxwxcJLKUfZeGzBFORKO5Qwul.rBnjpFJBHtcrDBjH.	t	123	123131312	12313131	5	t
+53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	t	123	123	123	5	t
 \.
 
 
@@ -402,6 +408,8 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_s
 --
 
 COPY public."Lost & Found" (t_id, item, quantity) FROM stdin;
+123	asd	1
+123	Phone	1
 \.
 
 
@@ -413,7 +421,6 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 1	karim@gmail.com	karim\n	z	farid	12341234	\N
 2	farid@gmail.com	farid	z	ahem	12341234	\N
 3257932	example412@gmail.com	fulan	ellan	elfulany	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	12341234
-123	asd@gmail.com	asd	aasd	asd	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	\N
 111112222	asdasd@gmail.com	Karim	M	Farid	$2b$10$BfK/NKqgxvx/m4OvrxLamemuj6ibVyB8lwltAwfOG8gK9lWofjMzG	\N
 66996699	asdasdasdasd@gmail.com	asd	asd	asd	$2b$10$7udhqx5EHeqRtmbxdqwvLuAMlimMR3tKRJLx6V63KlMb6/qfw3yHG	\N
 123123	asdasd231sd@gmail.com	asd	asd	asd	$2b$10$AqUiyquTpDHFlbI2GrUSNOROlKyOnmZJhahva0DZEQ1m/DLu1B3v2	\N
@@ -421,6 +428,7 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 4332	asa@gmail.com	asd	asd	asd	$2b$10$QvyeCHkp/Rc2uq3sQCSI3.a2ExevvfAk6LfAsfo6k9VXlmT2qeNZS	\N
 12221222	karim1234@gmail.com	Karim	Farid	Zakzouk	$2b$10$T.Edi3soo3rmvtnMyIhGBOJ5h33cOAxAPEsmAaXxivmA/OVgde.Yq	\N
 11113333	aaa@gmail.com	aaa	aaa	aaa	$2b$10$aoKhO48RbnqXqFRSvpd3oOGRwONsBwf2Ohdp5BsMkMaTAuXHFASIK	\N
+123	asd@gmail.com	asd	aasd	asd	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	123321
 \.
 
 
@@ -446,7 +454,6 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 --
 
 COPY public."Passenger Trip" (p_id, t_id, is_favourite) FROM stdin;
-3	1	t
 \.
 
 
@@ -454,7 +461,8 @@ COPY public."Passenger Trip" (p_id, t_id, is_favourite) FROM stdin;
 -- Data for Name: Private Trip; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Private Trip" (order_id, source, destination, price, estimated_time, data, d_ssn, p_id) FROM stdin;
+COPY public."Private Trip" (order_id, source, destination, price, estimated_time, date, d_ssn, p_id) FROM stdin;
+1	asdad	asdasda	1231	1	asdasdasdasdad	121	3
 \.
 
 
@@ -471,10 +479,8 @@ COPY public."Review" (p_id, t_id, rate, comment) FROM stdin;
 --
 
 COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn) FROM stdin;
-1	asd	asd	1234	asd	1231223
-3	6 october	giza	1234	1234	12221222
-4	aaa	aaa	aaa	aaa	11113333
-2	123	123	123	123	123
+5	asd	asd	asd	asd	123
+1	asdsadas	dsadsa	dsadsa	dsadasd	1
 \.
 
 
@@ -483,13 +489,9 @@ COPY public."Station" (station_id, station_name, street, zipcode, governorate, m
 --
 
 COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station) FROM stdin;
-2	12313	2024-12-08T17:15:56.426Z	\N	\N	4	2
-4	21313	2024-12-08T17:38:39.331Z	\N	253850923	2	3
-1	123123	2024-12-08T15:15:32.792Z	3	253850923	2	4
-6	21313	2024-12-08T17:38:39.626Z	\N	53290520	2	4
-5	21313	2024-12-08T17:38:39.474Z	\N	53290520	2	4
-3	21313	2024-12-08T17:38:37.511Z	\N	253850923	2	4
-7	213213	2024-12-08T18:55:45.588Z	\N	\N	2	3
+123	12313	2024-12-13T19:25:03.666Z	1	121	5	1
+2	123131	2024-12-13T19:29:14.082Z	1	121	5	1
+3	123132123	2024-12-13T20:09:40.233Z	1	121	5	1
 \.
 
 
@@ -498,6 +500,14 @@ COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station,
 --
 
 COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
+1	121	2024-12-19 00:00:00	false
+1	121	2024-12-20 00:00:00	false
+1	121	2024-12-31 00:00:00	false
+1	121	2025-01-02 00:00:00	false
+1	121	2025-01-01 00:00:00	false
+1	121	2024-12-26 00:00:00	false
+1	121	2024-12-25 00:00:00	false
+1	121	2051-06-16 00:00:00	false
 \.
 
 
@@ -519,7 +529,7 @@ SELECT pg_catalog.setval('public."Private Trip_order_id_seq"', 3, true);
 -- Name: Station_station_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Station_station_id_seq"', 4, true);
+SELECT pg_catalog.setval('public."Station_station_id_seq"', 5, true);
 
 
 --

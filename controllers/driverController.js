@@ -1,3 +1,4 @@
+const { response } = require("express");
 const pool = require("../models/db");
 
 exports.setEstimatedTime = async (req, res) => {
@@ -29,6 +30,24 @@ exports.setEstimatedTime = async (req, res) => {
   }
 };
 
+exports.getPrivateTrips = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM "Private Trip" WHERE "d_ssn" is NULL',
+    );
+    console.log(result.rows);
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching private trips:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
 exports.requestTripChange = async (req, res) => {
   const { trip_id, reason, d_ssn } = req.body;
 
@@ -52,13 +71,66 @@ exports.requestTripChange = async (req, res) => {
   }
 };
 
-exports.markAttendance = async (req, res) => {
-  const { d_ssn} = req.body;
-  
+exports.getTrips = async (req, res) => {
+  const { d_ssn } = req.body;
+  console.log(req.body);
   try {
     const result = await pool.query(
-      'INSERT INTO "Attendance" ("driver_ssn", "shift_date", "status") VALUES ($1, $2, $3) RETURNING *',
-      [d_ssn, shift_date, status]
+      'SELECT * FROM "Trip" WHERE "d_ssn" = $1',
+      [d_ssn]
+    );
+
+    console.log(result.rows);
+
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+
+exports.markAttendance = async (req, res) => {
+  const { d_ssn } = req.body;
+
+  try {
+    function formatTimeToAMPM(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
+    const currentDate = new Date().toISOString().split('T')[0];
+
+    const checkAttendance = await pool.query(
+      'SELECT * FROM "Attendance" WHERE "d_ssn" = $1 AND "date" = $2',
+      [d_ssn, currentDate]
+    );
+
+    if (checkAttendance.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Attendance has already been marked for today.",
+      });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO "Attendance" ("d_ssn", "date", "arrival_time", "leave_time") VALUES ($1, $2, $3, $4) RETURNING *',
+      [
+        d_ssn,
+        currentDate,
+        formatTimeToAMPM(new Date()),
+        '5:00:00 PM'
+      ]
     );
 
     res.json({
@@ -75,14 +147,40 @@ exports.markAttendance = async (req, res) => {
   }
 };
 
+exports.getAttendance = async (req, res) => {
+  const { d_ssn } = req.body;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM "Attendance" WHERE "d_ssn" = $1',
+      [d_ssn]
+    );
+    if (result.rows.length > 0) {
+      res.json({
+        attend: false
+      });
+    } else {
+      res.json({
+        attend: true
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({
+      success: true,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+
 exports.acceptRejectPrivateTrip = async (req, res) => {
-  const { trip_id, d_ssn, accept } = req.body;
+  const { order_id, d_ssn, Accept } = req.body;
+  console.log(req.body);
 
   try {
-    if (accept) {
+    if (Accept) {
       const result = await pool.query(
-        'UPDATE "Private Trip" SET "driver_ssn" = $1 WHERE "trip_id" = $2 RETURNING *',
-        [d_ssn, trip_id]
+        'UPDATE "Private Trip" SET "d_ssn" = $1 WHERE "order_id" = $2 RETURNING *',
+        [d_ssn, order_id]
       );
       res.json({
         success: true,
@@ -91,8 +189,8 @@ exports.acceptRejectPrivateTrip = async (req, res) => {
       });
     } else {
       const result = await pool.query(
-        'UPDATE "Private Trip" SET "driver_ssn" = NULL WHERE "trip_id" = $2 RETURNING *',
-        [trip_id]
+        'UPDATE "Private Trip" SET "d_ssn" = NULL WHERE "order_id" = $1 RETURNING *',
+        [order_id]
       );
       res.json({
         success: true,
@@ -109,13 +207,55 @@ exports.acceptRejectPrivateTrip = async (req, res) => {
   }
 };
 
-exports.requestDayOff = async (req, res) => {
-  const { d_ssn, date, reason } = req.body;
-
+exports.getPrivateStatus = async (req, res) => {
+  const { d_ssn } = req.body;
   try {
     const result = await pool.query(
-      'INSERT INTO "Day Off Request" ("driver_ssn", "date", "reason") VALUES ($1, $2, $3) RETURNING *',
-      [d_ssn, date, reason]
+      'SELECT "is_private" FROM "Driver" WHERE "ssn" = $1',
+      [d_ssn]
+    );
+
+    if (result.rows.length > 0) {
+      const isPrivate = result.rows[0].is_private;
+
+      res.json({
+        isPrivate: isPrivate, 
+      });
+    } else {
+      res.json({
+        isPrivate: false,
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching private trip status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+
+exports.requestDayOff = async (req, res) => {
+  console.log(req);
+  const { d_ssn, date } = req.body;
+
+  try {
+    const existingRequest = await pool.query(
+      'SELECT * FROM "Vacation" WHERE "d_ssn" = $1 AND "date" = $2',
+      [d_ssn, date]
+    );
+
+    if (existingRequest.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "A day-off request for this date has already been submitted.",
+      });
+    }
+
+    const result = await pool.query(
+      'INSERT INTO "Vacation" ("m_ssn", "d_ssn", "date", "status") VALUES ($1, $2, $3, $4) RETURNING *',
+      [1, d_ssn, date, false]
     );
 
     res.json({
@@ -132,13 +272,34 @@ exports.requestDayOff = async (req, res) => {
   }
 };
 
+exports.getDayOffRequests = async (req, res) => {
+  const { d_ssn } = req.body;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM "Vacation" WHERE "d_ssn" = $1',
+      [d_ssn]
+    );
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching day off requests:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
 exports.reportLostItem = async (req, res) => {
-  const { d_ssn, trip_id, item_description } = req.body;
+  const { trip_id, item, quantity, item_description } = req.body;
+  console.log(req.body);
 
   try {
     const result = await pool.query(
-      'INSERT INTO "Lost and Found" ("driver_ssn", "trip_id", "item_description") VALUES ($1, $2, $3) RETURNING *',
-      [d_ssn, trip_id, item_description]
+      'INSERT INTO "Lost & Found" ("t_id", "item", "quantity") VALUES ($1, $2, $3) RETURNING *',
+      [trip_id, item, quantity]
     );
 
     res.json({
@@ -156,14 +317,15 @@ exports.reportLostItem = async (req, res) => {
 };
 
 exports.resignDriver = async (req, res) => {
-  const { d_ssn, resignation_reason, effective_date } = req.body;
+  const { d_ssn, reason } = req.body;
+  console.log(req.body);
 
   try {
     const result = await pool.query(
-      'UPDATE "Driver" SET "status" = $1, "resignation_reason" = $2, "resignation_date" = $3 WHERE "ssn" = $4 RETURNING *',
-      ['resigned', resignation_reason, effective_date, d_ssn]
+      'UPDATE "Driver" SET "m_ssn" = null, "shift" = null, "salary" = null, "s_id" = null WHERE "ssn" = $1 RETURNING *',
+      [d_ssn]
     );
-
+    console.log(result.rows[0]);
     res.json({
       success: true,
       message: "Driver resignation processed successfully.",
