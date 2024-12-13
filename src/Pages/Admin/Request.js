@@ -1,14 +1,14 @@
-import Mreq from './Components/requestsgrid.js';
+import Areq from '../Admin/Components/Reqestsgrid.js';
 import Nav1 from './Components/navbar';
 
-export default function MreqList() {
+export default function AdminRequests() {
   return (
     <div>
       <header>
         <Nav1 /> 
       </header>
       <h1 style={{ margin: "1%" , textAlign: "center"}}>Requests</h1> 
-      <Mreq />
+      <Areq />
     </div>
   );
 }

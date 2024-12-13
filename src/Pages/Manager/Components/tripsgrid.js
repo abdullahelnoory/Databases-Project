@@ -332,7 +332,6 @@ export default function Tripslist() {
               justifyContent: "space-between",
               listStyle: "none",
               padding: 0,
-              margin: 0,
             }}
           >
             <li style={{ width: "23%" }}>
@@ -345,19 +344,19 @@ export default function Tripslist() {
               </button>
             </li>
 
-            <li style={{ width: "23%", display: "flex", flexDirection: "column"}}>
+            <li style={{ width: "23%", display: "flex", flexDirection: "column" }}>
               <button
                 id="set-price-btn"
                 className="button"
                 onClick={updatePrice}
                 style={{
-                  width: "100%", // Make the button take up full width
-                  boxSizing: "border-box", // Ensure padding is included in the width
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               >
                 Update Price
               </button>
-              <div className="input-container" id="update-input" style={{ width: "100%"}}>
+              <div className="input-container" id="update-input" style={{ width: "100%" }}>
                 <input
                   type="number"
                   value={newPrice}
@@ -366,14 +365,9 @@ export default function Tripslist() {
                   min="0"
                   step="0.1"
                   style={{
-                    width: "100%", // Make the input field match the button's width
-                    padding: "10px",
-                    boxSizing: "border-box", // Ensure consistent width
-                    fontSize: "16px",
-                    border: "1px solid #ccc",
-                    borderRadius: "5px",
-                    margin: "auto",
-                    marginTop: "0px",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    marginTop: "0",
                   }}
                 />
               </div>
@@ -391,6 +385,9 @@ export default function Tripslist() {
                 id="styled-combobox"
                 value={newDest}
                 onChange={handleDestChange}
+                style={{
+                  marginLeft: "10px",
+                }}
               >
                 <option value="">-- Select Destination --</option>
                 {destinationStations.map((station) => (
@@ -413,6 +410,9 @@ export default function Tripslist() {
                 id="styled-combobox"
                 value={newdriver}
                 onChange={handleDriverChange}
+                style={{
+                  marginLeft: "10px",
+                }}
               >
                 <option value="">-- Select Driver --</option>
                 {DriverStation.map((driver) => (

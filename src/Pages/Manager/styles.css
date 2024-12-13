@@ -30,7 +30,9 @@ header {
     color: #333;
     margin-top: 20px;
 }
-
+.margin-right{
+    margin-right: 10px;
+}
 /* Add Trip Form Container */
 #Addtrip {
     margin: auto;
@@ -85,6 +87,7 @@ header {
 /* Dropdown Styling */
 #styled-combobox {
     background-color: #ffffff;
+    margin: 0;
 }
 
 /* Error and Success Messages */

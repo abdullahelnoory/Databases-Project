@@ -38,7 +38,7 @@ export default function Stationgrid() {
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
-        setErrorMessage('Failed to fetch stations data.'); 
+        setErrorMessage('Failed to fetch stations data.');
       });
   }, []);
 
@@ -46,22 +46,23 @@ export default function Stationgrid() {
     const selectedStationIds = Rows.filter((row) => selectedRowIds.includes(row.id)).map(
       (row) => row.Stationid
     );
-  
+
     if (selectedStationIds.length === 0) {
       setErrorMessage('No stations selected for deletion.');
+      setSuccessMessage(''); // Clear success message when there's an error
       return;
     }
-  
+
     const userConfirmed = window.confirm(
       `Are you sure you want to delete the selected station(s)? This action cannot be undone.`
     );
-  
+
     if (!userConfirmed) {
       return;
     }
-  
+
     const dataToSend = { stationIds: selectedStationIds };
-  
+
     try {
       const response = await fetch('http://localhost:6969/admin/removeStation', {
         method: 'POST',
@@ -70,18 +71,21 @@ export default function Stationgrid() {
         },
         body: JSON.stringify(dataToSend),
       });
-  
+
       const result = await response.json();
       if (response.ok) {
         setSuccessMessage('Station(s) deleted successfully!');
+        setErrorMessage('');
         setRow((prevRows) => prevRows.filter((row) => !selectedStationIds.includes(row.Stationid)));
         setSelectedRowIds([]);
       } else {
         setErrorMessage(result.message || 'Failed to delete station(s).');
+        setSuccessMessage(''); 
       }
     } catch (error) {
       console.error('Error sending data:', error);
       setErrorMessage('Failed to delete station.');
+      setSuccessMessage('');
     }
   };
   return (

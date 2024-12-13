@@ -6,9 +6,8 @@ export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState(''); // Track message type
+  const [messageType, setMessageType] = useState(''); 
 
-  // Get the ssn from sessionStorage
   const userssn = sessionStorage.getItem('ssn');
 
   const handleSubmit = async (e) => {
@@ -33,7 +32,7 @@ export default function ChangePassword() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ssn: userssn, // Add ssn to the request body
+          ssn: userssn,
           currentPassword: oldPassword,
           newPassword,
         }),
@@ -96,7 +95,7 @@ export default function ChangePassword() {
           Change Password
         </button>
       </form>
-      {message && <p className={`message ${messageType}`}>{message}</p>} {/* Apply dynamic class */}
+      {message && <p className={`message ${messageType}`}>{message}</p>}
     </div>
   );
 }
