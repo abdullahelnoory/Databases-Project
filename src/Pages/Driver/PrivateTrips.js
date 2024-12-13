@@ -4,34 +4,38 @@ import axios from "axios";
 import Header from "./Header";
 import DataTable, { createTheme } from "react-data-table-component";
 function PrivateTrips() {
+  const userssn = sessionStorage.getItem('ssn');
+
   let tripData = {
     Accept: false, // mean accept and start if false mean reject if true means accept and start
-    Time: 1,
-    id: 0,
-    Price: 0,
+    estimated_time: 1,
+    order_id: 0,
+    price: 0,
+    d_ssn: userssn
+
   };
   const columns = [
     {
       name: "ID",
-      selector: (row) => row.id,
+      selector: (row) => row.order_id,
       sortable: true,
     },
     {
       name: "Source",
-      selector: (row) => row.Source,
+      selector: (row) => row.source,
     },
     {
       name: "Destination",
-      selector: (row) => row.Destination,
+      selector: (row) => row.destination,
     },
     {
       name: "Price",
-      selector: (row) => row.Price,
+      selector: (row) => row.price,
     },
 
     {
       name: "Date",
-      selector: (row) => row.Date,
+      selector: (row) => row.date.slice(0, 10),
     },
 
     {
@@ -84,7 +88,7 @@ function PrivateTrips() {
       minWidth: "150px",
       cell: (row) => (
         <input
-          value={row.Time}
+          value={row.estimated_time}
           // value={tripState.Time}
           onChange={(event) => HandleTime(event, row)}
           //   setTripState({ ...tripState, Time: event.target.value })
@@ -105,9 +109,16 @@ function PrivateTrips() {
 
   let [recievedData, setRecievedData] = useState([]);
 
+
   function HandleTime(event, Row) {
     const filteredData = recievedData.map((row) => {
-      if (row.id === Row.id) row.Time = event.target.value;
+      if (row.order_id === Row.order_id)
+        if (+event.target.value > 24)
+          row.estimated_time = "24";
+        else if (+event.target.value < 0)
+          row.estimated_time = "1";
+        else
+          row.estimated_time = event.target.value;
       return row;
     });
 
@@ -115,14 +126,23 @@ function PrivateTrips() {
     setRecievedData(filteredData);
   }
 
+
+
+
+
+
+
+
+
+
   function HandleAccept(Row, event) {
     console.log(event);
-    const filteredData = recievedData.filter((row) => row.id !== Row.id); // Filter out the row by id
+    const filteredData = recievedData.filter((row) => row.order_id !== Row.order_id); // Filter out the row by id
     // send data to back
     tripData.Accept = true;
-    tripData.Time = Row.Time;
-    tripData.id = Row.id;
-    tripData.Price = Row.Price;
+    tripData.estimated_time = Row.estimated_time;
+    tripData.order_id = Row.order_id;
+    tripData.price = Row.price;
 
     handleTrip(tripData);
     setRecievedData(filteredData); // Update state to remove the deleted row
@@ -132,16 +152,16 @@ function PrivateTrips() {
     const filteredData = recievedData.filter((row) => row.id !== Row.id); // Filter out the row by id
     // send data to back
     tripData.Accept = false;
-    tripData.Time = 0;
-    tripData.id = Row.id;
-    tripData.Price = Row.Price;
+    tripData.estimated_time = 0;
+    tripData.order_id = Row.order_id;
+    tripData.price = Row.price;
     handleTrip(tripData);
     setRecievedData(filteredData); // Update state to remove the deleted row
   }
 
   const handleTrip = async (sendData) => {
     try {
-      const result = await fetch("http://localhost:3001/Trips", {
+      const result = await fetch("http://localhost:6969/driver/accept-reject-private-trip", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,22 +175,28 @@ function PrivateTrips() {
     }
   };
 
+
+
   useEffect(() => {
     (async () => {
       try {
-        const result = await axios.get("http://localhost:3000/Trips");
-        //npm install -g json-server
-        //& "C:\Users\Jo\AppData\Roaming\npm\json-server.cmd" db.json& "C:\Users\Jo\AppData\Roaming\npm\json-server.cmd" db.json
-
-        // console.log(result.data);
-        // const jsonResult = await result.json;
-        setRecievedData(result.data);
-        console.log(recievedData);
+        const result = await fetch("http://localhost:6969/driver/get-private-trips", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ d_ssn: userssn }),
+        });
+        const resultInjson = await result.json();
+        setRecievedData(resultInjson.data);
+        console.log(resultInjson.data);
       } catch (error) {
         console.error(error);
       }
     })();
   }, []);
+
+
   // createTheme creates a new theme named solarized that overrides the build in dark theme
   createTheme(
     "solarized",

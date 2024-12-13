@@ -5,6 +5,9 @@ import imgnonotifi from "./Nonotification.png";
 import Popup from "reactjs-popup";
 import { Link, NavLink } from "react-router-dom";
 // import Dropdown from 'react-bootstrap/Dropdown';
+
+const userssn = sessionStorage.getItem('ssn');
+
 export default function Trips({ flagNotifiaction }) {
   let [popState, setPopState] = useState({
     openPop: false,
@@ -18,6 +21,37 @@ export default function Trips({ flagNotifiaction }) {
     setPopState({ ...popState, Seen: true, openPop: false });
   }
   // const [PopupOpen, setPopupOpen] = useState(false);
+
+  let [privateDriver, setPrivateDriver] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await fetch("http://localhost:6969/driver/get-private-status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ d_ssn: userssn }),
+        });
+        const resultInjson = await result.json();
+        setPrivateDriver(resultInjson.isPrivate);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, []);
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <>
@@ -47,18 +81,19 @@ export default function Trips({ flagNotifiaction }) {
       >
         {/* {popState.openPop ? ( */}
         <div className="containerr">
-          <Link to="/Trips" className="items" onClick={() => OpenTrips()}>
+          <Link to="/Driver/Trips" className="items" onClick={() => OpenTrips()}>
             {" "}
             Trips
           </Link>
-          <Link
-            to="/PrivateTrips"
+          {privateDriver ? <Link
+            to="/Driver/PrivateTrips"
             className="item2"
             onClick={() => OpenPrivateTrips()}
           >
             {" "}
             Private{" "}
-          </Link>
+          </Link> : null}
+
         </div>
         {/* ) : null} */}
       </Popup>
@@ -83,7 +118,7 @@ export default function Trips({ flagNotifiaction }) {
 
 
 
-      
+
     </>
   );
 }

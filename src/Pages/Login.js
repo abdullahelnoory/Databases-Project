@@ -49,9 +49,9 @@ export default function Login() {
         } else if (result.type === 'Manager') {
           navigate('/manager');
         } else if (result.type === 'Driver') {
-          navigate('/driver');
+          navigate('/Driver');
         } else if (result.type === 'Passenger') {
-          navigate('/passenger');
+          navigate('/Passenger');
         }
       } else {
         setError(result.message || 'Login failed. Please check your email and password.');
@@ -75,6 +75,8 @@ export default function Login() {
             type="text"
             onChange={(event) => setFormInput({ ...formInput, email: event.target.value })}
             required
+            style={{ boxSizing: 'border-box' }}
+
           />
         </div>
         <div id="input-container">
@@ -84,6 +86,7 @@ export default function Login() {
             type="password"
             onChange={(event) => setFormInput({ ...formInput, password: event.target.value })}
             required
+            style={{ boxSizing: 'border-box' }}
           />
         </div>
 

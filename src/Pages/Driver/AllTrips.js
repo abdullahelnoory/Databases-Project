@@ -5,35 +5,38 @@ import Header from "./Header";
 import DataTable, { createTheme } from "react-data-table-component";
 function AllTrips() {
   // let [reqState, setReqState] = useState(false);
-
+  const userssn = sessionStorage.getItem('ssn');
 
   let tripData = {
     Accept: false, // mean accept and start if false mean reject if true means accept and start
-    Time: 1,
-    id: 0,
+    estimated_time: 1,
+    trip_id: 0,
+    d_ssn: userssn
   };
+
+
   const columns = [
     {
       name: "ID",
-      selector: (row) => row.id,
+      selector: (row) => row.trip_id,
       sortable: true,
     },
     {
       name: "Source",
-      selector: (row) => row.Source,
+      selector: (row) => row.source_station,
     },
     {
       name: "Destination",
-      selector: (row) => row.Destination,
+      selector: (row) => row.destination_station,
     },
     {
       name: "Price",
-      selector: (row) => row.Price,
+      selector: (row) => row.price,
       maxWidth: "100px",
     },
     {
       name: "Date",
-      selector: (row) => row.Date,
+      selector: (row) => row.date.slice(0, 10),
     },
 
     // {
@@ -109,7 +112,7 @@ function AllTrips() {
       minWidth: "150px",
       cell: (row) => (
         <input
-          value={row.Time}
+          value={row.estimated_time}
           // value={tripState.Time}
           onChange={(event) => HandleTime(event, row)}
           //   setTripState({ ...tripState, Time: event.target.value })
@@ -225,7 +228,13 @@ function AllTrips() {
 
   function HandleTime(event, Row) {
     const filteredData = recievedData.map((row) => {
-      if (row.id === Row.id) row.Time = event.target.value;
+      if (row.trip_id === Row.trip_id)
+        if (+event.target.value > 24)
+          row.estimated_time = "24";
+        else if (+event.target.value < 0)
+          row.estimated_time = "1";
+        else
+          row.estimated_time = event.target.value;
       return row;
     });
 
@@ -238,8 +247,8 @@ function AllTrips() {
     const filteredData = recievedData.filter((row) => row.id !== Row.id); // Filter out the row by id
     // send data to back
     tripData.Accept = true;
-    tripData.Time = Row.Time;
-    tripData.id = Row.id;
+    tripData.estimated_time = Row.estimated_time;
+    tripData.trip_id = Row.trip_id;
     handleTrip(tripData);
     setRecievedData(filteredData); // Update state to remove the deleted row
   }
@@ -248,15 +257,15 @@ function AllTrips() {
     const filteredData = recievedData.filter((row) => row.id !== Row.id); // Filter out the row by id
     // send data to back
     tripData.Accept = false;
-    tripData.Time = 0;
-    tripData.id = Row.id;
+    tripData.estimated_time = 0;
+    tripData.trip_id = Row.trip_id;
     handleTrip(tripData);
     setRecievedData(filteredData); // Update state to remove the deleted row
   }
 
   const handleTrip = async (sendData) => {
     try {
-      const result = await fetch("http://localhost:3001/Trips", {
+      const result = await fetch("http://localhost:6969/driver/request-trip-change", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -270,28 +279,35 @@ function AllTrips() {
     }
   };
 
+
+
   useEffect(() => {
     (async () => {
       try {
-        const result = await axios.get("http://localhost:3000/Trips");
-        //npm install -g json-server
-        //& "C:\Users\Jo\AppData\Roaming\npm\json-server.cmd" db.json& "C:\Users\Jo\AppData\Roaming\npm\json-server.cmd" db.json
-
-        // console.log(result.data);
-        // const jsonResult = await result.json;
-        setRecievedData(result.data);
-        console.log(recievedData);
+        const result = await fetch("http://localhost:6969/driver/get-trips", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ d_ssn: userssn }),
+        });
+        const resultInjson = await result.json();
+        setRecievedData(resultInjson.data);
       } catch (error) {
         console.error(error);
       }
     })();
   }, []);
 
+
+
+
+
   // const HandleLost = async () => {
   //   setReqState(true);
   // };
 
- 
+
 
   // createTheme creates a new theme named solarized that overrides the build in dark theme
   createTheme(
@@ -345,8 +361,8 @@ function AllTrips() {
           // selectableRows
           fixedHeader
           pagination
-          //   expandableRows
-          //   expandableRowsComponent={ExpandedComponent}
+        //   expandableRows
+        //   expandableRowsComponent={ExpandedComponent}
         />
       </div>
     </div>

@@ -219,7 +219,7 @@ export default function Griddriv() {
             <button
               id="add-driver-btn"
               className="button"
-              onClick={() => navigate.push('/manager/drivers/add')}
+              onClick={() => navigate('/manager/drivers/add')}
             >
               Add Driver
             </button>

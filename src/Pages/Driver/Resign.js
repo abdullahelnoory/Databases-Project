@@ -6,10 +6,11 @@ export default function Resigon() {
   let [reasonState, setReasonState] = useState("");
   const [PopupOpen, setPopupOpen] = useState(false);
   const handleSubmit = async () => {
-    const sendState = { SSN: 21, Reason: reasonState };
-    // send reason
+    const userssn = sessionStorage.getItem('ssn');
+    const sendState = { d_ssn: userssn, Reason: reasonState };
+    // send reason  
     try {
-      const result = await fetch("http://localhost:3001/Trips", {
+      const result = await fetch("http://localhost:6969/driver/resign", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,14 +23,14 @@ export default function Resigon() {
       console.error("Error adding user:", error);
     }
     setReasonState("");
+    //setPopupOpen(false);   check
   };
-
   return (
     <div>
       {/* <h4> Resign </h4> */}
       <Popup
         contentStyle={{ border: "0", background: "none" }}
-        trigger={<button className="buttonReq"> Resign </button>}
+        trigger={<button className="buttonReq" onClick={()=>setPopupOpen(!PopupOpen)}> Resign </button>}
         position="bottom center"
         open={PopupOpen}
         onClose={() => {
@@ -54,12 +55,13 @@ export default function Resigon() {
               height: "60%",
               padding: "5px",
               backgroundColor: "#ecf0f1",
-              outlineColor:"#1abc9c"
+              outlineColor: "#1abc9c"
             }}
+            required
           ></textarea>
           <button
             className="buttonReq"
-            style={{ alignSelf: "center"}}
+            style={{ alignSelf: "center" }}
           >
             {" "}
             Send Request

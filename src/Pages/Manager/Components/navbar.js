@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './styles.css';
+import '../Components/styles.css';
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,7 +40,7 @@ const Navbar = () => {
     sessionStorage.clear();
     window.location.href = '/';
   };
-
+  
   const handleChangePassword = () => {
     window.location.href = '/change-password';
   };

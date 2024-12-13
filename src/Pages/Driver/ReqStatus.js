@@ -6,24 +6,45 @@ import axios from "axios";
 export default function ReqStatus() {
   let [reqState, setReqState] = useState(false);
   let [statusState, setStatusState] = useState([]);
-
+  const userssn = sessionStorage.getItem('ssn');
   function HandleReq(event) {
     //Fetch data
 
-  
-      setReqState(true); // can make problem so make it in one object
-      (async () => {
-        try {
-          const result = await axios.get(
-            "http://localhost:3001/Trips"
-          );
-          console.log(result.data);
-          setStatusState(result.data);
-        } catch (error) {
-          console.error(error);
-        }
-      })();
-    }
+
+    setReqState(true); // can make problem so make it in one object
+    //   (async () => {
+    //     try {
+    //       const result = await axios.get(
+    //         "http://localhost:3001/Trips"
+    //       );
+    //       console.log(result.data);
+    //       setStatusState(result.data);
+    //     } catch (error) {
+    //       console.error(error);
+    //     }
+    //   })();
+    // }
+
+    (async () => {
+      try {
+        const result = await fetch("http://localhost:6969/driver/get-day-off-requests", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ d_ssn: userssn }),
+        });
+        const resultInjson = await result.json();
+        console.log(resultInjson.data);
+        setStatusState(resultInjson.data);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  };
+
+
+
   // useEffect(() => {
   //   setReqState(true); // can make problem so make it in one object
   //   const fetchData = async () => {
@@ -42,9 +63,10 @@ export default function ReqStatus() {
 
   let StatusList = statusState.map(function (status) {
     return (
-      <li key={status.date} className="status">
-        Date:{status.date} status: {status.status}
-      </li>
+      <div key={status.date} className="status">
+        Date:{status.date.slice(0,10)} Status: {status.status}
+      </div>
+
     );
   });
 
@@ -56,8 +78,8 @@ export default function ReqStatus() {
 
       {reqState ? (
         <>
-          <div className="popUpstate">
-            <ul>{StatusList}</ul>
+          <div className="popUpstate" style={{overflowY:"scroll"}}>
+            <div style={{display:"flex",flexDirection:"column"}}>{StatusList}</div>
           </div>
           <div className="formm" onClick={() => setReqState(false)}></div>
         </>

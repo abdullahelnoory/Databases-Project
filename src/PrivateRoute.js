@@ -4,7 +4,6 @@ import { Outlet } from "react-router-dom";
 import AdminNavbar from "./Pages/Admin/Components/navbar";
 import ManagerNavbar from "./Pages/Manager/Components/navbar";
 import DriverNavbar from "./Pages/Driver/NavBar";
-
 const PrivateRoute = ({ element: Component, requiredRole, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [userRole, setUserRole] = useState(null);

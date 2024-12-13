@@ -4,7 +4,7 @@
   box-sizing: content-box;
   font-family: Arial, Helvetica, sans-serif;
 }
-nav {
+.nav_Driver {
   background-color: #2c3e50;
   display: flex;
   justify-content: space-between;
@@ -15,7 +15,7 @@ nav {
   /* max-height: 150px; */
   z-index: 900;
 }
-nav .mainPage {
+.nav_Driver .mainPage {
   text-decoration: none;
   /* display: block; */
   font-size: 1.5rem;
@@ -23,14 +23,15 @@ nav .mainPage {
   margin: 1rem;
   color: #f39c12;
 }
-nav ul {
+.nav_Driver ul {
   display: flex;
 }
-nav ul li {
+.nav_Driver ul li {
   list-style: none;
 }
-nav ul li a,
-nav ul li .req {
+.nav_Driver ul li a,
+.nav_Driver ul li 
+.req {
   text-decoration: none;
   display: block;
   color: #ecf0f1;
@@ -42,7 +43,7 @@ nav ul li .req {
 .active {
   background-color: #e74c3c;
 }
-nav ul li a:not(.active):hover {
+.nav_Driver ul li a:not(.active):hover {
   background-color: #1abc9c;
 }
 .req {

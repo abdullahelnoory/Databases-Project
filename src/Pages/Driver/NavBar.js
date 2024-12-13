@@ -12,12 +12,12 @@ function NavBar() {
   const location = useLocation();
   return (
     <>
-      <nav>
+      <nav className="nav_Driver">
         <Link className="mainPage" to="/">
           Home
         </Link>
         <ul>
-          {location.pathname === "/Trips" ? (
+          {location.pathname === "/Driver/Trips" ? (
             <li>
               <LostItems className="req" />
             </li>
@@ -40,11 +40,11 @@ function NavBar() {
           </li>
           <li>
             {" "}
-            <NavLink to="/Profile">Profile</NavLink>
+            <NavLink to="/Driver/Profile">Profile</NavLink>
           </li>
           <li>
             {" "}
-            <NavLink to="/LogOut">LogOut</NavLink>
+            <NavLink to="/Driver/LogOut">LogOut</NavLink>
           </li>
         </ul>
       </nav>
