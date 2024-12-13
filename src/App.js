@@ -1,5 +1,5 @@
 import './styles.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ManagerHome from './Pages/Manager/Home.js';
 import ManagerTrips from './Pages/Manager/Trips.js';
 import ManagerRequests from './Pages/Manager/Request.js';
@@ -15,39 +15,38 @@ import PrivateRoute from './PrivateRoute';
 import ChangePassword from './Pages/ChangePassword';
 import AdminRequests from './Pages/Admin/Request.js';
 import CreateAdmin from './Pages/Admin/Create_Admin.js';
+import NavBar1 from './Pages/Manager/Components/navbar.js';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Switch>
-          <Route exact path="/">
-            <Login />
+    <div className="App">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+
+          <Route path="/signup" element={<Signup />} />
+
+          <Route element={<PrivateRoute requiredRole="Admin" />}>
+            <Route path="/admin" element={<AdminHome />} />
+            <Route path="/admin/stations/add" element={<AdminAddStation />} />
+            <Route path="/admin/stations" element={<AdminStations />} />
+            <Route path="/admin/requests" element={<AdminRequests />} />
+            <Route path="/admin/create-admin" element={<CreateAdmin />} />
           </Route>
 
-          <Route exact path="/signup">
-            <Signup />
+          <Route element={<PrivateRoute requiredRole="Manager" />}>
+            <Route path="manager" element={<ManagerHome />} />
+            <Route path="manager/drivers/add" element={<ManagerAddDriver />} />
+            <Route path="manager/trips/add" element={<ManagerAddTrip />} />
+            <Route path="manager/drivers" element={<ManagerDrivers />} />
+            <Route path="manager/trips" element={<ManagerTrips />} />
+            <Route path="manager/requests" element={<ManagerRequests />} />
           </Route>
 
-          <PrivateRoute exact path="/admin" component={AdminHome} requiredRole="Admin" />
-          <PrivateRoute exact path="/admin/stations/add" component={AdminAddStation} requiredRole="Admin" />
-          <PrivateRoute exact path="/admin/stations" component={AdminStations} requiredRole="Admin" />
-          <PrivateRoute exact path="/admin/requests" component={AdminRequests} requiredRole="Admin" />
-          <PrivateRoute exact path="/admin/create-admin" component={CreateAdmin} requiredRole="Admin" /> {/* New Route */}
-          
-          <PrivateRoute exact path="/manager" component={ManagerHome} requiredRole="Manager" />
-          <PrivateRoute exact path="/manager/drivers/add" component={ManagerAddDriver} requiredRole="Manager" />
-          <PrivateRoute exact path="/manager/trips/add" component={ManagerAddTrip} requiredRole="Manager" />
-          <PrivateRoute exact path="/manager/drivers" component={ManagerDrivers} requiredRole="Manager" />
-          <PrivateRoute exact path="/manager/trips" component={ManagerTrips} requiredRole="Manager" />
-          <PrivateRoute exact path="/manager/requests" component={ManagerRequests} requiredRole="Manager" />
-
-          <Route exact path="/change-password">
-            <ChangePassword />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+          <Route path="/change-password" element={<ChangePassword />} />
+        </Routes>
+      </Router>
+    </div>
   );
 }
 

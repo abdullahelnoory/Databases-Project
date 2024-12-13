@@ -53,9 +53,6 @@ export default function AddTrip() {
 
   return (
     <div>
-      <header>
-        <NavA />
-      </header>
       <h2 id="site_Title">Add Station</h2>
       <div id="Addtrip">
         <form id="Addtrip_box">

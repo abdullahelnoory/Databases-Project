@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
+import AdminNavbar from './Pages/Admin/Components/navbar';
+import ManagerNavbar from './Pages/Manager/Components/navbar';
 
-const PrivateRoute = ({ component: Component, requiredRole, ...rest }) => {
+const PrivateRoute = ({ element: Component, requiredRole, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const [userRole, setUserRole] = useState(null); 
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     const ssn = sessionStorage.getItem('ssn');
     const userType = sessionStorage.getItem('userType');
 
     if (ssn && userType) {
-      setIsAuthenticated(true); 
+      setIsAuthenticated(true);
       setUserRole(userType);
     } else {
       setIsAuthenticated(false);
@@ -22,14 +25,27 @@ const PrivateRoute = ({ component: Component, requiredRole, ...rest }) => {
   }
 
   if (!isAuthenticated || userRole !== requiredRole) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
+  const renderNavbar = () => {
+    switch (userRole) {
+      case 'Admin':
+        return <AdminNavbar />;
+      case 'Manager':
+        return <ManagerNavbar />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <Route
-      {...rest}
-      render={(props) => <Component {...props} />} 
-    />
+    <div style={{ width: "100%", height: "100%" }}>
+      {renderNavbar()}
+      <main>
+        <Outlet />
+      </main>
+    </div>
   );
 };
 

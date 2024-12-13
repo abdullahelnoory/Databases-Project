@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate  } from 'react-router-dom';
 import '../Styles/Login.css';
 import logo from '../images/SwiftRoute.png';
 
@@ -9,7 +9,7 @@ export default function Login() {
     password: '',
   });
   const [error, setError] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const sendData = async (event) => {
     event.preventDefault();
@@ -45,13 +45,13 @@ export default function Login() {
         console.log('Verified By:', result.verified_by);
 
         if (result.type === 'Admin') {
-          history.push('/admin');
+          navigate('/admin');
         } else if (result.type === 'Manager') {
-          history.push('/manager');
+          navigate('/manager');
         } else if (result.type === 'Driver') {
-          history.push('/driver');
+          navigate('/driver');
         } else if (result.type === 'Passenger') {
-          history.push('/passenger');
+          navigate('/passenger');
         }
       } else {
         setError(result.message || 'Login failed. Please check your email and password.');

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './styles.css';
 
-export default function Navbar() {
+const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(true); // Default to true assuming the manager is verified
+  const [isVerified, setIsVerified] = useState(true);
   const userssn = sessionStorage.getItem('ssn');
-  
+
   useEffect(() => {
     const checkVerification = async () => {
       try {
@@ -14,7 +15,7 @@ export default function Navbar() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ m_ssn: userssn }), 
+          body: JSON.stringify({ m_ssn: userssn }),
         });
 
         const data = await response.json();
@@ -50,51 +51,39 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <a href="/M" className="site-title">
+
+      <Link className="site-title" to="/manager">
         Manager
-      </a>
+      </Link>
       <ul className="nav-links">
         <li>
-          <a
-            href="/manager/drivers"
-            className="nav-btn"
-            onClick={(e) => {
-              if (!isVerified) {
-                e.preventDefault(); // Prevent navigation if not verified
-              }
-            }}
-            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
-          >
+
+          <Link onClick={(e) => {
+            if (!isVerified) {
+              e.preventDefault();
+            }
+          }} className="nav-btn" to="/manager/drivers" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
             Drivers
-          </a>
+          </Link>
+
         </li>
         <li>
-          <a
-            href="/manager/trips"
-            className="nav-btn"
-            onClick={(e) => {
-              if (!isVerified) {
-                e.preventDefault(); // Prevent navigation if not verified
-              }
-            }}
-            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
-          >
+          <Link onClick={(e) => {
+            if (!isVerified) {
+              e.preventDefault();
+            }
+          }} className="nav-btn" to="/manager/trips" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
             Trips
-          </a>
+          </Link>
         </li>
         <li>
-          <a
-            href="/manager/requests"
-            className="nav-btn"
-            onClick={(e) => {
-              if (!isVerified) {
-                e.preventDefault(); // Prevent navigation if not verified
-              }
-            }}
-            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
-          >
+        <Link onClick={(e) => {
+            if (!isVerified) {
+              e.preventDefault();
+            }
+          }} className="nav-btn" to="/manager/requests" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
             Requests
-          </a>
+          </Link>
         </li>
         <li>
           <div className="dropdown-container">
@@ -121,3 +110,4 @@ export default function Navbar() {
     </nav>
   );
 }
+export default Navbar;

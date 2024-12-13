@@ -64,9 +64,6 @@ export default function Adddriver() {
 
   return (
     <div>
-      <header>
-        <Nav2 />
-      </header>
       <h2 id="site_Title">Add Driver</h2>
       <div id="Addtrip">
         <form id="Addtrip_box">

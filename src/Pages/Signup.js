@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import imag from "../images/SwiftRoute.png";
 import "../Styles/Signup.css";
 
 function RegisterPage() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [formInput, setFormInput] = useState({
     fname: "",
@@ -38,9 +38,9 @@ function RegisterPage() {
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      history.push("/");
+      navigate.push("/");
     }
-  }, [history]);
+  }, [navigate]);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;

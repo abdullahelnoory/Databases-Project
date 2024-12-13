@@ -6,7 +6,6 @@ export default function Adminhome() {
 
     return (
         <div>
-            <ANav />
             <h1 id="admin-greeting" className="Mname" style={{ margin: '15px' }}>
                 Hello User {userssn}
             </h1>

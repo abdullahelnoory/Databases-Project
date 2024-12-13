@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Components/navbar.js';
 
 export default function Manager() {
   const [isVerified, setIsVerified] = useState(false); // State to hold verification status
@@ -35,9 +34,6 @@ export default function Manager() {
 
   return (
     <div>
-      <header>
-        <Navbar />
-      </header>
       <h1 id="manager-greeting" className="Mname" style={{ margin: '15px' }}>
         Hello User {userssn}
       </h1>

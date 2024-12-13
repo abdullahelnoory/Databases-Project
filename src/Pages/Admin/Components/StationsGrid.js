@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+import { Link } from 'react-router-dom';
 
 const columns = [
   { field: 'Stationid', headerName: 'ID', width: 90 },
@@ -80,7 +81,7 @@ export default function Stationgrid() {
         setSelectedRowIds([]);
       } else {
         setErrorMessage(result.message || 'Failed to delete station(s).');
-        setSuccessMessage(''); 
+        setSuccessMessage('');
       }
     } catch (error) {
       console.error('Error sending data:', error);
@@ -114,13 +115,9 @@ export default function Stationgrid() {
       <div id="button-container">
         <ul>
           <li className="button-item">
-            <button
-              className="button"
-              id="add-station-btn"
-              onClick={() => (window.location.href = '/admin/stations/add')}
-            >
+            <Link id="add-station-btn" className="button" to="/admin/stations/add">
               Add Station
-            </button>
+            </Link>
           </li>
           <li className="button-item">
             <button className="button" id="delete-btn" onClick={sendDataDeleteStation}>

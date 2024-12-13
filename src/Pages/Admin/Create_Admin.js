@@ -74,9 +74,6 @@ export default function CreateAdmin() {
 
     return (
         <div>
-            <header>
-                <NavA />
-            </header>
             <h2 id="site_Title">Create Admin</h2>
             <div id="CreateAdmin">
                 <form id="CreateAdmin_box">

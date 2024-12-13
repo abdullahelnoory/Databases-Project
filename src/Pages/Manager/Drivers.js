@@ -6,9 +6,6 @@ export default function DriversList() {
 
    return (
       <div >
-         <header>
-            <Nav1 />
-         </header>
          <h1 style={{ margin: "1%" , textAlign: "center"}}>Drivers</h1>
          <DGrid />
 

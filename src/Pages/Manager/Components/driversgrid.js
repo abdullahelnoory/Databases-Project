@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 
 export default function Griddriv() {
@@ -10,7 +10,7 @@ export default function Griddriv() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showWarning, setShowWarning] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   
   const userssn = sessionStorage.getItem('ssn');
 
@@ -219,7 +219,7 @@ export default function Griddriv() {
             <button
               id="add-driver-btn"
               className="button"
-              onClick={() => history.push('/manager/drivers/add')}
+              onClick={() => navigate.push('/manager/drivers/add')}
             >
               Add Driver
             </button>

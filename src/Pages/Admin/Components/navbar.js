@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import "./styles.css";
 
 export default function NavbarA() {
@@ -30,14 +31,14 @@ export default function NavbarA() {
       </a>
       <ul className="nav-links">
         <li>
-          <a href="/admin/stations" className="nav-btn">
+          <Link className="nav-btn" to="/admin/stations">
             Stations
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/admin/requests" className="nav-btn">
+          <Link className="nav-btn" to="/admin/requests">
             Requests
-          </a>
+          </Link>
         </li>
         <li>
           <div className="dropdown-container">

@@ -8,7 +8,7 @@ export default function AddTrip() {
     price: ""
   });
   const userssn = sessionStorage.getItem('ssn');
-  
+
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -35,8 +35,8 @@ export default function AddTrip() {
       console.log('Response from server:', result);
 
       if (result.success) {
-        setSuccessMessage('Trip added successfully!'); 
-        setErrorMessage(''); 
+        setSuccessMessage('Trip added successfully!');
+        setErrorMessage('');
       } else {
         setErrorMessage('Error: Could not add the trip.');
         setSuccessMessage('');
@@ -65,9 +65,6 @@ export default function AddTrip() {
 
   return (
     <div>
-      <header>
-        <Nav1 />
-      </header>
       <h2 id="site_Title">Add Trip</h2>
       <div id="Addtrip">
         <form id="Addtrip_box">
