@@ -44,10 +44,13 @@ function NavBar() {
           </li>
           <li>
             {" "}
-            <NavLink to="/Driver/LogOut">LogOut</NavLink>
+            <NavLink to="/" onClick={() => {
+              localStorage.removeItem('authToken');
+              sessionStorage.clear();
+            }}>LogOut</NavLink>
           </li>
         </ul>
-      </nav>
+      </nav >
     </>
   );
 }
