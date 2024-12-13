@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import AdminNavbar from './Pages/Admin/Components/navbar';
-import ManagerNavbar from './Pages/Manager/Components/navbar';
+import AdminNavbar from "./Pages/Admin/Components/navbar";
+import ManagerNavbar from "./Pages/Manager/Components/navbar";
+import DriverNavbar from "./Pages/Driver/NavBar";
 
 const PrivateRoute = ({ element: Component, requiredRole, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    const ssn = sessionStorage.getItem('ssn');
-    const userType = sessionStorage.getItem('userType');
+    const ssn = sessionStorage.getItem("ssn");
+    const userType = sessionStorage.getItem("userType");
 
     if (ssn && userType) {
       setIsAuthenticated(true);
@@ -30,10 +31,12 @@ const PrivateRoute = ({ element: Component, requiredRole, ...rest }) => {
 
   const renderNavbar = () => {
     switch (userRole) {
-      case 'Admin':
+      case "Admin":
         return <AdminNavbar />;
-      case 'Manager':
+      case "Manager":
         return <ManagerNavbar />;
+      case "Driver":
+        return <DriverNavbar />;
       default:
         return null;
     }

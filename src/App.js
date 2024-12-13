@@ -16,6 +16,20 @@ import ChangePassword from './Pages/ChangePassword';
 import AdminRequests from './Pages/Admin/Request.js';
 import CreateAdmin from './Pages/Admin/Create_Admin.js';
 import NavBar1 from './Pages/Manager/Components/navbar.js';
+// import ReactDOM from "./Pages/Driver/react-dom/client";
+import "./Pages/Driver/index.css";
+// import Driver from "./Pages/Driver/Driver";
+import reportWebVitals from "./reportWebVitals";
+import AllTrips from "./Pages/Driver/AllTrips";
+import PrivateTrips from "./Pages/Driver/PrivateTrips";
+import Home from "./Pages/Driver/Home";
+// import { Navbar } from "./Pages/Driver/react-bootstrap";
+import NavBar from "./Pages/Driver/NavBar";
+
+import Profile from "./Pages/Driver/Components/Profile";
+import LogOut from "./Pages/Driver/Components/LogOut";
+import Layout from "./Pages/Driver/Layout";
+
 
 function App() {
   return (
@@ -42,6 +56,34 @@ function App() {
             <Route path="manager/trips" element={<ManagerTrips />} />
             <Route path="manager/requests" element={<ManagerRequests />} />
           </Route>
+
+
+          <Route element={<PrivateRoute requiredRole="Driver" />}>
+            <Route path="Driver" element={<Home />} />
+            <Route path="Driver/Profile" element={<Profile />} />
+            <Route path="Driver/LogOut" element={<LogOut />} />
+            <Route path="Driver/Trips" element={<AllTrips />} />
+            <Route path="Driver/PrivateTrips" element={<PrivateTrips />} />
+            <Route path="manager/requests" element={<ManagerRequests />} />
+          </Route>
+
+          {/* <Route element={<PrivateRoute requiredRole="Driver" />}>
+            <Route path="Driver" element={<Home />} />
+            <Route path="Driver/Profile" element={<Profile />} />
+            <Route path="Driver/LogOut" element={<LogOut />} />
+            <Route path="Driver/Trips" element={<AllTrips />} />
+            <Route path="Driver/PrivateTrips" element={<PrivateTrips />} />
+            <Route path="manager/requests" element={<ManagerRequests />} />
+          </Route> */}
+
+
+           {/* <Route path="/" element={<Layout />}>
+           <Route index element={<Home />} />
+         <Route path="Profile" element={<Profile />} />
+           <Route path="LogOut" element={<LogOut />} />
+          <Route path="Trips" element={<AllTrips />} />
+           <Route path="PrivateTrips" element={<PrivateTrips />} /> */}
+
 
           <Route path="/change-password" element={<ChangePassword />} />
         </Routes>
