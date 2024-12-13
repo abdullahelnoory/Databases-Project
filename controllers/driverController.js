@@ -237,7 +237,7 @@ exports.getPrivateStatus = async (req, res) => {
 
 
 exports.requestDayOff = async (req, res) => {
-  console.log(req);
+  console.log(req.body);
   const { d_ssn, date } = req.body;
 
   try {
@@ -279,6 +279,7 @@ exports.getDayOffRequests = async (req, res) => {
       'SELECT * FROM "Vacation" WHERE "d_ssn" = $1',
       [d_ssn]
     );
+    console.log(result.rows);
     res.json({
       success: true,
       data: result.rows,

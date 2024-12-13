@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.0
--- Dumped by pg_dump version 17.0
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,7 +43,7 @@ ALTER TABLE public."Admin" OWNER TO postgres;
 
 CREATE TABLE public."Attendance" (
     d_ssn integer NOT NULL,
-    date date NOT NULL,
+    date character varying NOT NULL,
     arrival_time character varying,
     leave_time character varying
 );
@@ -322,7 +322,7 @@ ALTER SEQUENCE public."Trip_trip_id_seq" OWNED BY public."Trip".trip_id;
 CREATE TABLE public."Vacation" (
     m_ssn integer NOT NULL,
     d_ssn integer NOT NULL,
-    date timestamp without time zone NOT NULL,
+    date character varying NOT NULL,
     status text DEFAULT false
 );
 
@@ -377,6 +377,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 
 COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
 121	2024-12-13	7:53 PM	5:00:00 PM
+321	2024-12-13	11:30 PM	5:00:00 PM
 \.
 
 
@@ -398,8 +399,8 @@ test4test4	123	t	nissan	33	121
 COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, shift, salary, s_id, is_available) FROM stdin;
 253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	t	\N	\N	\N	\N	t
 121	aref@gmail.com	Karim	M	Farid	$2b$10$pIP6QZKK/bYlxuUsO21n0eM2V4J.UAZo1L8.kzIR7054uFCjpwzoy	t	\N	\N	\N	\N	t
-321	qwerasdf@gmail.com	Karim	M	Farid	$2b$10$Eai9dYoFAxHxwxcJLKUfZeGzBFORKO5Qwul.rBnjpFJBHtcrDBjH.	t	123	123131312	12313131	5	t
 53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	t	123	123	123	5	t
+321	qwerasdf@gmail.com	Karim	M	Farid	$2b$10$Eai9dYoFAxHxwxcJLKUfZeGzBFORKO5Qwul.rBnjpFJBHtcrDBjH.	f	123	123131312	12313131	5	t
 \.
 
 
@@ -500,14 +501,7 @@ COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station,
 --
 
 COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
-1	121	2024-12-19 00:00:00	false
-1	121	2024-12-20 00:00:00	false
-1	121	2024-12-31 00:00:00	false
-1	121	2025-01-02 00:00:00	false
-1	121	2025-01-01 00:00:00	false
-1	121	2024-12-26 00:00:00	false
-1	121	2024-12-25 00:00:00	false
-1	121	2051-06-16 00:00:00	false
+1	321	2024-12-18	false
 \.
 
 
