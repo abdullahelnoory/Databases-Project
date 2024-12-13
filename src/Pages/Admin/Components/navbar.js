@@ -53,9 +53,9 @@ export default function NavbarA() {
                   </button>
                 </li>
                 <li>
-                  <a href="/admin/create-admin" className="dropdown-item" id="create-admin-link">
+                  <Link className="dropdown-item" id="create-admin-link" to="/admin/create-admin">
                     Create Admin
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <button onClick={handleLogout} className="dropdown-item">

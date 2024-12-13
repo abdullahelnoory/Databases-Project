@@ -8,7 +8,6 @@ export default function DriversList() {
       <div >
          <h1 style={{ margin: "1%" , textAlign: "center"}}>Drivers</h1>
          <DGrid />
-
       </div>
 
    );

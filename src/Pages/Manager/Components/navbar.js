@@ -77,7 +77,7 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
-        <Link onClick={(e) => {
+          <Link onClick={(e) => {
             if (!isVerified) {
               e.preventDefault();
             }
