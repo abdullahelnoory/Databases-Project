@@ -156,7 +156,8 @@ ALTER TABLE public."Passenger" OWNER TO postgres;
 CREATE TABLE public."Passenger Trip" (
     p_id integer NOT NULL,
     t_id integer NOT NULL,
-    is_favourite boolean NOT NULL
+    is_favourite boolean DEFAULT false NOT NULL,
+    rate integer NOT NULL
 );
 
 
@@ -225,20 +226,6 @@ ALTER SEQUENCE public."Private Trip_order_id_seq" OWNED BY public."Private Trip"
 
 
 --
--- Name: Review; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."Review" (
-    p_id integer NOT NULL,
-    t_id integer NOT NULL,
-    rate double precision NOT NULL,
-    comment character varying
-);
-
-
-ALTER TABLE public."Review" OWNER TO postgres;
-
---
 -- Name: Station; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -248,7 +235,8 @@ CREATE TABLE public."Station" (
     street character varying NOT NULL,
     zipcode character varying NOT NULL,
     governorate character varying NOT NULL,
-    m_ssn integer
+    m_ssn integer,
+    rate integer
 );
 
 
@@ -287,7 +275,8 @@ CREATE TABLE public."Trip" (
     estimated_time double precision DEFAULT 1,
     d_ssn integer,
     source_station integer NOT NULL,
-    destination_station integer NOT NULL
+    destination_station integer NOT NULL,
+    status character varying DEFAULT 'idle'::character varying NOT NULL
 );
 
 
@@ -400,7 +389,7 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_s
 253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	t	\N	\N	\N	\N	t
 121	aref@gmail.com	Karim	M	Farid	$2b$10$pIP6QZKK/bYlxuUsO21n0eM2V4J.UAZo1L8.kzIR7054uFCjpwzoy	t	\N	\N	\N	\N	t
 53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	t	123	123	123	5	t
-321	qwerasdf@gmail.com	Karim	M	Farid	$2b$10$Eai9dYoFAxHxwxcJLKUfZeGzBFORKO5Qwul.rBnjpFJBHtcrDBjH.	f	123	123131312	12313131	5	t
+321	qwerasdf@gmail.com	Karim	M	Farid	$2b$10$Eai9dYoFAxHxwxcJLKUfZeGzBFORKO5Qwul.rBnjpFJBHtcrDBjH.	t	123	123131312	12313131	5	t
 \.
 
 
@@ -454,7 +443,10 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 -- Data for Name: Passenger Trip; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Passenger Trip" (p_id, t_id, is_favourite) FROM stdin;
+COPY public."Passenger Trip" (p_id, t_id, is_favourite, rate) FROM stdin;
+3	2	f	1
+3	123	f	0
+3	3	f	5
 \.
 
 
@@ -464,14 +456,7 @@ COPY public."Passenger Trip" (p_id, t_id, is_favourite) FROM stdin;
 
 COPY public."Private Trip" (order_id, source, destination, price, estimated_time, date, d_ssn, p_id) FROM stdin;
 1	asdad	asdasda	1231	1	asdasdasdasdad	121	3
-\.
-
-
---
--- Data for Name: Review; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Review" (p_id, t_id, rate, comment) FROM stdin;
+17	cairo	giza	100	1	2024-12-18	\N	3
 \.
 
 
@@ -479,9 +464,9 @@ COPY public."Review" (p_id, t_id, rate, comment) FROM stdin;
 -- Data for Name: Station; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn) FROM stdin;
-5	asd	asd	asd	asd	123
-1	asdsadas	dsadsa	dsadsa	dsadasd	1
+COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn, rate) FROM stdin;
+5	asd	asd	asd	asd	123	\N
+1	asdsadas	dsadsa	dsadsa	dsadasd	1	\N
 \.
 
 
@@ -489,10 +474,11 @@ COPY public."Station" (station_id, station_name, street, zipcode, governorate, m
 -- Data for Name: Trip; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station) FROM stdin;
-123	12313	2024-12-13T19:25:03.666Z	1	121	5	1
-2	123131	2024-12-13T19:29:14.082Z	1	121	5	1
-3	123132123	2024-12-13T20:09:40.233Z	1	121	5	1
+COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station, status) FROM stdin;
+123	12313	2024-12-13T19:25:03.666Z	1	121	5	1	accepted
+2	123131	2024-12-13T19:29:14.082Z	1	121	5	1	accepted
+5	1025	2024-12-13T19:29:14.082Z	\N	321	1	5	accepted
+3	123132123	2024-12-13T20:09:40.233Z	1	121	5	1	rejected
 \.
 
 
@@ -502,6 +488,13 @@ COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station,
 
 COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
 1	321	2024-12-18	false
+1	321	2024-12-31	false
+1	321	2024-12-19	false
+1	321	2024-12-23	false
+1	321	2024-12-22	false
+1	321	2024-12-15	false
+1	321	2024-12-16	false
+1	321	2024-12-17	false
 \.
 
 
@@ -516,7 +509,7 @@ SELECT pg_catalog.setval('public."Passenger_id_seq"', 3, true);
 -- Name: Private Trip_order_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Private Trip_order_id_seq"', 3, true);
+SELECT pg_catalog.setval('public."Private Trip_order_id_seq"', 17, true);
 
 
 --
@@ -662,14 +655,6 @@ ALTER TABLE ONLY public."Manager"
 
 
 --
--- Name: Review pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Review"
-    ADD CONSTRAINT pkey PRIMARY KEY (p_id, t_id);
-
-
---
 -- Name: Attendance Attendance_D_SSN_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -723,22 +708,6 @@ ALTER TABLE ONLY public."Private Trip"
 
 ALTER TABLE ONLY public."Private Trip"
     ADD CONSTRAINT "Private Trip_p_id_fkey" FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
-
-
---
--- Name: Review Review_p_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Review"
-    ADD CONSTRAINT "Review_p_id_fkey" FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
-
-
---
--- Name: Review Review_t_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Review"
-    ADD CONSTRAINT "Review_t_id_fkey" FOREIGN KEY (t_id) REFERENCES public."Trip"(trip_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
