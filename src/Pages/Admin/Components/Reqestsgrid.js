@@ -18,8 +18,6 @@ export default function Areq() {
 
   const handleSelectionChange = (newSelectionModel) => {
     setSelectedRowIds(newSelectionModel);
-    setErrorMessage('');
-    setSuccessMessage('');
   };
 
   useEffect(() => {
@@ -40,22 +38,22 @@ export default function Areq() {
 
   const handleAcceptRec = () => {
     if (selectedRowIds.length === 0) {
-      setErrorMessage('Please select a request first!');
-      setSuccessMessage('');
+      
       return;
     }
+  
 
     const selectedRequests = selectedRowIds.map((id) => rows.find((row) => row.ssn === id)); // Use ssn to find the request
 
     selectedRequests.forEach((Request) => {
-      fetch('http://localhost:6969/admin/accept-request', {
+      fetch('http://localhost:6969/admin/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           a_ssn: userssn,
-          request_id: Request.ssn, // Use ssn as the request_id
+           m_ssn: selectedRowIds.ssn // Use ssn as the request_id
         }),
       })
         .then((response) => response.json())
@@ -74,14 +72,14 @@ export default function Areq() {
           setSuccessMessage('');
         });
     });
-  };
-
+  
+  }
   const handleRejectRec = () => {
     if (selectedRowIds.length === 0) {
-      setErrorMessage('Please select a request first!');
-      setSuccessMessage('');
+    
       return;
     }
+  
 
     const selectedRequests = selectedRowIds.map((id) => rows.find((row) => row.ssn === id)); // Use ssn to find the request
 
@@ -112,7 +110,7 @@ export default function Areq() {
           setSuccessMessage('');
         });
     });
-  };
+  }
 
   return (
     <div className="List">
@@ -124,7 +122,7 @@ export default function Areq() {
             pageSize={5}
             checkboxSelection
             getRowId={(row) => row.ssn}
-            onSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)}
+            onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)}
           />
 
         </div>
