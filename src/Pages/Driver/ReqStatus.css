@@ -90,7 +90,7 @@
   border-bottom-right-radius: 4px;
   overflow: hidden;
 
-  
+
   overflow-y: scroll;
 
   /* min-height: 300px;
@@ -151,3 +151,5 @@
 .item-status:nth-child(even) {
   background: rgb(234, 235, 234);
 }
+
+

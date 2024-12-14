@@ -99,3 +99,6 @@
 div#popup-2.popup-content {
   position: sticky;
 }
+/* div#popup-2.popup-content {
+  left: 25.2875px !important;
+} */

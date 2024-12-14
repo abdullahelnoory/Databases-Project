@@ -25,9 +25,12 @@
 }
 .nav_Driver ul {
   display: flex;
+
+
 }
 .nav_Driver ul li {
   list-style: none;
+
 }
 .nav_Driver ul li a,
 .nav_Driver ul li 
@@ -48,4 +51,233 @@
 }
 .req {
   /* max-height: 150px; */
+}
+/* From Uiverse.io by 3bdel3ziz-T */ 
+.card-nav {
+  width: 200px;
+  /* background-color: rgba(36, 40, 50, 1);
+  background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  ); */
+  background-color: rgb(44 62 80);
+  background-image: linear-gradient(139deg, rgb(44 62 80) 0%, rgb(34 46 58) 0%, rgb(44 62 80) 100%);
+
+  -webkit-user-select:none ;
+  user-select: none;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute;
+  top: 100%;
+  right: 0%;
+
+}
+
+.card-nav .list .element label input[type="radio"] {
+  display: none;
+}
+
+.card-nav .separator {
+  border-top: 1.5px solid #42434a;
+}
+
+.card-nav .list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0px;
+}
+
+.card-nav .list .element > label {
+  display: flex;
+  align-items: center;
+  color: #7e8590;
+  gap: 10px;
+  transition: all 0.3s ease-out;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.card-nav .list .element label svg {
+  width: 19px;
+  height: 19px;
+  transition: all 0.3s ease-out;
+}
+
+.card-nav .list .element label:has(input[type="radio"]:checked),
+.card-nav .list .element label:hover {
+  background-color: var(--color);
+  color: var(--hover-color);
+}
+
+.card-nav .list .element label:active {
+  transform: scale(0.96);
+}
+
+.card-nav .list .element label:has(input[type="radio"]:checked) svg,
+.card-nav .list .element label:hover svg {
+  stroke: var(--hover-storke);
+}
+
+
+
+.card-nav .list .element NavLink{
+  text-decoration: none;
+  display: block;
+  color: #ecf0f1;
+  padding: 0.5rem;
+  margin: 1.5rem;
+  border-radius: 0.5rem;
+}
+
+.card-nav .list .element NavLink input[type="radio"] {
+  display: none;
+}
+
+.card-nav .separator {
+  border-top: 1.5px solid #42434a;
+}
+
+.card-nav .list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0px;
+}
+
+.card-nav .list .element > NavLink {
+  display: flex;
+  align-items: center;
+  color: #7e8590;
+  gap: 10px;
+  transition: all 0.3s ease-out;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.card-nav .list .element NavLink svg {
+  width: 19px;
+  height: 19px;
+  transition: all 0.3s ease-out;
+}
+
+.card-nav .list .element NavLink:has(input[type="radio"]:checked),
+.card-nav .list .element NavLink:hover {
+  background-color: var(--color);
+  color: var(--hover-color);
+}
+
+.card-nav .list .element NavLink:active {
+  transform: scale(0.96);
+}
+
+.card-nav .list .element NavLink:has(input[type="radio"]:checked) svg,
+.card-nav .list .element NavLink:hover svg {
+  stroke: var(--hover-storke);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.checkboxtoggler {
+  width: 3em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.7em;
+  cursor: pointer;
+}
+
+.line-1 {
+  /* background: #df6447; */
+  background: #f39c12; 
+  height: 0.3em;
+  border-radius: 10em;
+  -webkit-transition-duration: 500ms;
+          transition-duration: 500ms;
+}
+
+.line-2 {
+  /* background: #df6447; */
+  background: #f39c12;
+  height: 0.3em;
+  border-radius: 10em;
+  -webkit-transition-duration: 500ms;
+          transition-duration: 500ms;
+}
+
+.line-3 {
+  /* background: #df6447; */
+  background: #f39c12;
+  height: 0.3em;
+  border-radius: 10em;
+  -webkit-transition-duration: 500ms;
+          transition-duration: 500ms;
+}
+
+#toggleChecker {
+  height: 3em;
+  width: 100%;
+  display: none;
+}
+
+#toggleChecker:checked + #togglerLable .checkboxtoggler .line-1 {
+  -webkit-transform: rotate(45deg) translateY(0.7em) translateX(0.7em);
+  -ms-transform: rotate(45deg) translateY(0.7em) translateX(0.7em);
+  transform: rotate(45deg) translateY(0.7em) translateX(0.7em);
+}
+
+#toggleChecker:checked + #togglerLable .checkboxtoggler .line-2 {
+  -webkit-transform: rotate(-45deg) translateY(0em) translateX(0.1em);
+  -ms-transform: rotate(-45deg) translateY(0em) translateX(0.1em);
+  transform: rotate(-45deg) translateY(0em) translateX(0.1em);
+}
+
+#toggleChecker:checked + #togglerLable .checkboxtoggler .line-3 {
+  -webkit-transform: scaleX(0);
+      -ms-transform: scaleX(0);
+          transform: scaleX(0);
+  -webkit-transform-origin: left;
+      -ms-transform-origin: left;
+          transform-origin: left;
+}
+.sidepop{
+
+  align-self: flex-end;
+  margin-bottom: 10px;
 }

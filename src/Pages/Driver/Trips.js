@@ -73,6 +73,7 @@ export default function Trips({ flagNotifiaction }) {
           ></img>
         }
         position="bottom center"
+   
         // Close popup
         // Your extra function
         onClose={() => {
