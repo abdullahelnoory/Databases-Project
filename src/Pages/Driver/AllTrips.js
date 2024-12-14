@@ -244,7 +244,7 @@ function AllTrips() {
 
   function HandleStart(Row, event) {
     console.log(event);
-    const filteredData = recievedData.filter((row) => row.id !== Row.id); // Filter out the row by id
+    const filteredData = recievedData.filter((row) => row.trip_id !== Row.trip_id); // Filter out the row by id
     // send data to back
     tripData.Accept = true;
     tripData.estimated_time = Row.estimated_time;
@@ -254,7 +254,7 @@ function AllTrips() {
   }
   function HandleReject(Row) {
     console.log(Row);
-    const filteredData = recievedData.filter((row) => row.id !== Row.id); // Filter out the row by id
+    const filteredData = recievedData.filter((row) => row.trip_id !== Row.trip_id); // Filter out the row by id
     // send data to back
     tripData.Accept = false;
     tripData.estimated_time = 0;

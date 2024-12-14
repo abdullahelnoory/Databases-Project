@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import AdminNavbar from "./Pages/Admin/Components/navbar";
 import ManagerNavbar from "./Pages/Manager/Components/navbar";
 import DriverNavbar from "./Pages/Driver/NavBar";
+import PassengerNavBar from "./Pages/Passenger/NavBar";
 const PrivateRoute = ({ element: Component, requiredRole, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [userRole, setUserRole] = useState(null);
@@ -36,6 +37,8 @@ const PrivateRoute = ({ element: Component, requiredRole, ...rest }) => {
         return <ManagerNavbar />;
       case "Driver":
         return <DriverNavbar />;
+        case 'Passenger':
+        return <PassengerNavBar/>;
       default:
         return null;
     }
