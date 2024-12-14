@@ -55,13 +55,7 @@ export default function Trips({ flagNotifiaction }) {
 
   return (
     <>
-      <img
-        alt="Notification"
-        role="button"
-        className="imma"
-        src={flagNotifiaction && !popState.Seen ? imagnotifi : imgnonotifi}
-        onClick={() => setPopState({ ...popState, openPop: !popState.openPop })}
-      ></img>
+
 
       <Popup
         // onOpen={()=>setPopState({ ...popState, Seen: true })}
@@ -69,8 +63,12 @@ export default function Trips({ flagNotifiaction }) {
         contentStyle={{ border: "0", background: "none" }}
         trigger={
           <img
-
-          ></img>
+          alt="Notification"
+          role="button"
+          className="imma"
+          src={flagNotifiaction && !popState.Seen ? imagnotifi : imgnonotifi}
+          onClick={() => setPopState({ ...popState, openPop: !popState.openPop })}
+        ></img>
         }
         position="bottom center"
    
