@@ -32,6 +32,7 @@ export default function Login() {
         sessionStorage.setItem('authToken', result.token);  
         sessionStorage.setItem('ssn', result.ssn);
         sessionStorage.setItem('userType', result.type); 
+        sessionStorage.setItem('id', result.id); 
         
         if (result.type === 'Manager') {
           const isVerified = result.verified_by !== null && result.verified_by !== undefined && result.verified_by !== '';

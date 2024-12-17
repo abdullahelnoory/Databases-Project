@@ -30,7 +30,16 @@ import Profile from "./Pages/Driver/Components/Profile";
 import LogOut from "./Pages/Driver/Components/LogOut";
 import Layout from "./Pages/Driver/Layout";
 
+import PassengerHome from './Pages/Passenger/Home.js';
+import PassengerProfile from './Pages/Passenger/Components/Profile.js';
+import MyTrips from './Pages/Passenger/MyTrips.js';
+import PassengerLogOut from './Pages/Passenger/Components/LogOut.js';
+import PassengerPrivateTrips from './Pages/Passenger/PrivateTrips.js';
+// import PassengerTrips from './Pages/Passenger/Trips.js';
 
+import PassengerTrips from './Pages/Passenger/AllTrips.js';
+import Drivers from './Pages/Passenger/Components/Drivers.js';
+import Station from './Pages/Passenger/Components/Station.js';
 function App() {
   return (
     <div className="App">
@@ -66,6 +75,21 @@ function App() {
             <Route path="Driver/PrivateTrips" element={<PrivateTrips />} />
             <Route path="manager/requests" element={<ManagerRequests />} />
           </Route>
+
+
+          <Route element={<PrivateRoute requiredRole="Passenger" />}>
+            <Route path="Passenger" element={<PassengerHome />} />
+            <Route path="Passenger/Profile" element={<PassengerProfile />} />
+            <Route path="Passenger/LogOut" element={<PassengerLogOut />} />
+            <Route path="Passenger/MyTrips" element={<MyTrips />} />
+            <Route path="Passenger/PrivateTrips" element={<PassengerPrivateTrips />} />
+            <Route path="Passenger/RequestTrips" element={<PassengerTrips />} />
+            <Route path="Passenger/Drivers" element={<Drivers />} />
+            <Route path="Passenger/Station" element={<Station/>} />
+          </Route>
+
+
+
 
           {/* <Route element={<PrivateRoute requiredRole="Driver" />}>
             <Route path="Driver" element={<Home />} />

@@ -5,9 +5,6 @@ import imgnonotifi from "./Nonotification.png";
 import Popup from "reactjs-popup";
 import { Link, NavLink } from "react-router-dom";
 // import Dropdown from 'react-bootstrap/Dropdown';
-
-const userssn = sessionStorage.getItem('ssn');
-
 export default function Trips({ flagNotifiaction }) {
   let [popState, setPopState] = useState({
     openPop: false,
@@ -22,80 +19,54 @@ export default function Trips({ flagNotifiaction }) {
   }
   // const [PopupOpen, setPopupOpen] = useState(false);
 
-  let [privateDriver, setPrivateDriver] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await fetch("http://localhost:6969/driver/get-private-status", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ d_ssn: userssn }),
-        });
-        const resultInjson = await result.json();
-        setPrivateDriver(resultInjson.isPrivate);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, []);
-
-
-
-
-
-
-
-
-
-
-
-
   return (
     <>
+      <img
+        alt="Notification"
+        role="button"
+        className="immag"
+        src={flagNotifiaction && !popState.Seen ? imagnotifi : imgnonotifi}
+        onClick={() => setPopState({ ...popState, openPop: !popState.openPop })}
+      ></img>
 
+<Popup
+// onOpen={()=>setPopState({ ...popState, Seen: true })}
+open={popState.openPop}
+contentStyle={{ border: "0", background: "none" }}
+trigger={
+  <img
 
-      <Popup
-        // onOpen={()=>setPopState({ ...popState, Seen: true })}
-        open={popState.openPop}
-        contentStyle={{ border: "0", background: "none" }}
-        trigger={
-          <img
-          alt="Notification"
-          role="button"
-          className="imma"
-          src={flagNotifiaction && !popState.Seen ? imagnotifi : imgnonotifi}
-          onClick={() => setPopState({ ...popState, openPop: !popState.openPop })}
-        ></img>
-        }
-        position="bottom center"
-   
-        // Close popup
-        // Your extra function
-        onClose={() => {
-          setPopState({ ...popState, openPop: false, Seen: true }); // Close popup
-        }} // Your extra function
-      >
+  ></img>
+}
+position="bottom center"
+
+// Close popup
+// Your extra function
+onClose={() => {
+  setPopState({ ...popState, openPop: false, Seen: true }); // Close popup
+}} // Your extra function
+>
+{/* {popState.openPop ? ( */}
+<div className="containerr">
+  <Link to="/Trips" className="items" onClick={() => OpenTrips()}>
+    {" "}
+    Trips
+  </Link>
+  <Link
+    to="/PrivateTrips"
+    className="item2"
+    onClick={() => OpenPrivateTrips()}
+  >
+    {" "}
+    Private{" "}
+  </Link>
+</div>
+{/* ) : null} */}
+</Popup>
         {/* {popState.openPop ? ( */}
-        <div className="containerr">
-          <Link to="/Driver/Trips" className="items" onClick={() => OpenTrips()}>
-            {" "}
-            Trips
-          </Link>
-          {privateDriver ? <Link
-            to="/Driver/PrivateTrips"
-            className="item2"
-            onClick={() => OpenPrivateTrips()}
-          >
-            {" "}
-            Private{" "}
-          </Link> : null}
 
-        </div>
         {/* ) : null} */}
-      </Popup>
+
       {/* <div className="parent"> */}
 
       {/* <img
@@ -117,7 +88,7 @@ export default function Trips({ flagNotifiaction }) {
 
 
 
-
+      
     </>
   );
 }
@@ -140,3 +111,5 @@ Dropdown Button
 </Dropdown.Menu>
 </Dropdown> */
 }
+
+
