@@ -1,14 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
-  { field: 'drivId', headerName: 'ID', width: 90 },
-  { field: 'descripton', headerName: 'Request', width: 150 },
-  { field: 'reqType', headerName: 'Type', width: 150 },
-  { field: 'Request_id', headerName: 'Request ID', width: 90 },
+  { field: 'ssn', headerName: 'SSN', width: 150 },
+  { field: 'fname', headerName: 'First Name', width: 150 },
+  { field: 'mname', headerName: 'Middle Name', width: 150 },
+  { field: 'lname', headerName: 'Last Name', width: 150 },
 ];
 
-export default function Mreq() {
+export default function Areq() {
   const [rows, setRows] = useState([]);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
@@ -21,30 +22,39 @@ export default function Mreq() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:6969/manager/requests')
+    fetch('http://localhost:6969/admin/getUnverifiedManagers')
       .then((response) => response.json())
-      .then((data) => setRows(data.data))
-      .catch((error) => console.error('Error fetching data:', error));
+      .then((data) => {
+        if (data.success) {
+          setRows(data.data); // Set rows based on the response's `data` field
+        } else {
+          setErrorMessage('Failed to fetch data');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        setErrorMessage('Failed to fetch data');
+      });
   }, []);
 
   const handleAcceptRec = () => {
     if (selectedRowIds.length === 0) {
-      setErrorMessage('Please select a Request First!');
-      setSuccessMessage('');
+      
       return;
     }
+  
 
-    const selectedRequest = selectedRowIds.map((id) => rows.find((row) => row.id === id));
+    const selectedRequests = selectedRowIds.map((id) => rows.find((row) => row.ssn === id)); // Use ssn to find the request
 
-    selectedRequest.forEach((Request) => {
-      fetch('http://localhost:6969/manager/accept-request', {
+    selectedRequests.forEach((Request) => {
+      fetch('http://localhost:6969/admin/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          a_ssn: userssn,
-          station_id: Request.id,
+          ssn: userssn,
+          m_ssn: Request.ssn // Use ssn as the request_id
         }),
       })
         .then((response) => response.json())
@@ -53,7 +63,6 @@ export default function Mreq() {
             setSuccessMessage('Request Accepted successfully');
             setErrorMessage('');
           } else {
-            console.error('Error Accepting Request:', data);
             setErrorMessage('Failed to Accept Request');
             setSuccessMessage('');
           }
@@ -64,26 +73,26 @@ export default function Mreq() {
           setSuccessMessage('');
         });
     });
-  };
-
+  
+  }
   const handleRejectRec = () => {
     if (selectedRowIds.length === 0) {
-      setErrorMessage('Please select a Request First!');
-      setSuccessMessage('');
+    
       return;
     }
+  
 
-    const selectedRequest = selectedRowIds.map((id) => rows.find((row) => row.id === id));
+    const selectedRequests = selectedRowIds.map((id) => rows.find((row) => row.ssn === id)); // Use ssn to find the request
 
-    selectedRequest.forEach((Request) => {
-      fetch('http://localhost:6969/manager/reject-request', {
+    selectedRequests.forEach((Request) => {
+      fetch('http://localhost:6969/admin/reject-request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           a_ssn: userssn,
-          station_id: Request.id,
+          request_id: Request.ssn,
         }),
       })
         .then((response) => response.json())
@@ -92,7 +101,6 @@ export default function Mreq() {
             setSuccessMessage('Request Rejected successfully');
             setErrorMessage('');
           } else {
-            console.error('Error Rejecting Request:', data);
             setErrorMessage('Failed to Reject Request');
             setSuccessMessage('');
           }
@@ -103,7 +111,7 @@ export default function Mreq() {
           setSuccessMessage('');
         });
     });
-  };
+  }
 
   return (
     <div className="List">
@@ -114,11 +122,14 @@ export default function Mreq() {
             columns={columns}
             pageSize={5}
             checkboxSelection
+            getRowId={(row) => row.ssn}
             onRowSelectionModelChange={(newSelectionModel) => handleSelectionChange(newSelectionModel)}
           />
+
         </div>
+
         <div id="selected-row-preview">
-          <h3>Selected Row ssn:</h3>
+          <h3>Selected Request SSNs:</h3>
           <pre>{JSON.stringify(selectedRowIds, null, 2)}</pre>
         </div>
 
@@ -126,17 +137,14 @@ export default function Mreq() {
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           {successMessage && <p className="success-message">{successMessage}</p>}
         </div>
+
         <div className="button-container">
           <ul className="button-list">
             <li>
-              <button id="accept-btn" className="button" onClick={handleAcceptRec}>
-                Accept
-              </button>
+              <button id="accept-btn" className="button" onClick={handleAcceptRec}>Accept</button>
             </li>
             <li>
-              <button id="reject-btn" className="button" onClick={handleRejectRec}>
-                Reject
-              </button>
+              <button id="reject-btn" className="button" onClick={handleRejectRec}>Reject</button>
             </li>
           </ul>
         </div>
