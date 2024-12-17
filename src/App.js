@@ -40,6 +40,7 @@ import PassengerPrivateTrips from './Pages/Passenger/PrivateTrips.js';
 import PassengerTrips from './Pages/Passenger/AllTrips.js';
 import Drivers from './Pages/Passenger/Components/Drivers.js';
 import Station from './Pages/Passenger/Components/Station.js';
+import ManagerFnance from './Pages/Manager/Components/MangerFinance.js'
 function App() {
   return (
     <div className="App">
@@ -64,6 +65,7 @@ function App() {
             <Route path="manager/drivers" element={<ManagerDrivers />} />
             <Route path="manager/trips" element={<ManagerTrips />} />
             <Route path="manager/requests" element={<ManagerRequests />} />
+            <Route path="manager/manager-finance" element={<ManagerFnance />} />
           </Route>
 
 
