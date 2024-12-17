@@ -25,7 +25,7 @@ export default function Areq() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setRows(data.data); // Set rows based on the response's `data` field
+          setRows(data.data); 
         } else {
           setErrorMessage('Failed to fetch data');
         }
@@ -38,42 +38,56 @@ export default function Areq() {
 
   const handleAcceptRec = () => {
     if (selectedRowIds.length === 0) {
-      
       return;
     }
   
-
-    const selectedRequests = selectedRowIds.map((id) => rows.find((row) => row.ssn === id)); // Use ssn to find the request
-
-    selectedRequests.forEach((Request) => {
-      fetch('http://localhost:6969/admin/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          a_ssn: userssn,
-           m_ssn: selectedRowIds.ssn // Use ssn as the request_id
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            setSuccessMessage('Request Accepted successfully');
-            setErrorMessage('');
-          } else {
-            setErrorMessage('Failed to Accept Request');
-            setSuccessMessage('');
-          }
-        })
-        .catch((error) => {
-          console.error('Error Accepting Request:', error);
-          setErrorMessage('Error Accepting Request');
-          setSuccessMessage('');
-        });
-    });
+    const selectedRequests = selectedRowIds.map((id) =>
+      rows.find((row) => row.ssn === id)
+    );
   
-  }
+    Promise.all(
+      selectedRequests.map((Request) =>
+        fetch('http://localhost:6969/admin/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ssn: userssn,
+            m_ssn: Request.ssn,
+          }),
+        }).then((response) => response.json())
+      )
+    )
+      .then((responses) => {
+        const allSuccessful = responses.every((data) => data.success);
+  
+        if (allSuccessful) {
+          setSuccessMessage('Requests Accepted successfully');
+          setErrorMessage('');
+        } else {
+          setErrorMessage('Some requests failed to accept');
+          setSuccessMessage('');
+        }
+  
+        // Refetch the updated list
+        return fetch('http://localhost:6969/admin/getUnverifiedManagers');
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setRows(data.data); // Update the rows in DataGrid
+        } else {
+          setErrorMessage('Failed to fetch updated data');
+        }
+      })
+      .catch((error) => {
+        console.error('Error Accepting Request:', error);
+        setErrorMessage('Error Accepting Request');
+        setSuccessMessage('');
+      });
+  };
+  
   const handleRejectRec = () => {
     if (selectedRowIds.length === 0) {
     
@@ -90,8 +104,8 @@ export default function Areq() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          a_ssn: userssn,
-          request_id: Request.ssn,
+          ssn: userssn,
+          m_ssn: Request.ssn,
         }),
       })
         .then((response) => response.json())
