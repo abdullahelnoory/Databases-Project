@@ -18,7 +18,7 @@ export default function Managerfinance()
       const userssn = sessionStorage.getItem('ssn');
 
       const handleAddSalary = () => {
-        fetch('http://localhost:6969/manager-finance/AddSalary', {
+        fetch('http://localhost:6969/manager/manager-add-salary', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export default function Managerfinance()
 
       }
        useEffect(() => {
-           fetch('http://localhost:6969/manager-finance', {
+           fetch('http://localhost:6969/manager/manager-finance', {
              method: 'POST',
              headers: {
                'Content-Type': 'application/json',
