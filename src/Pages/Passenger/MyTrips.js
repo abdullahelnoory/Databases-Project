@@ -32,7 +32,7 @@ export default function MyTrips() {
 
   const sendFav = async (sendData) => {
     try {
-      const result = await fetch("http://localhost:6969/passenger/favTrip", {
+      const result = await fetch("http://localhost:6969/passenger/setFavouriteTrip", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,9 +55,10 @@ export default function MyTrips() {
   function HandleFav(event, row) {
     // console.log(event,row);
     // row.is_favourite=! row.is_favourite;
+    sendFav({ p_id: userID, t_id: row.t_id, isFavourite: !row.is_favourite });
     let newData = recievedData.map((ele) => {
       if (ele.t_id === row.t_id) ele.is_favourite = !ele.is_favourite;
-      return ele;
+      return {...ele};
     });
 
     setRecievedData(newData);
@@ -66,7 +67,6 @@ export default function MyTrips() {
     //   t_id: row.t_id,
     //   is_favourite: row.is_favourite,
     // });
-    sendFav({ p_id: userID, t_id: row.t_id, is_favourite: row.is_favourite });
   }
   const caseInsensitiveSort = (rowA, rowB) => {
     const a = rowA.is_favourite;
@@ -136,7 +136,7 @@ export default function MyTrips() {
       sortable: true,
     },
     {
-      name: "Review",
+      name: "Rate",
       selector: (row) => row.rate,
       sortable: true,
     },
@@ -402,7 +402,7 @@ export default function MyTrips() {
 
       <div className="containerrr">
       <DataTable
-        title="Trips"
+        title="Passenger Trips"
         columns={columns}
         //   data={recievedData}
         data={recievedData}
