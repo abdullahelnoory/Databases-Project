@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles.css'
 
 export default function Station()
+
 {
     const [Station,SetStation]=useState({
         station_name: "",

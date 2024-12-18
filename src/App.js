@@ -39,7 +39,8 @@ import PassengerPrivateTrips from './Pages/Passenger/PrivateTrips.js';
 
 import PassengerTrips from './Pages/Passenger/AllTrips.js';
 import Drivers from './Pages/Passenger/Components/Drivers.js';
-import Station from './Pages/Passenger/Components/Station.js';
+// import Station from './Pages/Passenger/Components/Station.js';
+import Station from './Pages/Station/StationHome.js';
 import ProfileSettings from './Pages/Driver/Components/ProfileSettings.js';
 function App() {
   return (
