@@ -27,11 +27,13 @@ function NavBar() {
           {/* <li>
             <Trips className="req" flagNotifiaction={true} />
           </li> */}
-          <li>
-          <NavLink  className="req"   to="/Passenger/MyTrips">My Trips</NavLink>
-          </li>
+          {location.pathname === "/Passenger" ||location.pathname ==="/Passenger/Profile" ?
           <li>
             <ReqStatus className="req" />
+          </li>
+          :null}
+          <li>
+          <NavLink  className="req"   to="/Passenger/MyTrips">My Trips</NavLink>
           </li>
           <li>
           <NavLink  className="req"   to="/Passenger/PrivateTrips">Private Trips</NavLink>

@@ -6,19 +6,21 @@ import DataTable, { createTheme } from "react-data-table-component";
 import { Link, NavLink, useLocation } from "react-router-dom";
 export default function MyTrips() {
   let [recievedData, setRecievedData] = useState([]);
-  const userID = sessionStorage.getItem('ssn');
-
+  const userID = sessionStorage.getItem("ssn");
 
   useEffect(() => {
     (async () => {
       try {
-        const result = await fetch("http://localhost:6969/passenger/getMyTrips", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ p_id: userID }),
-        });
+        const result = await fetch(
+          "http://localhost:6969/passenger/getMyTrips",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ p_id: userID }),
+          }
+        );
         const resultInjson = await result.json();
         console.log(resultInjson.data);
         setRecievedData(resultInjson.data);
@@ -28,14 +30,21 @@ export default function MyTrips() {
     })();
   }, []);
 
-
-
-
-
-
-
-
-
+  const sendFav = async (sendData) => {
+    try {
+      const result = await fetch("http://localhost:6969/passenger/favTrip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sendData),
+      });
+      const resultInjson = await result.json();
+      console.log(resultInjson);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
 
   function handlestation(row) {
     console.log(row);
@@ -43,7 +52,37 @@ export default function MyTrips() {
   function handleDriver(row) {
     console.log(row);
   }
+  function HandleFav(event, row) {
+    // console.log(event,row);
+    // row.is_favourite=! row.is_favourite;
+    let newData = recievedData.map((ele) => {
+      if (ele.t_id === row.t_id) ele.is_favourite = !ele.is_favourite;
+      return ele;
+    });
 
+    setRecievedData(newData);
+    // console.log({
+    //   p_id: userID,
+    //   t_id: row.t_id,
+    //   is_favourite: row.is_favourite,
+    // });
+    sendFav({ p_id: userID, t_id: row.t_id, is_favourite: row.is_favourite });
+  }
+  const caseInsensitiveSort = (rowA, rowB) => {
+    const a = rowA.is_favourite;
+    const b = rowB.is_favourite;
+  
+    if (a ===true&&b===false) 
+      return 1;
+    
+    if (a ===false&&b===true) 
+      return -1;
+    
+    if(a ===true&&b===true)
+      return 1;
+    if(a ===false&&b===false)
+    return 0;
+  };
   const columns = [
     // {
     //   name: "ID",
@@ -103,34 +142,51 @@ export default function MyTrips() {
     },
     {
       name: "Fav",
+      sortable: true,
+      sortFunction: caseInsensitiveSort,
+
       //  minWidth: "150",
       // minHieght: "150",
 
+      /* From Uiverse.io by barisdogansutcu */
       cell: (row) => (
-          <svg
-            class="feather feather-heart"
-            stroke-linejoin="round"
-            stroke-linecap="round"
-            stroke-width="2"
-            stroke="currentColor"
-            fill="none"
-            viewBox="0 0 24 24"
-            height="24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
+        <>
+          <input
+            value="favorite-button"
+            name="favorite-checkbox"
+            id="favorite"
+            type="checkbox"
+          />
+          <label class="containerfav" for="favorite">
+            <svg
+              class="feather feather-heart"
+              stroke-linejoin="round"
+              stroke-linecap="round"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              viewBox="0 0 24 24"
+              height="24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{
+                fill: `${
+                  row.is_favourite === true ? "hsl(0deg 100% 50%)" : ""
+                }`,
+                cursor: "pointer",
+              }}
+              onClick={(event) => HandleFav(event, row)}
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </label>
+        </>
       ),
       ignoreRowClick: true, // Prevents row click events when button is clicked
       allowOverflow: true, // Allows the button to overflow if needed
       button: true, // Identifies the column as a button
     },
   ];
-
-  function HandleFav(Row) {
-
-  }
 
   createTheme(
     "solarized",
@@ -343,7 +399,8 @@ export default function MyTrips() {
   ///
 
   return (
-    <div>
+
+      <div className="containerrr">
       <DataTable
         title="Trips"
         columns={columns}
@@ -359,5 +416,6 @@ export default function MyTrips() {
         //   expandableRowsComponent={ExpandedComponent}
       />
     </div>
+
   );
 }

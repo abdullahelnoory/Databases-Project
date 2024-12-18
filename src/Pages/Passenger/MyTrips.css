@@ -1,5 +1,5 @@
 /* From Uiverse.io by barisdogansutcu */
-.container {
+/* .container {
   background-color: rgb(36, 36, 36);
   display: -webkit-box;
   display: -ms-flexbox;
@@ -124,6 +124,77 @@
 #favorite:checked + .container .action span.option-2 {
   -webkit-transform: translate(0px, 0%);
   -ms-transform: translate(0px, 0%);
+  transform: translate(0px, 0%);
+  opacity: 1;
+} */
+
+
+
+
+
+#favorite {
+  display: none;
+}
+
+#favorite:checked + .container svg {
+  fill: hsl(0deg 100% 50%);
+  stroke: hsl(0deg 100% 50%);
+  animation: heartButton 1s;
+}
+
+@keyframes heartButton {
+  0% {
+    transform: scale(1);
+  }
+
+  25% {
+    transform: scale(1.3);
+  }
+
+  50% {
+    transform: scale(1);
+  }
+
+  75% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+#favorite + .containerfav .action {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+
+}
+
+#favorite + .containerfav .action span {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 1;
+  transition: all 0.5s;
+}
+
+#favorite + .containerfav .action span.option-1 {
+  transform: translate(0px, 0%);
+  opacity: 1;
+}
+
+#favorite:checked + .containerfav .action span.option-1 {
+  transform: translate(0px, -100%);
+  opacity: 0;
+}
+
+#favorite + .containerfav .action span.option-2 {
+  transform: translate(0px, 100%);
+  opacity: 0;
+}
+
+#favorite:checked + .containerfav .action span.option-2 {
   transform: translate(0px, 0%);
   opacity: 1;
 }

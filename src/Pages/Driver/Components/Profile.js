@@ -2,8 +2,21 @@ import React from 'react'
 import "./Profile.css"
 function Profile() {
   return (
-    <div>
-
+    <div className='main-profile' >
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
+Profile
     
 
     </div>

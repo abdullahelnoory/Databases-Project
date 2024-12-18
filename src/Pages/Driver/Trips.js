@@ -54,9 +54,9 @@ export default function Trips({ flagNotifiaction }) {
 
 
   return (
-    <>
+    // <>
 
-
+<div  className="mainPage">
       <Popup
         // onOpen={()=>setPopState({ ...popState, Seen: true })}
         open={popState.openPop}
@@ -67,9 +67,10 @@ export default function Trips({ flagNotifiaction }) {
           role="button"
           className="imma"
           src={flagNotifiaction && !popState.Seen ? imagnotifi : imgnonotifi}
-          onClick={() => setPopState({ ...popState, openPop: !popState.openPop })}
-        ></img>
+          // onClick={() => setPopState({ ...popState, openPop: !popState.openPop })}
+          ></img>
         }
+        onOpen={() => setPopState({ ...popState, openPop: true})}
         position="bottom center"
    
         // Close popup
@@ -96,29 +97,30 @@ export default function Trips({ flagNotifiaction }) {
         </div>
         {/* ) : null} */}
       </Popup>
-      {/* <div className="parent"> */}
+      </div>
+      /* <div className="parent"> */
 
-      {/* <img
+      /* <img
         alt="Notification"
           role="button"
           className="imma"
           src={flagNotifiaction && !State.Seen ? imagnotifi : imgnonotifi}
           onClick={() => setState({ Seen: true, Req: !State.Req })}
-        ></img> */}
+        ></img> */
 
-      {/* </div> */}
+      /* </div> */
 
-      {/* {State.Req ? (
+      /* {State.Req ? (
         <div className="containerr">
           <div className="items" onClick={()=>OpenTrips()}> Trips</div>
           <div className="item2"  onClick={()=>OpenPrivateTrips()}> Private </div>
         </div>
-      ) : null} */}
+      ) : null} */
 
 
 
 
-    </>
+  // </> 
   );
 }
 
