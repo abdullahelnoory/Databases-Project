@@ -35,7 +35,6 @@ exports.getPrivateTrips = async (req, res) => {
     const result = await pool.query(
       'SELECT * FROM "Private Trip" WHERE "d_ssn" is NULL',
     );
-    console.log(result.rows);
     res.json({
       success: true,
       data: result.rows,
@@ -48,13 +47,15 @@ exports.getPrivateTrips = async (req, res) => {
     });
   }
 }
-exports.requestTripChange = async (req, res) => {
-  const { trip_id, reason, d_ssn } = req.body;
+
+exports.acceptTrips = async (req, res) => {
+  const {trip_id, d_ssn, Status, estimated_time} = req.body;
+  console.log(req.body);
 
   try {
     const result = await pool.query(
-      'INSERT INTO "Trip Change Request" ("trip_id", "driver_ssn", "reason") VALUES ($1, $2, $3) RETURNING *',
-      [trip_id, d_ssn, reason]
+      'Update  "Trip" set  "status"= $3 , "estimated_time"=$4  where "d_ssn"=$2 and "trip_id"=$1  RETURNING *',
+      [trip_id, d_ssn, Status, estimated_time,]
     );
 
     res.json({
@@ -71,16 +72,13 @@ exports.requestTripChange = async (req, res) => {
   }
 };
 
-exports.getTrips = async (req, res) => {
+exports.getAcceptedTrips = async (req, res) => {
   const { d_ssn } = req.body;
-  console.log(req.body);
   try {
     const result = await pool.query(
-      'SELECT * FROM "Trip" WHERE "d_ssn" = $1',
-      [d_ssn]
+      'SELECT * FROM "Trip" WHERE "d_ssn" = $1 and "status"=$2',
+      [d_ssn, "accepted"]
     );
-
-    console.log(result.rows);
 
     res.json({
       success: true,
@@ -94,6 +92,120 @@ exports.getTrips = async (req, res) => {
     });
   }
 }
+
+exports.startAcceptedTrips = async (req, res) => {
+  const { d_ssn, Status, trip_id } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE "Trip" SET "status" = $1 WHERE "trip_id" = $2',
+      [Status, trip_id]
+    );
+
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+
+exports.getTrips = async (req, res) => {
+  const { d_ssn } = req.body;
+  try {
+    const result1 = await pool.query(
+      'SELECT * FROM "Trip" WHERE "d_ssn" = $1 and "status"=$2',
+      [d_ssn, "idle"]
+    );
+
+    const result2 = await pool.query(
+      'SELECT * FROM "Trip" WHERE "d_ssn" = $1 and "status"=$2 or "status"=$3',
+      [d_ssn, "accepted","ongoing",]
+    );
+
+    res.json({
+      success: true,
+      tripsidle: result1.rows,
+      tripsaccepted: result2.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+
+exports.rejectTrip = async (req, res) => {
+  const { trip_id } = req.body;
+
+  try {
+    const result = await pool.query(
+      'UPDATE "Trip" SET "status" = $1 WHERE "trip_id" = $2 RETURNING *',
+      ["rejected", trip_id]
+    );
+
+    res.json({
+      success: true,
+      message: "Trip rejected successfully.",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error rejecting trip:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+
+exports.ongoingAcceptedTrips = async (req, res) => {
+  const { d_ssn, trip_id } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE "Trip" SET "status" = $1 WHERE "trip_id" = $2',
+      ["ongoing", trip_id]
+    );
+
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+exports.getNumberofPassengers = async (req, res) => {
+  const { trip_id } = req.body;
+  console.log(req.body);
+  try {
+    const result = await pool.query(
+      'SELECT count(*) FROM "Passenger Trip" WHERE "t_id" = $1',
+      [trip_id]
+    );
+    console.log(result.rows[0]);
+    res.json({
+      success: true,
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error fetching number of passengers:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+}
+
 
 exports.markAttendance = async (req, res) => {
   const { d_ssn } = req.body;

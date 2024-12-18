@@ -252,3 +252,29 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
+
+exports.deleteAccount = async (req, res) => {
+  const { ssn } = req.body;
+
+  try {
+    const deleteQueries = [
+      `DELETE FROM "Admin" WHERE ssn = $1`,
+      `DELETE FROM "Manager" WHERE ssn = $1`,
+      `DELETE FROM "Driver" WHERE ssn = $1`,
+      `DELETE FROM "Passenger" WHERE id = $1`
+    ];
+
+    for (const query of deleteQueries) {
+      await pool.query(query, [ssn]);
+    }
+
+    res.json({ success: true, message: "Account deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database error occurred while deleting account",
+    });
+  }
+
+}
