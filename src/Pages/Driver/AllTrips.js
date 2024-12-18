@@ -6,10 +6,10 @@ import DataTable, { createTheme } from "react-data-table-component";
 import React from "react";
 function AllTrips() {
   let [checkNumPassenger, setCheckNumPassenger] = useState({
-    valid: false,
     trip_id: null,
     num: null,
   });
+  let [validfetches, setValidfetches]=useState(false);
   // let [reqState, setReqState] = useState(false);
   const userssn = sessionStorage.getItem("ssn");
   let tripData = {
@@ -217,10 +217,11 @@ useEffect(() => {
       }
     };
 
-    if(checkNumPassenger.valid === true)
+    if(validfetches === true)
       fetchData();
-    
-  }, []);
+    else return;
+
+  }, [checkNumPassenger]);
 
 
 
@@ -388,6 +389,7 @@ useEffect(() => {
     console.log(recievedAcceptedData);
     let filteredData;
     let flag = false;
+    let flag2=false;
     console.log(flag);
     if (Row.status === "accepted") {
       filteredData = recievedAcceptedData.map((row) => {
@@ -398,16 +400,16 @@ useEffect(() => {
             console.log(row.trip_id);
           }
         }
-
+          console.log("jjj")
         return { ...row };
       });
       if (!flag) {
         console.log("hi");
         console.log(recievedAcceptedData);
-        // Filter out the row by id
+        // Filter out the row by 
+        setValidfetches(true);
         setCheckNumPassenger({
           ...checkNumPassenger,
-          valid: true,
           trip_id: Row.trip_id,
         });
         tripData.Status = "ongoing";
@@ -417,12 +419,11 @@ useEffect(() => {
         (row) => row.trip_id !== Row.trip_id
       ); // Filter out the row by id
       tripData.Status = "started";
+      setValidfetches(false);
       setCheckNumPassenger({
         ...checkNumPassenger,
-        valid: false,
         trip_id: null,
       });
-      console.log("sdndsnjsdnjkd");
     }
     // Filter out the row by id
     // send data to back
@@ -481,7 +482,8 @@ useEffect(() => {
         resultInjson.tripsaccepted.map((ele)=>{
           if(ele.status === "ongoing")
           {
-            setCheckNumPassenger({...checkNumPassenger,valid: true,trip_id:ele.trip_id});
+            setValidfetches(true);
+            setCheckNumPassenger({...checkNumPassenger,trip_id:ele.trip_id});
           }
           return {...ele}
         },)
