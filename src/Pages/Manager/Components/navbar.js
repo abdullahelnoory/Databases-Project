@@ -86,6 +86,15 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
+          <Link onClick={(e) => {
+            if (!isVerified) {
+              e.preventDefault();
+            }
+          }} className="nav-btn" to="/manager/manager-finance" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
+           Finance
+          </Link>
+        </li>
+        <li>
           <div className="dropdown-container">
             <button onClick={toggleDropdown} className="dropdown-btn">
               Account ▼
