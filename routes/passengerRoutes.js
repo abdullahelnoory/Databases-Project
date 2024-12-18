@@ -9,5 +9,6 @@ router.post('/getMyTrips',passengerController.getMyTrips);
 router.post('/getTrips',passengerController.getTrips);
 router.post('/setFavouriteTrip',passengerController.setFavouriteTrip);
 router.post('/getStatusPrivateTrips',passengerController.getStatusPrivateTrips);
+router.post('/station',passengerController.station)
 
 module.exports = router;

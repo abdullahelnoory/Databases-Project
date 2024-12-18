@@ -132,7 +132,7 @@ exports.getTrips = async (req, res) => {
   const accepted = "ongoing";
   const p_id = req.body.p_id;
   const query =
-    'select d1.ssn, d1.fname driver_fname, d1.mname, d1.lname, s.station_id, s.station_name source, s.street, s.governorate, d.station_id, d.station_name destination, d.street, d.governorate, t.trip_id , t.price , t.estimated_time from "Driver" d1, "Station" s, "Station" d, "Trip" t where d1.ssn = t.d_ssn and t.source_station = s.station_id and t.destination_station = d.station_id and t.status = $1 and t.trip_id not in (select t_id from "Passenger Trip" where p_id = $2)';
+    'select d1.ssn driver_ssn, d1.fname driver_fname, d1.mname, d1.lname, s.station_id as source_id, s.station_name source, s.street source_street, s.governorate source_governorate, d.station_id as destination_id, d.station_name destination, d.street as destination_street, d.governorate as destination_governorate, t.trip_id , t.price , t.estimated_time from "Driver" d1, "Station" s, "Station" d, "Trip" t where d1.ssn = t.d_ssn and t.source_station = s.station_id and t.destination_station = d.station_id and t.status = $1 and t.trip_id not in (select t_id from "Passenger Trip" where p_id = $2)';
   try {
     const result = await pool.query(query, [accepted, p_id]);
     res.json({ success: true, data: result.rows });
@@ -191,4 +191,22 @@ exports.setFavouriteTrip = async (req, res) => {
       });
     }
   }
+};
+
+exports.station = async (req, res) => {
+    const st_id = req.body.st_id;
+    const query = 'select station_name, street, zipcode, governorate, rate from "Station" where station_id = $1';
+    try
+    {
+        const result = await pool.query(query, [st_id]);
+        res.json({success : true, data : {station_name : result.rows[0].station_name, street : result.rows[0].street, zipcode : result.rows[0].zipcode, governorate : result.rows[0].governorate, rate : result.rows[0].rate}});
+    }
+    catch(error)
+    {
+        console.error("Error connecting to the database:", error);
+        res.status(500).json({
+          success: false,
+          message: "Database connection failed",
+        }); 
+    } 
 };
