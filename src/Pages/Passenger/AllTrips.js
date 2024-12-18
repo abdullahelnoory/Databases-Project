@@ -37,7 +37,7 @@ function AllTrips() {
       name: "Source",
       cell: (row) => (
         <NavLink
-          to="/Station"
+          to="/Passenger/Station"
           className="links"
           onClick={() => handlestation(row)}
           state={{ value: row.SourceId }}
@@ -52,7 +52,7 @@ function AllTrips() {
       name: "Destination",
       cell: (row) => (
         <NavLink
-          to="/Station"
+          to="/Passenger/Station"
           className="links"
           onClick={() => handlestation(row)}
           state={{ value: row.DestinationId }}
@@ -65,7 +65,7 @@ function AllTrips() {
       name: "Driver",
       cell: (row) => (
         <NavLink
-          to="/Drivers"
+          to="/Passenger/Drivers"
           className="links"
           onClick={() => handleDriver(row)}
           state={{ value: row.driver_fname }}

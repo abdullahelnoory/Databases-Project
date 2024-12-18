@@ -40,6 +40,7 @@ import PassengerPrivateTrips from './Pages/Passenger/PrivateTrips.js';
 import PassengerTrips from './Pages/Passenger/AllTrips.js';
 import Drivers from './Pages/Passenger/Components/Drivers.js';
 import Station from './Pages/Passenger/Components/Station.js';
+import ProfileSettings from './Pages/Driver/Components/ProfileSettings.js';
 function App() {
   return (
     <div className="App">
@@ -68,12 +69,12 @@ function App() {
 
 
           <Route element={<PrivateRoute requiredRole="Driver" />}>
-            <Route path="Driver" element={<Home />} />
-            <Route path="Driver/Profile" element={<Profile />} />
+            <Route path="Driver" element={<Profile />} />
+            {/* <Route path="Driver/Profile" element={<Profile />} /> */}
             <Route path="Driver/LogOut" element={<LogOut />} />
             <Route path="Driver/Trips" element={<AllTrips />} />
             <Route path="Driver/PrivateTrips" element={<PrivateTrips />} />
-            <Route path="manager/requests" element={<ManagerRequests />} />
+            <Route path="Driver/ProfileSettings" element={<ProfileSettings/>} />
           </Route>
 
 

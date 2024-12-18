@@ -1,0 +1,124 @@
+/* styles.css */
+.container-set {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.profile-card-set {
+  display: flex;
+  width: 80%;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.profile-sidebar-set {
+  padding: 20px;
+  background-color: #f9f9f9;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.profile-image-set {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-name-set {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.profile-email-set {
+  color: #777;
+  font-size: 14px;
+}
+
+.profile-settings-set {
+  flex: 1;
+  padding: 20px;
+}
+
+.section-title-set {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-group-set {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.form-input-set {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+}
+
+.set {
+  margin-top: 5px;
+}
+
+input.set {
+  width: 70%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.profile-button-set {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+}
+
+.profile-button-set:hover {
+  background-color: #0056b3;
+}
+
+.profile-experience-set {
+  padding: 20px;
+  background-color: #f9f9f9;
+  width: 250px;
+}
+
+.add-experience-set {
+  background-color: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-experience-set:hover {
+  background-color: #218838;
+}
+
+.form-input-set label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.form-input-set input {
+  font-size: 14px;
+}
+.profile-settings-set {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 100%;
+}

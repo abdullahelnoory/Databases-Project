@@ -3,17 +3,79 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "./Header";
 import DataTable, { createTheme } from "react-data-table-component";
+import React from "react";
 function AllTrips() {
+  let [checkNumPassenger, setCheckNumPassenger] = useState({
+    valid: false,
+    trip_id: null,
+    num: null,
+  });
   // let [reqState, setReqState] = useState(false);
-  const userssn = sessionStorage.getItem('ssn');
-
+  const userssn = sessionStorage.getItem("ssn");
   let tripData = {
-    Accept: false, // mean accept and start if false mean reject if true means accept and start
+    Status: "idle", // mean accept and start if false mean reject if true means accept and start
     estimated_time: 1,
     trip_id: 0,
-    d_ssn: userssn
+    d_ssn: userssn,
   };
 
+  const columnsAcceptedTrip = [
+    {
+      name: "ID",
+      selector: (row) => row.trip_id,
+      sortable: true,
+    },
+    {
+      name: "Source",
+      selector: (row) => row.source_station,
+    },
+    {
+      name: "Destination",
+      selector: (row) => row.destination_station,
+    },
+    {
+      name: "Price",
+      selector: (row) => row.price,
+      // maxWidth: "100px",
+    },
+    {
+      name: "Date",
+
+      selector: (row) => row.date.slice(0, 10),
+    },
+    {
+      name: "number of passengers",
+      selector: (row) =>
+        `${row.status === "accepted" ? "" : checkNumPassenger.num}`,
+    },
+    {
+      name: "Start",
+      minWidth: "200px",
+
+      cell: (row) => (
+        <button
+          className="butt1"
+          onClick={() => HandleStart(row)}
+          style={{
+            padding: "5px 10px",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          {row.status === "accepted" ? "pick up people" : "Start trip"}
+        </button>
+      ),
+      ignoreRowClick: true, // Prevents row click events when button is clicked
+      allowOverflow: true, // Allows the button to overflow if needed
+      button: true, // Identifies the column as a button
+    },
+    {
+      name: "EstimatedTime (hr)",
+      selector: (row) => row.estimated_time,
+    },
+  ];
 
   const columns = [
     {
@@ -80,17 +142,18 @@ function AllTrips() {
           Reject
         </button>
       ),
+
       ignoreRowClick: true, // Prevents row click events when button is clicked
       allowOverflow: true, // Allows the button to overflow if needed
       button: true, // Identifies the column as a button
     },
     {
-      name: "Start",
+      name: "Accept",
       maxWidth: "100px",
       cell: (row) => (
         <button
           className="butt1"
-          onClick={() => HandleStart(row)}
+          onClick={() => HandleAccept(row)}
           style={{
             padding: "5px 10px",
             color: "white",
@@ -99,7 +162,7 @@ function AllTrips() {
             cursor: "pointer",
           }}
         >
-          Start Trip
+          Accept Trip
         </button>
       ),
       ignoreRowClick: true, // Prevents row click events when button is clicked
@@ -130,6 +193,36 @@ function AllTrips() {
       button: true, // Identifies the column as a button
     },
   ];
+
+useEffect(() => {
+  console.log(checkNumPassenger)
+
+      const fetchData = async () => {
+      try {
+        const result = await fetch(
+          "http://localhost:6969/driver/get-passengers-number",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ trip_id: checkNumPassenger.trip_id }),
+          }
+        );
+        const resultInjson = await result.json();
+        console.log(resultInjson);
+        setCheckNumPassenger({...checkNumPassenger, num: resultInjson.data.count})
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if(checkNumPassenger.valid === true)
+      fetchData();
+    
+  }, []);
+
+
 
   //   const data = [
   //     {
@@ -225,16 +318,14 @@ function AllTrips() {
   //   ];
 
   let [recievedData, setRecievedData] = useState([]);
+  let [recievedAcceptedData, setRecievedAcceptedData] = useState([]);
 
   function HandleTime(event, Row) {
     const filteredData = recievedData.map((row) => {
       if (row.trip_id === Row.trip_id)
-        if (+event.target.value > 24)
-          row.estimated_time = "24";
-        else if (+event.target.value < 0)
-          row.estimated_time = "1";
-        else
-          row.estimated_time = event.target.value;
+        if (+event.target.value > 24) row.estimated_time = "24";
+        else if (+event.target.value < 0) row.estimated_time = "1";
+        else row.estimated_time = event.target.value;
       return row;
     });
 
@@ -242,30 +333,124 @@ function AllTrips() {
     setRecievedData(filteredData);
   }
 
-  function HandleStart(Row, event) {
-    console.log(event);
-    const filteredData = recievedData.filter((row) => row.trip_id !== Row.trip_id); // Filter out the row by id
+  function HandleAccept(Row) {
+    const filteredData = recievedData.filter(
+      (row) => row.trip_id !== Row.trip_id
+    ); // Filter out the row by id
     // send data to back
-    tripData.Accept = true;
+    tripData.Status = "accepted";
     tripData.estimated_time = Row.estimated_time;
     tripData.trip_id = Row.trip_id;
-    handleTrip(tripData);
+    handleAcceptTrip(tripData);
     setRecievedData(filteredData); // Update state to remove the deleted row
+    let newData = [...recievedAcceptedData];
+    newData.push({ ...Row, status: "accepted" });
+    setRecievedAcceptedData(newData);
+    console.log(newData);
   }
+
+  const handleStartTrip = async (sendData) => {
+    try {
+      const result = await fetch("http://localhost:6969/driver/start-trip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          trip_id: sendData.trip_id,
+          Status: sendData.Status,
+        }),
+      });
+      const resultInjson = await result.json();
+      console.log(resultInjson);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
+  const handleRejectTrip = async (sendData) => {
+    try {
+      const result = await fetch("http://localhost:6969/driver/reject-trip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ trip_id: sendData.trip_id }),
+      });
+      const resultInjson = await result.json();
+      console.log(resultInjson);
+    } catch (error) {
+      console.error("Error adding user:", error);
+    }
+  };
+
+  function HandleStart(Row) {
+    console.log(recievedAcceptedData);
+    let filteredData;
+    let flag = false;
+    console.log(flag);
+    if (Row.status === "accepted") {
+      filteredData = recievedAcceptedData.map((row) => {
+        if (row.trip_id === Row.trip_id) return { ...row, status: "ongoing" };
+        else {
+          if (row.status === "ongoing") {
+            flag = true;
+            console.log(row.trip_id);
+          }
+        }
+
+        return { ...row };
+      });
+      if (!flag) {
+        console.log("hi");
+        console.log(recievedAcceptedData);
+        // Filter out the row by id
+        setCheckNumPassenger({
+          ...checkNumPassenger,
+          valid: true,
+          trip_id: Row.trip_id,
+        });
+        tripData.Status = "ongoing";
+      }
+    } else {
+      filteredData = recievedAcceptedData.filter(
+        (row) => row.trip_id !== Row.trip_id
+      ); // Filter out the row by id
+      tripData.Status = "started";
+      setCheckNumPassenger({
+        ...checkNumPassenger,
+        valid: false,
+        trip_id: null,
+      });
+      console.log("sdndsnjsdnjkd");
+    }
+    // Filter out the row by id
+    // send data to back
+    if (!flag) {
+      // tripData.Status=Row.status;
+      tripData.trip_id = Row.trip_id;
+      handleStartTrip(tripData);
+      setRecievedAcceptedData(filteredData);
+     // Update state to remove the deleted row
+    }
+  }
+
   function HandleReject(Row) {
     console.log(Row);
-    const filteredData = recievedData.filter((row) => row.trip_id !== Row.trip_id); // Filter out the row by id
+    const filteredData = recievedData.filter(
+      (row) => row.trip_id !== Row.trip_id
+    ); // Filter out the row by id
     // send data to back
-    tripData.Accept = false;
+    tripData.Status = "rejected";
     tripData.estimated_time = 0;
     tripData.trip_id = Row.trip_id;
-    handleTrip(tripData);
+    handleRejectTrip(tripData);
     setRecievedData(filteredData); // Update state to remove the deleted row
   }
 
-  const handleTrip = async (sendData) => {
+  const handleAcceptTrip = async (sendData) => {
     try {
-      const result = await fetch("http://localhost:6969/driver/request-trip-change", {
+      const result = await fetch("http://localhost:6969/driver/accept-trip", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -279,8 +464,6 @@ function AllTrips() {
     }
   };
 
-
-
   useEffect(() => {
     (async () => {
       try {
@@ -292,22 +475,27 @@ function AllTrips() {
           body: JSON.stringify({ d_ssn: userssn }),
         });
         const resultInjson = await result.json();
-        setRecievedData(resultInjson.data);
+        console.log(resultInjson);
+        setRecievedData(resultInjson.tripsidle);
+        setRecievedAcceptedData(resultInjson.tripsaccepted);
+        resultInjson.tripsaccepted.map((ele)=>{
+          if(ele.status === "ongoing")
+          {
+            setCheckNumPassenger({...checkNumPassenger,valid: true,trip_id:ele.trip_id});
+          }
+          return {...ele}
+        },)
+
+
       } catch (error) {
         console.error(error);
       }
     })();
   }, []);
 
-
-
-
-
   // const HandleLost = async () => {
   //   setReqState(true);
   // };
-
-
 
   // createTheme creates a new theme named solarized that overrides the build in dark theme
   createTheme(
@@ -345,8 +533,6 @@ function AllTrips() {
   //     <pre>{JSON.stringify(data, null, 2)}</pre>
   //   );
 
-
-
   return (
     <div style={{ height: "fit-content" }}>
       <div className="containerrr">
@@ -361,8 +547,21 @@ function AllTrips() {
           // selectableRows
           fixedHeader
           pagination
-        //   expandableRows
-        //   expandableRowsComponent={ExpandedComponent}
+          //   expandableRows
+          //   expandableRowsComponent={ExpandedComponent}
+        />
+      </div>
+      <div className="containerrr">
+        <DataTable
+          style={{ zIndex: "1" }}
+          title="Accepted Trips"
+          columns={columnsAcceptedTrip}
+          data={recievedAcceptedData}
+          theme="solarized"
+          // selectableRows
+          fixedHeader
+          //   expandableRows
+          //   expandableRowsComponent={ExpandedComponent}
         />
       </div>
     </div>
