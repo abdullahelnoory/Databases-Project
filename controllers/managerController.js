@@ -3,7 +3,10 @@ const pool = require("../models/db");
 exports.getStations = async (req, res) => {
   const { m_ssn } = req.body;
   try {
-    const result = await pool.query('SELECT "station_id", "station_name" FROM "Station" WHERE m_ssn <> $1', [m_ssn]);
+    const result = await pool.query(
+      'SELECT "station_id", "station_name" FROM "Station" WHERE m_ssn <> $1',
+      [m_ssn]
+    );
     res.json({
       data: result.rows,
       success: true,
@@ -30,7 +33,8 @@ exports.getTrips = async (req, res) => {
        JOIN "Station" ts2 ON t.destination_station = ts2.station_id
        JOIN "Manager" m ON ts1.m_ssn = m.ssn
        LEFT JOIN "Driver" d ON t.d_ssn = d.ssn
-       WHERE m.ssn = $1`, [m_ssn]
+       WHERE m.ssn = $1`,
+      [m_ssn]
     );
 
     if (result1.rows.length === 0) {
@@ -53,7 +57,6 @@ exports.getTrips = async (req, res) => {
   }
 };
 
-
 exports.createTrip = async (req, res) => {
   const { m_ssn, price, date, d_ssn, estimated_time, destination_station } =
     req.body;
@@ -70,14 +73,7 @@ exports.createTrip = async (req, res) => {
 
     const result = await pool.query(
       'INSERT INTO "Trip" ("trip_id", "price", "date", "d_ssn", "source_station", "destination_station") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', // Added RETURNING * to get the inserted row
-      [
-        trip_id,
-        price,
-        date,
-        d_ssn,
-        source_station,
-        destination_station,
-      ]
+      [trip_id, price, date, d_ssn, source_station, destination_station]
     );
 
     res.json({
@@ -115,7 +111,7 @@ exports.getDrivers = async (req, res) => {
 
 exports.getPrivateTrips = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM "Private Trip"'); 
+    const result = await pool.query('SELECT * FROM "Private Trip"');
     res.json({
       data: result.rows,
       success: true,
@@ -172,7 +168,10 @@ exports.hireDriver = async (req, res) => {
       [d_ssn]
     );
 
-    if (existingManagerResult.rows.length > 0 && existingManagerResult.rows[0].m_ssn !== null) {
+    if (
+      existingManagerResult.rows.length > 0 &&
+      existingManagerResult.rows[0].m_ssn !== null
+    ) {
       return res.status(400).json({
         success: false,
         message: "Driver is already working for another manager",
@@ -200,7 +199,7 @@ exports.hireDriver = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Driver hired successfully!',
+      message: "Driver hired successfully!",
       data: result.rows,
     });
   } catch (error) {
@@ -211,8 +210,6 @@ exports.hireDriver = async (req, res) => {
     });
   }
 };
-
-
 
 exports.updateDriverSalary = async (req, res) => {
   const { m_ssn, d_ssn, new_salary } = req.body;
@@ -243,24 +240,27 @@ exports.updateDriverSalary = async (req, res) => {
 exports.getAvailableDrivers = async (req, res) => {
   const { m_ssn } = req.body;
   try {
-    const result = await pool.query('SELECT "ssn", "fname", "lname", "salary" FROM "Driver" WHERE "is_available" = true AND m_ssn = $1', [m_ssn]);
+    const result = await pool.query(
+      'SELECT "ssn", "fname", "lname", "salary" FROM "Driver" WHERE "is_available" = true AND m_ssn = $1',
+      [m_ssn]
+    );
 
     if (result.rows.length > 0) {
       return res.status(200).json({
         success: true,
-        data: result.rows
+        data: result.rows,
       });
     } else {
       return res.status(404).json({
         success: false,
-        message: "No available drivers found."
+        message: "No available drivers found.",
       });
     }
   } catch (error) {
     console.error("Error getting available drivers:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error. Please try again later."
+      message: "Server error. Please try again later.",
     });
   }
 };
@@ -278,25 +278,25 @@ exports.updateTripPrice = async (req, res) => {
     if (result.rows.length > 0) {
       return res.status(200).json({
         success: true,
-        message: "Trip price updated successfully."
+        message: "Trip price updated successfully.",
       });
     } else {
       return res.status(404).json({
         success: false,
-        message: "Trip not found."
+        message: "Trip not found.",
       });
     }
   } catch (error) {
     console.error("Error updating trip price:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error. Please try again later."
+      message: "Server error. Please try again later.",
     });
   }
 };
 
 exports.updateTripDestination = async (req, res) => {
-  const { trips } = req.body; 
+  const { trips } = req.body;
 
   try {
     for (let trip of trips) {
@@ -314,17 +314,16 @@ exports.updateTripDestination = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "All trips' destinations updated successfully."
+      message: "All trips' destinations updated successfully.",
     });
   } catch (error) {
     console.error("Error updating trip destinations:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error. Please try again later."
+      message: "Server error. Please try again later.",
     });
   }
 };
-
 
 exports.updateTripDriver = async (req, res) => {
   const { trips } = req.body;
@@ -344,16 +343,97 @@ exports.updateTripDriver = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Driver assigned to all trips successfully."
+      message: "Driver assigned to all trips successfully.",
     });
   } catch (error) {
     console.error("Error assigning driver to trips:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error. Please try again later."
+      message: "Server error. Please try again later.",
     });
   }
 };
+
+exports.getManagerFinanace = async (req, res) => {
+  const { m_ssn } = req.body;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM "Manager Finance" WHERE "m_ssn" = $1',
+      [m_ssn]
+    );
+    res.json({
+      data: result.rows,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};
+
+
+
+exports.addManagerFinancesSalary = async (req, res) => {
+  const { m_ssn, salary } = req.body;
+
+  try {
+    // Get the current date and month
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+    const currentMonth = currentDate.getMonth() + 1; // Current month (1-12)
+
+    // Fetch all drivers' SSNs associated with the manager
+    const driversResult = await pool.query(
+      'SELECT "ssn" FROM "Driver" WHERE m_ssn = $1',
+      [m_ssn]
+    );
+
+    if (driversResult.rowCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No drivers found for the given manager SSN.",
+      });
+    }
+
+    // Extract all driver SSNs
+    const driverSsns = driversResult.rows.map(row => row.ssn);
+
+    // Calculate total profit for the current month for all drivers
+    const totalProfitResult = await pool.query(
+      `SELECT SUM("price") AS total_profit 
+       FROM "Trip" 
+       WHERE d_ssn = ANY($1) AND EXTRACT(MONTH FROM TO_DATE("date", 'YYYY-MM-DD')) = $2`,
+      [driverSsns, currentMonth]
+    );
+
+    const totalProfit = totalProfitResult.rows[0].total_profit || 0;
+
+    console.log("Total Profit:", totalProfit);
+
+    // Insert data into Manager Finance table
+    const result = await pool.query(
+      `INSERT INTO "Manager Finance" ("m_ssn", "date", "salary", "total_profit") 
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [m_ssn, formattedDate, totalProfit - salary, totalProfit]
+    );
+
+    res.json({
+      data: result.rows[0],
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};
+
+
 
 exports.checkManagerVerified = async (req, res) => {
   const { m_ssn } = req.body;

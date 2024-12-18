@@ -40,6 +40,11 @@ router.post("/set-trip-driver", managerController.updateTripDriver);
 
 router.post("/check-verified", managerController.checkManagerVerified);
 
+router.post("/manager-finance", managerController.getManagerFinanace);
+
+
+router.post("/manager-add-salary", managerController.addManagerFinancesSalary);
+
 
 // 
 
