@@ -47,5 +47,9 @@ router.post("/report-lost-item", driverController.reportLostItem);
 // Driver resignation with { d_ssn (Driver SSN), reason, effective_date }
 router.post("/resign", driverController.resignDriver);
 
+router.post("/profile", driverController.profile);
+
+router.put("/profile", driverController.updateProfile);
+
 
 module.exports = router;

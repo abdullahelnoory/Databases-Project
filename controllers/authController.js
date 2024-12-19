@@ -115,45 +115,58 @@ exports.login = async (req, res) => {
   const password = req.body.password;
   let ssn;
   let verifiedBy = null; // Variable to hold verified_by for Manager
+  let userType;
+  let userProfile = {}; // Object to hold profile information
 
   try {
+    // Query for Admin user
     const result1 = await pool.query(
-      'SELECT ssn, email, password FROM "Admin" WHERE email = $1',
+      'SELECT ssn, email, password, fname, mname, lname FROM "Admin" WHERE email = $1',
       [email]
     );
+    
+    // Query for Manager user
     const result2 = await pool.query(
-      'SELECT ssn, email, password, verified_by FROM "Manager" WHERE email = $1',
+      'SELECT ssn, email, password, fname, mname, lname, verified_by FROM "Manager" WHERE email = $1',
       [email]
     );
+    
+    // Query for Driver user
     const result3 = await pool.query(
-      'SELECT ssn, email, password FROM "Driver" WHERE email = $1',
+      'SELECT ssn, email, password, fname, mname, lname, is_private, shift, salary, s_id, m_ssn FROM "Driver" WHERE email = $1',
       [email]
     );
+    
+    // Query for Passenger user
     const result4 = await pool.query(
-      'SELECT id, email, password FROM "Passenger" WHERE email = $1',
+      'SELECT id, email, password, fname, lname FROM "Passenger" WHERE email = $1',
       [email]
     );
 
     let user = null;
-    let userType = null;
 
+    // Check which user type the email corresponds to
     if (result1.rows.length === 1) {
       user = result1.rows[0];
       ssn = user.ssn;
       userType = "Admin";
+      userProfile = user; // Store admin profile data
     } else if (result2.rows.length === 1) {
       user = result2.rows[0];
       ssn = user.ssn;
-      verifiedBy = user.verified_by; // Store the verified_by value
+      verifiedBy = user.verified_by; // Store the verified_by value for Manager
       userType = "Manager";
+      userProfile = user; // Store manager profile data
     } else if (result3.rows.length === 1) {
       user = result3.rows[0];
       ssn = user.ssn;
       userType = "Driver";
+      userProfile = user; // Store driver profile data
     } else if (result4.rows.length === 1) {
       user = result4.rows[0];
       ssn = user.id;
       userType = "Passenger";
+      userProfile = user; // Store passenger profile data
     }
 
     if (!user) {
@@ -161,9 +174,11 @@ exports.login = async (req, res) => {
       return res.json({ login: false, success: true });
     }
 
+    // Check if the password matches
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (passwordMatch) {
+      // Generate JWT token
       const token = jwt.sign(
         { ssn: ssn, userType: userType },
         'your_secret_key',
@@ -171,16 +186,27 @@ exports.login = async (req, res) => {
       );
       console.log("Login Successful");
 
+      // Prepare the response with user profile and token
       const response = {
         login: true,
         success: true,
         token: token,
         type: userType,
-        ssn: ssn
+        ssn: ssn,
+        fname: userProfile.fname,
+        mname: userProfile.mname,
+        lname: userProfile.lname,
+        email: userProfile.email,
+        is_private: userProfile.is_private,
+        shift: userProfile.shift,
+        salary: userProfile.salary,
+        s_id: userProfile.s_id,
+        m_ssn: userProfile.m_ssn,
       };
 
+      // Include verified_by for Manager
       if (userType === "Manager") {
-        response.verified_by = verifiedBy; // Include verified_by for Managers
+        response.verified_by = verifiedBy;
       }
 
       res.json(response);

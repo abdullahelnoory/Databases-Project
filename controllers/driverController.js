@@ -33,7 +33,7 @@ exports.setEstimatedTime = async (req, res) => {
 exports.getPrivateTrips = async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM "Private Trip" WHERE "d_ssn" is NULL',
+      'SELECT * FROM "Private Trip" WHERE "d_ssn" is NULL'
     );
     res.json({
       success: true,
@@ -46,16 +46,16 @@ exports.getPrivateTrips = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 
 exports.acceptTrips = async (req, res) => {
-  const {trip_id, d_ssn, Status, estimated_time} = req.body;
+  const { trip_id, d_ssn, Status, estimated_time } = req.body;
   console.log(req.body);
 
   try {
     const result = await pool.query(
       'Update  "Trip" set  "status"= $3 , "estimated_time"=$4  where "d_ssn"=$2 and "trip_id"=$1  RETURNING *',
-      [trip_id, d_ssn, Status, estimated_time,]
+      [trip_id, d_ssn, Status, estimated_time]
     );
 
     res.json({
@@ -91,7 +91,7 @@ exports.getAcceptedTrips = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 
 exports.startAcceptedTrips = async (req, res) => {
   const { d_ssn, Status, trip_id } = req.body;
@@ -112,7 +112,7 @@ exports.startAcceptedTrips = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 
 exports.getTrips = async (req, res) => {
   const { d_ssn } = req.body;
@@ -124,7 +124,7 @@ exports.getTrips = async (req, res) => {
 
     const result2 = await pool.query(
       'SELECT * FROM "Trip" WHERE "d_ssn" = $1 and "status"=$2 or "status"=$3',
-      [d_ssn, "accepted","ongoing",]
+      [d_ssn, "accepted", "ongoing"]
     );
 
     res.json({
@@ -139,7 +139,7 @@ exports.getTrips = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 
 exports.rejectTrip = async (req, res) => {
   const { trip_id } = req.body;
@@ -162,7 +162,7 @@ exports.rejectTrip = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 
 exports.ongoingAcceptedTrips = async (req, res) => {
   const { d_ssn, trip_id } = req.body;
@@ -183,7 +183,7 @@ exports.ongoingAcceptedTrips = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 exports.getNumberofPassengers = async (req, res) => {
   const { trip_id } = req.body;
   console.log(req.body);
@@ -204,8 +204,7 @@ exports.getNumberofPassengers = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
-
+};
 
 exports.markAttendance = async (req, res) => {
   const { d_ssn } = req.body;
@@ -214,14 +213,14 @@ exports.markAttendance = async (req, res) => {
     function formatTimeToAMPM(date) {
       let hours = date.getHours();
       let minutes = date.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const ampm = hours >= 12 ? "PM" : "AM";
       hours = hours % 12;
       hours = hours ? hours : 12;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
       return `${hours}:${minutes} ${ampm}`;
     }
 
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = new Date().toISOString().split("T")[0];
 
     const checkAttendance = await pool.query(
       'SELECT * FROM "Attendance" WHERE "d_ssn" = $1 AND "date" = $2',
@@ -237,12 +236,7 @@ exports.markAttendance = async (req, res) => {
 
     const result = await pool.query(
       'INSERT INTO "Attendance" ("d_ssn", "date", "arrival_time", "leave_time") VALUES ($1, $2, $3, $4) RETURNING *',
-      [
-        d_ssn,
-        currentDate,
-        formatTimeToAMPM(new Date()),
-        '5:00:00 PM'
-      ]
+      [d_ssn, currentDate, formatTimeToAMPM(new Date()), "5:00:00 PM"]
     );
 
     res.json({
@@ -268,11 +262,11 @@ exports.getAttendance = async (req, res) => {
     );
     if (result.rows.length > 0) {
       res.json({
-        attend: false
+        attend: false,
       });
     } else {
       res.json({
-        attend: true
+        attend: true,
       });
     }
   } catch (error) {
@@ -282,7 +276,7 @@ exports.getAttendance = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
-}
+};
 
 exports.acceptRejectPrivateTrip = async (req, res) => {
   const { order_id, d_ssn, Accept } = req.body;
@@ -331,7 +325,7 @@ exports.getPrivateStatus = async (req, res) => {
       const isPrivate = result.rows[0].is_private;
 
       res.json({
-        isPrivate: isPrivate, 
+        isPrivate: isPrivate,
       });
     } else {
       res.json({
@@ -346,7 +340,6 @@ exports.getPrivateStatus = async (req, res) => {
     });
   }
 };
-
 
 exports.requestDayOff = async (req, res) => {
   console.log(req.body);
@@ -446,6 +439,139 @@ exports.resignDriver = async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing resignation:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.profile = async (req, res) => {
+  const { ssn } = req.body;
+  try {
+    const result = await pool.query(
+      'SELECT "ssn", "email", "fname", "mname", "lname", "is_private", "m_ssn", "shift", "salary", "s_id"  FROM "Driver" WHERE "ssn" = $1',
+      [ssn]
+    );
+
+    console.log(result.rows);
+
+    if (result.rows.length > 0) {
+      const driver = result.rows[0];
+      const responseData = {
+        success: true,
+        data: driver,
+      };
+
+      if (driver.m_ssn) {
+        const managerResult = await pool.query(
+          'SELECT "fname", "mname", "lname" FROM "Manager" WHERE "ssn" = $1',
+          [driver.m_ssn]
+        );
+        if (managerResult.rows.length > 0) {
+          responseData.manager = `${managerResult.rows[0].fname} ${managerResult.rows[0].lname}`;
+        }
+      }
+
+      if (driver.s_id) {
+        const stationResult = await pool.query(
+          'SELECT "station_name" FROM "Station" WHERE "station_id" = $1',
+          [driver.s_id]
+        );
+        if (stationResult.rows.length > 0) {
+          responseData.station = stationResult.rows[0].station_name;
+        }
+      }
+
+      console.log(responseData);
+      res.json(responseData);
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Driver not found.",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching driver profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  const { ssn, fname, mname, lname, email, is_private } = req.body;
+
+  try {
+    const result = await pool.query('SELECT * FROM "Driver" WHERE "ssn" = $1', [ssn]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Driver not found.",
+      });
+    }
+
+    const emailCheckResult = await pool.query(`
+      SELECT email FROM "Passenger" WHERE email = $1
+      UNION
+      SELECT email FROM "Admin" WHERE email = $1
+      UNION
+      SELECT email FROM "Manager" WHERE email = $1
+      UNION
+      SELECT email FROM "Driver" WHERE email = $1
+    `, [email]);
+
+    if (emailCheckResult.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "The provided email is already associated with another user.",
+      });
+    }
+
+    let manager = null;
+    if (result.rows[0].m_ssn) {
+      const managerResult = await pool.query(
+        'SELECT "fname", "lname" FROM "Manager" WHERE "ssn" = $1',
+        [result.rows[0].m_ssn]
+      );
+      if (managerResult.rows.length > 0) {
+        manager = `${managerResult.rows[0].fname} ${managerResult.rows[0].lname}`;
+      }
+    }
+
+    let station = null;
+    if (result.rows[0].s_id) {
+      const stationResult = await pool.query(
+        'SELECT "station_name" FROM "Station" WHERE "station_id" = $1',
+        [result.rows[0].s_id]
+      );
+      if (stationResult.rows.length > 0) {
+        station = stationResult.rows[0].station_name; 
+      }
+    }
+
+    await pool.query(
+      'UPDATE "Driver" SET "fname" = $1, "mname" = $2, "lname" = $3, "email" = $4, "is_private" = $5 WHERE "ssn" = $6',
+      [fname, mname, lname, email, is_private, ssn]
+    );
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully!",
+      data: {
+        fname,
+        mname,
+        lname,
+        email,
+        is_private,
+      },
+      manager,
+      station,
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
