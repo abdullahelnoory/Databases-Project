@@ -281,6 +281,7 @@ exports.changePassword = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   const { ssn } = req.body;
+  console.log(req.body);
 
   try {
     const deleteQueries = [

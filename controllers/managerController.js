@@ -528,3 +528,103 @@ exports.respondRequest = async (req, res) => {
     });
   }
 }
+
+exports.profile = async (req, res) => {
+  const { ssn } = req.body;
+  try {
+    const result = await pool.query(
+      'SELECT "ssn", "email", "fname", "mname", "lname", "verified_by" FROM "Manager" WHERE "ssn" = $1',
+      [ssn]
+    );
+
+    console.log(result.rows);
+
+    if (result.rows.length > 0) {
+      const manager = result.rows[0];
+      const responseData = {
+        success: true,
+        data: manager,
+      };
+
+      if (manager.verified_by) {
+        const adminResult = await pool.query(
+          'SELECT "fname", "mname", "lname" FROM "Admin" WHERE "ssn" = $1',
+          [manager.verified_by]
+        );
+        if (adminResult.rows.length > 0) {
+          responseData.admin = `${adminResult.rows[0].fname} ${adminResult.rows[0].lname}`;
+        }
+      }
+
+
+      console.log(responseData);
+      res.json(responseData);
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Manager not found.",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching driver profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  const { ssn, fname, mname, lname, email } = req.body;
+  console.log(req.body);
+
+  try {
+    const result = await pool.query('SELECT * FROM "Manager" WHERE "ssn" = $1', [ssn]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Manager not found.",
+      });
+    }
+
+    const emailCheckResult = await pool.query(`
+      SELECT email FROM "Passenger" WHERE email = $1 AND id <> $2
+      UNION
+      SELECT email FROM "Admin" WHERE email = $1 AND ssn <> $2
+      UNION
+      SELECT email FROM "Manager" WHERE email = $1 AND ssn <> $2
+      UNION
+      SELECT email FROM "Driver" WHERE email = $1 AND ssn <> $2
+    `, [email, ssn]);
+
+    if (emailCheckResult.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "The provided email is already associated with another user.",
+      });
+    }
+
+    await pool.query(
+      'UPDATE "Manager" SET "fname" = $1, "mname" = $2, "lname" = $3, "email" = $4 WHERE "ssn" = $5',
+      [fname, mname, lname, email, ssn]
+    );
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully!",
+      data: {
+        fname,
+        mname,
+        lname,
+        email,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};

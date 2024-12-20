@@ -49,6 +49,10 @@ router.post("/requests", managerController.requests);
 
 router.post("/respond-request", managerController.respondRequest);
 
+router.post("/profile", managerController.profile);
+
+router.put("/profile", managerController.updateProfile);    
+
 
 // 
 

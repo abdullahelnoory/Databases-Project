@@ -514,14 +514,14 @@ exports.updateProfile = async (req, res) => {
     }
 
     const emailCheckResult = await pool.query(`
-      SELECT email FROM "Passenger" WHERE email = $1
+      SELECT email FROM "Passenger" WHERE email = $1 AND id <> $2
       UNION
-      SELECT email FROM "Admin" WHERE email = $1
+      SELECT email FROM "Admin" WHERE email = $1 AND ssn <> $2
       UNION
-      SELECT email FROM "Manager" WHERE email = $1
+      SELECT email FROM "Manager" WHERE email = $1 AND ssn <> $2
       UNION
-      SELECT email FROM "Driver" WHERE email = $1
-    `, [email]);
+      SELECT email FROM "Driver" WHERE email = $1 AND ssn <> $2
+    `, [email , ssn]);
 
     if (emailCheckResult.rows.length > 0) {
       return res.status(400).json({
