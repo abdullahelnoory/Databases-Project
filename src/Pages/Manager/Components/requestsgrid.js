@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
-  { field: 'drivId', headerName: 'ID', width: 90 },
-  { field: 'descripton', headerName: 'Request', width: 150 },
-  { field: 'reqType', headerName: 'Type', width: 150 },
-  { field: 'Request_id', headerName: 'Request ID', width: 90 },
+  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'date', headerName: 'Date', width: 150 },
+  { field: 'status', headerName: 'Status', width: 150 },
+  { field: 'driver_name', headerName: 'Driver Name', width: 200 },
 ];
 
 export default function Mreq() {
@@ -21,13 +21,39 @@ export default function Mreq() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:6969/manager/requests')
-      .then((response) => response.json())
-      .then((data) => setRows(data.data))
-      .catch((error) => console.error('Error fetching data:', error));
+    const postData = async () => {
+      try {
+        const response = await fetch('http://localhost:6969/manager/requests', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            m_ssn: userssn,  // Sending Manager SSN to get requests
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          setRows(data.data.map((item, index) => ({
+            id: index + 1,
+            date: item.date,
+            status: item.status,
+            driver_name: item.driver_name,
+            d_ssn: item.d_ssn,  // Include driver SSN in the row
+          })));
+        } else {
+          console.error('Error fetching data:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    postData();
   }, []);
 
-  const handleAcceptRec = () => {
+  const handleResponse = (action) => {
     if (selectedRowIds.length === 0) {
       setErrorMessage('Please select a Request First!');
       setSuccessMessage('');
@@ -37,69 +63,39 @@ export default function Mreq() {
     const selectedRequest = selectedRowIds.map((id) => rows.find((row) => row.id === id));
 
     selectedRequest.forEach((Request) => {
-      fetch('http://localhost:6969/manager/accept-request', {
+      const response = action === 'accept' ? 'accepted' : 'rejected';
+
+      fetch('http://localhost:6969/manager/respond-request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          a_ssn: userssn,
-          station_id: Request.id,
+          m_ssn: userssn,
+          d_ssn: Request.d_ssn,  // Send the driver's SSN
+          date: Request.date,     // Send the date of the request
+          response,  // Send the response (accepted or rejected)
         }),
       })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            setSuccessMessage('Request Accepted successfully');
+            setSuccessMessage(`Request ${response.charAt(0).toUpperCase() + response.slice(1)} successfully`);
             setErrorMessage('');
+
+            // Update the rows after accepting/rejecting
+            setRows((prevRows) => 
+              prevRows.filter((row) => row.id !== Request.id)
+            );
           } else {
-            console.error('Error Accepting Request:', data);
-            setErrorMessage('Failed to Accept Request');
+            console.error(`Error ${response} Request:`, data);
+            setErrorMessage(`Failed to ${response.charAt(0).toUpperCase() + response.slice(1)} Request`);
             setSuccessMessage('');
           }
         })
         .catch((error) => {
-          console.error('Error Accepting Request:', error);
-          setErrorMessage('Error Accepting Request');
-          setSuccessMessage('');
-        });
-    });
-  };
-
-  const handleRejectRec = () => {
-    if (selectedRowIds.length === 0) {
-      setErrorMessage('Please select a Request First!');
-      setSuccessMessage('');
-      return;
-    }
-
-    const selectedRequest = selectedRowIds.map((id) => rows.find((row) => row.id === id));
-
-    selectedRequest.forEach((Request) => {
-      fetch('http://localhost:6969/manager/reject-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          a_ssn: userssn,
-          station_id: Request.id,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            setSuccessMessage('Request Rejected successfully');
-            setErrorMessage('');
-          } else {
-            console.error('Error Rejecting Request:', data);
-            setErrorMessage('Failed to Reject Request');
-            setSuccessMessage('');
-          }
-        })
-        .catch((error) => {
-          console.error('Error Rejecting Request:', error);
-          setErrorMessage('Error Rejecting Request');
+          console.error(`Error ${response} Request:`, error);
+          setErrorMessage(`Error ${response.charAt(0).toUpperCase() + response.slice(1)} Request`);
           setSuccessMessage('');
         });
     });
@@ -129,12 +125,12 @@ export default function Mreq() {
         <div className="button-container">
           <ul className="button-list">
             <li>
-              <button id="accept-btn" className="button" onClick={handleAcceptRec}>
+              <button id="accept-btn" className="button" onClick={() => handleResponse('accept')}>
                 Accept
               </button>
             </li>
             <li>
-              <button id="reject-btn" className="button" onClick={handleRejectRec}>
+              <button id="reject-btn" className="button" onClick={() => handleResponse('reject')}>
                 Reject
               </button>
             </li>

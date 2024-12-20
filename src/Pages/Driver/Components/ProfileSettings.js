@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./ProfileSettings.css";
-import { useState, useEffect } from "react";
 
 function ProfileSettings() {
   let [profileState, setProfileState] = useState({
@@ -68,9 +67,12 @@ function ProfileSettings() {
       );
       const resultInjson = await result.json();
       if (resultInjson.success === false)
-        setVaildState({ error: "Error ", success: "" }); // error: resultInjson.suceess 
+        setVaildState({
+          error: "Error ",
+          success: "",
+        }); // error: resultInjson.suceess
       else {
-        setVaildState({ error: "", success: "Sucess Edit Profile" }); //success: resultInjson.suceess 
+        setVaildState({ error: "", success: "Sucess Edit Profile" }); //success: resultInjson.suceess
         setPrevProfileState(profileState);
         setProfileState({
           email: "",
