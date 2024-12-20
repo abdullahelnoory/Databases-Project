@@ -1,42 +1,35 @@
 import React, { useState, useEffect } from "react";
-import "./ProfileSettings.css";
 
-function ProfileSettings() {
+function ManagerProfileSettings() {
   const [profileData, setProfileData] = useState({
     fname: "",
     mname: "",
     lname: "",
     email: "",
-    is_private: false,
-    shift: "",
-    salary: "",
-    s_id: "",
-    m_ssn: "",
+    verified_by: "",
   });
 
   const [initialProfileData, setInitialProfileData] = useState({});
-  const [manager, setManager] = useState("");
-  const [station, setStation] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [profileLoaded, setProfileLoaded] = useState(false);
 
   const fetchProfileData = async () => {
-    const ssn = sessionStorage.getItem("ssn");
-    if (!ssn) {
+    const userssn = sessionStorage.getItem("ssn");
+    if (!userssn) {
       alert("No SSN found in session storage");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:6969/driver/profile", {
+      const response = await fetch("http://localhost:6969/manager/profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ssn }),
+        body: JSON.stringify({ ssn: userssn }),
       });
 
       if (!response.ok) {
@@ -45,29 +38,15 @@ function ProfileSettings() {
 
       const result = await response.json();
       const profile = {
-        ssn: sessionStorage.getItem("ssn"),
+        ssn: sessionStorage.getItem("m_ssn"),
         fname: result.data.fname,
         mname: result.data.mname,
         lname: result.data.lname,
         email: result.data.email,
-        is_private: result.data.is_private,
-        shift: result.data.shift,
-        salary: result.data.salary,
-        s_id: result.data.s_id,
-        m_ssn: result.data.m_ssn,
       };
 
       setProfileData(profile);
-      setInitialProfileData(profile); // Store the initial profile data
-
-      if (result.manager) {
-        setManager(result.manager);
-      }
-
-      if (result.station) {
-        setStation(result.station);
-      }
-
+      setInitialProfileData(profile);
       setProfileLoaded(true);
       setLoading(false);
     } catch (error) {
@@ -89,22 +68,15 @@ function ProfileSettings() {
     });
   };
 
-  const handleTogglePrivate = () => {
-    setProfileData({
-      ...profileData,
-      is_private: !profileData.is_private,
-    });
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Reset the error and success messages before making the request
     setError("");
     setSuccessMessage("");
 
     try {
-      const response = await fetch("http://localhost:6969/driver/profile", {
+      const response = await fetch("http://localhost:6969/manager/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -124,6 +96,7 @@ function ProfileSettings() {
       if (response.ok) {
         setSuccessMessage("Profile updated successfully!");
         setInitialProfileData({ ...profileData }); // Reset initial profile data
+
       } else {
         if (result.message === "Email already exists.") {
           setError("The email you entered already exists.");
@@ -137,7 +110,8 @@ function ProfileSettings() {
     }
   };
 
-  const isProfileChanged = JSON.stringify(profileData) !== JSON.stringify(initialProfileData);
+  const isProfileChanged =
+    JSON.stringify(profileData) !== JSON.stringify(initialProfileData);
 
   return (
     <div className="container-set">
@@ -224,83 +198,11 @@ function ProfileSettings() {
                   />
                 </div>
               </div>
-
-              <div className="form-group-set">
-                <div className="form-input-set">
-                  <label htmlFor="is_private" className="set">
-                    Private Profile
-                  </label>
-                  <input
-                    type="checkbox"
-                    id="is_private"
-                    name="is_private"
-                    checked={profileData.is_private}
-                    onChange={handleTogglePrivate}
-                    className="set"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group-set">
-                <div className="form-input-set">
-                  <label htmlFor="manager" className="set">
-                    Manager
-                  </label>
-                  <input
-                    type="text"
-                    id="manager"
-                    name="manager"
-                    value={manager}
-                    className="set"
-                    disabled
-                  />
-                </div>
-                <div className="form-input-set">
-                  <label htmlFor="station" className="set">
-                    Station
-                  </label>
-                  <input
-                    type="text"
-                    id="station"
-                    name="station"
-                    value={station}
-                    className="set"
-                    disabled
-                  />
-                </div>
-                <div className="form-input-set">
-                  <label htmlFor="shift" className="set">
-                    Shift
-                  </label>
-                  <input
-                    type="text"
-                    id="shift"
-                    name="shift"
-                    value={profileData.shift}
-                    className="set"
-                    disabled
-                  />
-                </div>
-                <div className="form-input-set">
-                  <label htmlFor="salary" className="set">
-                    Salary
-                  </label>
-                  <input
-                    type="text"
-                    id="salary"
-                    name="salary"
-                    value={profileData.salary}
-                    className="set"
-                    disabled
-                  />
-                </div>
-              </div>
-
               <div className="mt-5 text-center">
                 <button
                   className="btn btn-primary profile-button-set"
                   type="submit"
-                  disabled={!isProfileChanged} 
+                  disabled={!isProfileChanged}
                 >
                   Save Profile
                 </button>
@@ -317,4 +219,4 @@ function ProfileSettings() {
   );
 }
 
-export default ProfileSettings;
+export default ManagerProfileSettings;

@@ -40,9 +40,43 @@ const Navbar = () => {
     sessionStorage.clear();
     window.location.href = '/';
   };
-  
+
   const handleChangePassword = () => {
     window.location.href = '/change-password';
+  };
+
+  const handleSettings = () => {
+    window.location.href = '/manager/profile-settings';
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
+
+    if (confirmDelete) {
+      try {
+        const response = await fetch('http://localhost:6969/accounts/delete-account', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ssn: userssn }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('Account deleted successfully.');
+          localStorage.removeItem('authToken');
+          sessionStorage.clear();
+          window.location.href = '/'; // Redirect to home page or login page
+        } else {
+          alert(data.message || 'An error occurred while deleting the account.');
+        }
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        alert('Error deleting account. Please try again later.');
+      }
+    }
   };
 
   const toggleDropdown = () => {
@@ -51,47 +85,64 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-
       <Link className="site-title" to="/manager">
         Manager
       </Link>
       <ul className="nav-links">
         <li>
-
-          <Link onClick={(e) => {
-            if (!isVerified) {
-              e.preventDefault();
-            }
-          }} className="nav-btn" to="/manager/drivers" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
+          <Link
+            onClick={(e) => {
+              if (!isVerified) {
+                e.preventDefault();
+              }
+            }}
+            className="nav-btn"
+            to="/manager/drivers"
+            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
+          >
             Drivers
           </Link>
-
         </li>
         <li>
-          <Link onClick={(e) => {
-            if (!isVerified) {
-              e.preventDefault();
-            }
-          }} className="nav-btn" to="/manager/trips" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
+          <Link
+            onClick={(e) => {
+              if (!isVerified) {
+                e.preventDefault();
+              }
+            }}
+            className="nav-btn"
+            to="/manager/trips"
+            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
+          >
             Trips
           </Link>
         </li>
         <li>
-          <Link onClick={(e) => {
-            if (!isVerified) {
-              e.preventDefault();
-            }
-          }} className="nav-btn" to="/manager/requests" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
+          <Link
+            onClick={(e) => {
+              if (!isVerified) {
+                e.preventDefault();
+              }
+            }}
+            className="nav-btn"
+            to="/manager/requests"
+            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
+          >
             Requests
           </Link>
         </li>
         <li>
-          <Link onClick={(e) => {
-            if (!isVerified) {
-              e.preventDefault();
-            }
-          }} className="nav-btn" to="/manager/manager-finance" style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}>
-           Finance
+          <Link
+            onClick={(e) => {
+              if (!isVerified) {
+                e.preventDefault();
+              }
+            }}
+            className="nav-btn"
+            to="/manager/manager-finance"
+            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
+          >
+            Finance
           </Link>
         </li>
         <li>
@@ -107,6 +158,16 @@ const Navbar = () => {
                   </button>
                 </li>
                 <li>
+                  <button onClick={handleSettings} className="dropdown-item">
+                    Settings
+                  </button>
+                </li>
+                <li>
+                  <button onClick={handleDeleteAccount} className="dropdown-item">
+                    Delete Account
+                  </button>
+                </li>
+                <li>
                   <button onClick={handleLogout} className="dropdown-item">
                     Logout
                   </button>
@@ -118,5 +179,6 @@ const Navbar = () => {
       </ul>
     </nav>
   );
-}
+};
+
 export default Navbar;

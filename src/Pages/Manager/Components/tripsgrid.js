@@ -20,7 +20,7 @@ export default function Tripslist() {
   const [newdriver, setDriver] = useState("");
   const [newDest, setNewDest] = useState("");
   const [newDestName, setNewDestName] = useState("");
-
+  const [DriverStation, setDriverStations] = useState([]);
 
   const [statusMessage, setStatusMessage] = useState({
     message: '',
@@ -111,7 +111,7 @@ export default function Tripslist() {
       return;
     }
 
-    if (!newDest || newDest <= 0) { // Check if newDest is a valid id
+    if (!newDest || newDest <= 0) {
       setStatusMessage({
         message: "Please select a valid Destination.",
         type: "error",
@@ -172,25 +172,37 @@ export default function Tripslist() {
   const updateDriver = async () => {
     if (selectedRowIds.length === 0) {
       setStatusMessage({
-        message: "Please select one trip to update the Driver.",
+        message: "Please select at least one trip to update the driver.",
         type: "error",
       });
       return;
     }
-
+  
     if (!newdriver || newdriver <= 0) {
       setStatusMessage({
-        message: "Please select a valid Driver.",
+        message: "Please select a valid driver.",
         type: "error",
       });
       return;
     }
-
-    const updatedTrips = selectedRowIds.map((id) => {
-      const trip = rows.find((row) => row.id === id);
-      return { trip_id: trip.id, d_ssn: newdriver };
-    });
-
+  
+    // Find the selected driver by SSN
+    const selectedDriver = DriverStation.find((driver) => driver.ssn == newdriver);
+    console.log(selectedDriver);
+    if (!selectedDriver) {
+      setStatusMessage({
+        message: "Driver not found. Please select a valid driver.",
+        type: "error",
+      });
+      return;
+    }
+  
+    // Prepare updated trips payload
+    const updatedTrips = selectedRowIds.map((id) => ({
+      trip_id: id, // Directly using `id` since you already have it
+      d_ssn: selectedDriver.ssn, // Use the SSN of the selected driver
+    }));
+  
     try {
       const response = await fetch(
         "http://localhost:6969/manager/set-trip-driver",
@@ -199,18 +211,20 @@ export default function Tripslist() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            trips: updatedTrips,
-          }),
+          body: JSON.stringify({ trips: updatedTrips }),
         }
       );
-
+  
       const data = await response.json();
+  
       if (data.success) {
         setRows((prevRows) =>
           prevRows.map((row) =>
             selectedRowIds.includes(row.id)
-              ? { ...row, Driver: newdriver }
+              ? {
+                  ...row,
+                  Driver: `${selectedDriver.fname} ${selectedDriver.lname}`, // Update with full driver name
+                }
               : row
           )
         );
@@ -220,18 +234,19 @@ export default function Tripslist() {
         });
       } else {
         setStatusMessage({
-          message: "Error updating Driver.",
+          message: data.message || "Error updating driver.",
           type: "error",
         });
       }
     } catch (error) {
-      console.error("Error updating Driver:", error);
+      console.error("Error updating driver:", error);
       setStatusMessage({
-        message: "An error occurred while updating the Driver.",
+        message: "An error occurred while updating the driver.",
         type: "error",
       });
     }
   };
+  
 
   useEffect(() => {
     if (!userssn) return;
@@ -277,7 +292,7 @@ export default function Tripslist() {
       .catch((error) => console.error("Error fetching data:", error));
   }, [userssn]);
 
-  const [DriverStation, setDriverStations] = useState([]);
+
 
   useEffect(() => {
     axios
@@ -385,9 +400,8 @@ export default function Tripslist() {
                 id="styled-combobox"
                 value={newDest}
                 onChange={handleDestChange}
-                style={{
-                  marginLeft: "10px",
-                }}
+                style={{margin:'auto', width:'95%'}}
+
               >
                 <option value="">-- Select Destination --</option>
                 {destinationStations.map((station) => (
@@ -410,9 +424,7 @@ export default function Tripslist() {
                 id="styled-combobox"
                 value={newdriver}
                 onChange={handleDriverChange}
-                style={{
-                  marginLeft: "10px",
-                }}
+                style={{margin:'auto', width:'95%'}}
               >
                 <option value="">-- Select Driver --</option>
                 {DriverStation.map((driver) => (

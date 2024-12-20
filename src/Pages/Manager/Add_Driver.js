@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Nav2 from './Components/navbar';
+import React, { useState, useEffect } from "react";
+import Nav2 from "./Components/navbar";
 import "./styles.css";
 
 export default function Adddriver() {
@@ -9,7 +9,7 @@ export default function Adddriver() {
     shift: "",
     m_ssn: "",
   });
-  const userssn = sessionStorage.getItem('ssn');
+  const userssn = sessionStorage.getItem("ssn");
   const [message, setMessage] = useState(""); // For both success and error messages
 
   useEffect(() => {
@@ -21,44 +21,27 @@ export default function Adddriver() {
     }
   }, [userssn]);
 
-  const validateForm = () => {
-    for (let key in forminput) {
-      if (forminput[key].trim() === "") {
-        console.log(`Validation failed at ${key}: ${forminput[key]}`);
-        return "Please fill in all fields.";
-      }
-    }
-    return null;
-  };
-
   const sendData = async () => {
-    const validationError = validateForm();
-    if (validationError) {
-      setMessage({ type: 'error', text: validationError });
-      return; // Prevent form submission if validation fails
-    }
-
-    // Clear previous messages before sending data
     setMessage("");
 
     try {
-      const response = await fetch('http://localhost:6969/manager/hire', {
-        method: 'POST',
+      const response = await fetch("http://localhost:6969/manager/hire", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(forminput),
       });
 
       const result = await response.json();
       if (result.success) {
-        setMessage({ type: 'success', text: 'Driver hired successfully!' });
+        setMessage({ type: "success", text: "Driver hired successfully!" });
       } else {
-        setMessage({ type: 'error', text: result.message || "An error occurred." });
+        setMessage({ type: "error", text: result.message || "An error occurred." });
       }
     } catch (error) {
-      console.error('Error sending data:', error);
-      setMessage({ type: 'error', text: "An error occurred while sending the data." });
+      console.error("Error sending data:", error);
+      setMessage({ type: "error", text: "An error occurred while sending the data." });
     }
   };
 
@@ -71,7 +54,8 @@ export default function Adddriver() {
             <label>Driver SSN</label>
             <input
               value={forminput.d_ssn}
-              type="text"
+              type="number"
+              step="1"
               onChange={(event) => {
                 setforminput({ ...forminput, d_ssn: event.target.value });
               }}
@@ -82,7 +66,8 @@ export default function Adddriver() {
             <label>Salary</label>
             <input
               value={forminput.salary}
-              type="text"
+              type="number"
+              step="1"
               onChange={(event) => {
                 setforminput({ ...forminput, salary: event.target.value });
               }}
@@ -93,7 +78,8 @@ export default function Adddriver() {
             <label>Shift</label>
             <input
               value={forminput.shift}
-              type="text"
+              type="number"
+              step="1"
               onChange={(event) => {
                 setforminput({ ...forminput, shift: event.target.value });
               }}
@@ -106,7 +92,7 @@ export default function Adddriver() {
             </div>
           )}
 
-          <button id="button" type="button" onClick={sendData}>
+          <button id="button" type="button" style={{ width: "100%" }} onClick={sendData}>
             Submit
           </button>
         </form>

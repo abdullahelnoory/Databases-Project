@@ -211,6 +211,7 @@ export default function Griddriv() {
               id="new-salary-input"
               placeholder="Enter new salary"
               value={newSalary}
+              style={{margin:'auto', width:'100%'}}
               onChange={(e) => setNewSalary(e.target.value)}
             />
           </li>
