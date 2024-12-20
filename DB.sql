@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 17.0
+-- Dumped by pg_dump version 17.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -235,8 +235,7 @@ CREATE TABLE public."Station" (
     street character varying NOT NULL,
     zipcode character varying NOT NULL,
     governorate character varying NOT NULL,
-    m_ssn integer,
-    rate integer
+    m_ssn integer
 );
 
 
@@ -357,6 +356,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 112233	asdasdasd@gmail.com	Karim	M	Farid	$2b$10$wMcy.uyaLKlqUishzN/xD.5zHbRfAZm6okGUxojmjWJYvNklKVn56
 123321	abcabc@gmail.com	aaa	bbb	ccc	$2b$10$qrWFBzv.y5ZVBPymGpMEf.rieMMh.SyzrLhPYMo.c3D/aZYT02rRe
 123456789	YousefAdel@gmail.com	Yousef	Adel	A	$2b$10$P75kVjS.nBlLY/g.Nkoe4uXge.U0s0ckdSbo1LqOlVkZ4phhW3GAS
+13987	admin@gmail.com	Karim	Farid	Zakzouk	$2b$10$qEvZ2nWl4IPMmw0rY141.eiWXuQ2tP4VXSDfaX6u7YsVevWNOpxmm
 \.
 
 
@@ -365,8 +365,7 @@ COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
 --
 
 COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
-121	2024-12-13	7:53 PM	5:00:00 PM
-321	2024-12-13	11:30 PM	5:00:00 PM
+321321	2024-12-20	1:18 PM	5:00:00 PM
 \.
 
 
@@ -375,9 +374,8 @@ COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
 --
 
 COPY public."Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) FROM stdin;
-u53jf3g2	13	f	Toyota	15.5	53290520
-1123	123	t	nissan	3	321
-test4test4	123	t	nissan	33	121
+123456789	14	t	Sedan	50	141224613
+3152312	14	t	Sedan	34	321321
 \.
 
 
@@ -386,10 +384,8 @@ test4test4	123	t	nissan	33	121
 --
 
 COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, shift, salary, s_id, is_available) FROM stdin;
-253850923	example135@gmail.com	Abdullah	Ahmed	Elnoory	$2b$10$FnvbQQ/MCCs2y8nTSBADuux6mg8..Hjq0JKoBiDXQEa0FefkkYIsm	t	\N	\N	\N	\N	t
-121	aref@gmail.com	Karim	M	Farid	$2b$10$pIP6QZKK/bYlxuUsO21n0eM2V4J.UAZo1L8.kzIR7054uFCjpwzoy	t	\N	\N	\N	\N	t
-53290520	example786@gmail.com	Mohammed	Ramy	Abozaid	$2b$10$55UbQOUBHUO36nZoh0UQNud3SuA2wipKw.KTQwbNl27Om74J2x/6q	t	123	123	123	5	t
-321	qwerasdf@gmail.com	Karim	M	Farid	$2b$10$Eai9dYoFAxHxwxcJLKUfZeGzBFORKO5Qwul.rBnjpFJBHtcrDBjH.	t	123	123131312	12313131	5	t
+321321	driver@gmail.com	Karim	Farid	Zakzouk	$2b$10$5taqCAm.JTdPXgVMY1y0z.t52Qqb6wuC4AtQVJXNJk5dQHMvyXJJS	t	11223344	32	2111	6	t
+141224613	john.doe123@example.com	John	A	Doe	$2b$10$KAm46Edi6XTtEbHQdIc2quSGn7wUAR08urH4SLBCByi5Jc1V2.O.q	f	\N	\N	\N	\N	t
 \.
 
 
@@ -398,8 +394,6 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_s
 --
 
 COPY public."Lost & Found" (t_id, item, quantity) FROM stdin;
-123	asd	1
-123	Phone	1
 \.
 
 
@@ -418,7 +412,7 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 4332	asa@gmail.com	asd	asd	asd	$2b$10$QvyeCHkp/Rc2uq3sQCSI3.a2ExevvfAk6LfAsfo6k9VXlmT2qeNZS	\N
 12221222	karim1234@gmail.com	Karim	Farid	Zakzouk	$2b$10$T.Edi3soo3rmvtnMyIhGBOJ5h33cOAxAPEsmAaXxivmA/OVgde.Yq	\N
 11113333	aaa@gmail.com	aaa	aaa	aaa	$2b$10$aoKhO48RbnqXqFRSvpd3oOGRwONsBwf2Ohdp5BsMkMaTAuXHFASIK	\N
-123	asd@gmail.com	asd	aasd	asd	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	123321
+11223344	manager@gmail.com	Karim	Farid	Zakzouk	$2b$10$vh6xETSPS5Pv9bhEUoAIJOu14oyCbxXDqU8JwJin9wTNK.UPt6Rm2	123321
 \.
 
 
@@ -427,6 +421,9 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 --
 
 COPY public."Manager Finance" (m_ssn, date, salary, total_profit) FROM stdin;
+11223344	2024-10-20	0	18504
+11223344	2024-11-20	17504	18504
+11223344	2024-12-20	7504	18504
 \.
 
 
@@ -435,7 +432,28 @@ COPY public."Manager Finance" (m_ssn, date, salary, total_profit) FROM stdin;
 --
 
 COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
-3	example123@gmail.com	20	Abdullah	Elnoory	$2b$10$JmwL6oaxFdK4Ljl74RI5ke6LJ2w/qkJcM7FLJrUYF6UBTZbLsK8eW
+6	john.doe@example.com	25	John	Doe	$2b$10$YRH4pIAC60WlsEIAC4i5x.uqdAHmO3gdci/7IMIC1dJAaq2XLObL2
+7	jane.smith@example.com	30	Jane	Smith	$2b$10$OG.88Js9LprgaVRBxANxjuUOnecP6MUxYVlAhSMZSZCTj6Amc58pq
+8	alice.johnson@example.com	22	Alice	Johnson	$2b$10$Ur22qYt0XISgjG6rtgxkQu9zXg8WvSeF2r1ZPp28Dba8cL5A0KHeS
+9	bob.williams@example.com	28	Bob	Williams	$2b$10$oAhaa5WgeY4geEJ6tRuXW.wFotmRknMw6vmOr1dJr1mwPaPowe1.6
+10	carol.brown@example.com	35	Carol	Brown	$2b$10$TaWnz4MwyFnGQZ6y3rFBN.5pPksDXuj3kQjTLCH1q0SMJYFXAU7gS
+11	emma.anderson@example.com	24	Emma	Anderson	$2b$10$SA9ZU.JdHhSqCEFEbiXdSerQHygMBzWMYwMYnTiVsUlC0y1/9KtFi
+12	frank.thomas@example.com	29	Frank	Thomas	$2b$10$dpbA7HHtUJymIr5loZwkFutC1JqtpTXj/uiwJfpG8CwrUhnBksyNO
+13	grace.jackson@example.com	27	Grace	Jackson	$2b$10$vA9hHSpXckmsgomUA4ukBu2cGIzjAE3LzUzX7aIonWvGIend1y99a
+14	henry.white@example.com	32	Henry	White	$2b$10$qtdNwJwvBX01rvoqgYV4Q.0Aer9XL.m58Jv4Ht3L558fJEioAalrS
+15	ivy.harris@example.com	26	Ivy	Harris	$2b$10$zIqE4a70scl9VkMux5xRRe8OikSL017LEpowLsX7itIEn3xtOGGqu
+16	jack.martin@example.com	33	Jack	Martin	$2b$10$VqCsEoTmQ7qN3U7coSi44.VUFP3lHf.LKn.ffJEyLIGKwpurQaAOK
+17	kelly.clark@example.com	23	Kelly	Clark	$2b$10$Zh9C5Ce503lpZwaPZEZame2t5cOz1qBaNubvx1umnq2C7tphGyT6q
+18	liam.lewis@example.com	31	Liam	Lewis	$2b$10$GQudf8M5MXsRKY3cVYB0fOM0szgYUr37c0VwoiaUj.mxXtX4RGpWK
+19	mia.walker@example.com	29	Mia	Walker	$2b$10$HJSWSZdbiRo9U/7bAK6s7eXRXsk6dRrgrWv9oa5JNIpKXJbH/QCUW
+20	noah.allen@example.com	33	Noah	Allen	$2b$10$QEgUdS7gmhe7XT6ebKZeLOjbkH.H4uLIXvXG2.qJjMcJKOj51Nky.
+1	olivia.young@example.com	22	Olivia	Young	$2b$10$XO2waipZPL5fGN2zKlfSu.7to2KwT8MIsAyCzXiIQwa1.ImAAsBWW
+2	peter.king@example.com	32	Peter	King	$2b$10$Ilhc.PbDQmZRjc/OIxPbBORti53c1jw5We7mg0G/l94i7AU4rS.mO
+3	quinn.scott@example.com	25	Quinn	Scott	$2b$10$deEikW2F8kMFhLztzzI5Au4phGz1MLNWVMOvOVwf9Gn0sRrZbQoki
+4	rachel.green@example.com	28	Rachel	Green	$2b$10$ZFuXXyNtVMA.MftI/GTghuT/lVNDzACqj7pxZBVi5JA1z4QgS60By
+5	samuel.miller@example.com	26	Samuel	Miller	$2b$10$dlvsawLEIAyejCK/zSklcOK3AbvYbqoBtw/TKfH3ZUTRG9aCDC6ZG
+21	passenger@gmail.com	24	Karim	Zakzouk	$2b$10$YPJy9FEu7dorDOvxyXZ8Ielmlf/8snueR/R9p/BvG62hdCQgYZXjm
+22	passenger1@gmail.com	42	Karim	Zakzouk	$2b$10$eWkzJfJRAfGVpJ8ildJqDeexm0LmreZi2O0BgMUNafH7DZG2X3m.y
 \.
 
 
@@ -444,9 +462,9 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 --
 
 COPY public."Passenger Trip" (p_id, t_id, is_favourite, rate) FROM stdin;
-3	2	f	1
-3	123	f	0
-3	3	f	5
+6	23	f	5
+6	24	t	1
+6	22	t	5
 \.
 
 
@@ -455,8 +473,6 @@ COPY public."Passenger Trip" (p_id, t_id, is_favourite, rate) FROM stdin;
 --
 
 COPY public."Private Trip" (order_id, source, destination, price, estimated_time, date, d_ssn, p_id) FROM stdin;
-1	asdad	asdasda	1231	1	asdasdasdasdad	121	3
-17	cairo	giza	100	1	2024-12-18	\N	3
 \.
 
 
@@ -464,9 +480,10 @@ COPY public."Private Trip" (order_id, source, destination, price, estimated_time
 -- Data for Name: Station; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn, rate) FROM stdin;
-5	asd	asd	asd	asd	123	\N
-1	asdsadas	dsadsa	dsadsa	dsadasd	1	\N
+COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn) FROM stdin;
+1	12341	dsadsa	dsadsa	dsadasd	1
+5	asd	asd	asd	asd	\N
+6	Giza Station	El Mehwar	38164	Cario	11223344
 \.
 
 
@@ -475,10 +492,31 @@ COPY public."Station" (station_id, station_name, street, zipcode, governorate, m
 --
 
 COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station, status) FROM stdin;
-123	12313	2024-12-13T19:25:03.666Z	1	121	5	1	accepted
-2	123131	2024-12-13T19:29:14.082Z	1	121	5	1	accepted
-5	1025	2024-12-13T19:29:14.082Z	\N	321	1	5	accepted
-3	123132123	2024-12-13T20:09:40.233Z	1	121	5	1	rejected
+25	2313	2024-12-20T11:38:20.325Z	1	321321	6	1	accepted
+18	2313	2024-12-20T11:38:18.693Z	1	321321	6	1	accepted
+19	2313	2024-12-20T11:38:19.397Z	1	321321	6	1	accepted
+20	2313	2024-12-20T11:38:19.589Z	1	321321	6	1	accepted
+21	2313	2024-12-20T11:38:19.733Z	1	321321	6	1	accepted
+22	2313	2024-12-20T11:38:19.869Z	1	321321	6	1	started
+23	2313	2024-12-20T11:38:20.021Z	1	321321	6	1	started
+24	2313	2024-12-20T11:38:20.173Z	1	321321	6	1	started
+14	213	2024-12-15T00:46:26.278Z	1	253850923	5	1	started
+6	12313	2024-12-15T00:45:39.133Z	1	253850923	5	1	started
+15	12313	2024-12-15T00:46:26.406Z	1	253850923	5	1	started
+16	12313	2024-12-15T00:46:26.550Z	1	253850923	5	1	started
+17	12313	2024-12-15T00:46:26.710Z	1	253850923	5	1	started
+2	123131	2024-12-15T00:42:25.326Z	1	253850923	5	1	started
+1	12313	2024-12-15T00:45:36.997Z	1	253850923	5	1	started
+4	12313	2024-12-15T00:45:38.030Z	1	253850923	5	1	started
+5	12313	2024-12-15T00:45:38.189Z	1	253850923	5	1	started
+3	123132123	2024-12-13T20:09:40.233Z	1	253850923	5	1	rejected
+8	12313	2024-12-15T00:45:39.742Z	1	253850923	5	1	started
+9	12313	2024-12-15T00:45:39.958Z	1	253850923	5	1	started
+10	12313	2024-12-15T00:45:40.102Z	1	253850923	5	1	started
+11	12313	2024-12-15T00:46:25.854Z	1	253850923	5	1	started
+12	12313	2024-12-15T00:46:26.014Z	1	253850923	5	1	started
+13	12313	2024-12-15T00:46:26.151Z	1	253850923	5	1	started
+7	123	2024-12-15T00:45:39.517Z	1	253850923	5	1	started
 \.
 
 
@@ -487,14 +525,9 @@ COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station,
 --
 
 COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
-1	321	2024-12-18	false
-1	321	2024-12-31	false
-1	321	2024-12-19	false
-1	321	2024-12-23	false
-1	321	2024-12-22	false
-1	321	2024-12-15	false
-1	321	2024-12-16	false
-1	321	2024-12-17	false
+1	321321	2024-12-24	pending
+11223344	321321	2024-12-26	accepted
+11223344	321321	2024-12-31	rejected
 \.
 
 
@@ -502,7 +535,7 @@ COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
 -- Name: Passenger_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Passenger_id_seq"', 3, true);
+SELECT pg_catalog.setval('public."Passenger_id_seq"', 22, true);
 
 
 --
@@ -711,6 +744,14 @@ ALTER TABLE ONLY public."Private Trip"
 
 
 --
+-- Name: Vacation Vacation_m_ssn_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Vacation"
+    ADD CONSTRAINT "Vacation_m_ssn_fkey" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+
+
+--
 -- Name: Driver fkey_MSSN; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -756,14 +797,6 @@ ALTER TABLE ONLY public."Trip"
 
 ALTER TABLE ONLY public."Vacation"
     ADD CONSTRAINT "fkey_Vacation_D_SSN" FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
-
-
---
--- Name: Vacation fkey_Vacation_M_SSN; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Vacation"
-    ADD CONSTRAINT "fkey_Vacation_M_SSN" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) ON UPDATE CASCADE ON DELETE SET NULL NOT VALID;
 
 
 --
