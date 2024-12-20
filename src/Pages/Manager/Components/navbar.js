@@ -100,7 +100,7 @@ const Navbar = () => {
               Account ▼
             </button>
             {dropdownOpen && (
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu" style={{ display: dropdownOpen ? 'block' : 'none' }}>
                 <li>
                   <button onClick={handleChangePassword} className="dropdown-item">
                     Change Password
