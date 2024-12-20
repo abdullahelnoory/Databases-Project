@@ -51,5 +51,7 @@ router.post("/profile", driverController.profile);
 
 router.put("/profile", driverController.updateProfile);
 
+router.post("/rate", driverController.getRate );
+
 
 module.exports = router;

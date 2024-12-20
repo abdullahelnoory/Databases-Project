@@ -346,6 +346,22 @@ exports.requestDayOff = async (req, res) => {
   const { d_ssn, date } = req.body;
 
   try {
+    const mSsnResult = await pool.query(
+      'SELECT "m_ssn" FROM "Driver" WHERE "ssn" = $1',
+      [d_ssn]
+    );
+
+    if (mSsnResult.rows.length === 0 || !mSsnResult.rows[0].m_ssn) {
+      return res.status(400).json({
+        success: false,
+        message: "No associated manager (m_ssn) found for this driver.",
+      });
+    }
+
+    const m_ssn = mSsnResult.rows[0].m_ssn;
+
+    console.log(m_ssn);
+
     const existingRequest = await pool.query(
       'SELECT * FROM "Vacation" WHERE "d_ssn" = $1 AND "date" = $2',
       [d_ssn, date]
@@ -360,7 +376,7 @@ exports.requestDayOff = async (req, res) => {
 
     const result = await pool.query(
       'INSERT INTO "Vacation" ("m_ssn", "d_ssn", "date", "status") VALUES ($1, $2, $3, $4) RETURNING *',
-      [1, d_ssn, date, "pending"]
+      [m_ssn, d_ssn, date, "pending"]
     );
 
     res.json({
@@ -376,6 +392,7 @@ exports.requestDayOff = async (req, res) => {
     });
   }
 };
+
 
 exports.getDayOffRequests = async (req, res) => {
   const { d_ssn } = req.body;
@@ -572,6 +589,39 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.getRate = async (req, res) => {
+  const { ssn } = req.body;
+
+  try {
+    const tripResult = await pool.query(
+      'SELECT AVG(rate) AS average_rate FROM "Trip", "Passenger Trip" WHERE "trip_id" = "t_id" AND "d_ssn" = $1',
+      [ssn]
+    );
+
+    if (tripResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No trips found for the provided SSN.",
+      });
+    }
+
+    const averageRate = tripResult.rows[0].average_rate;
+
+    res.json({
+      success: true,
+      data: {
+        average_rate: averageRate,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching driver's trip ratings:", error);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",

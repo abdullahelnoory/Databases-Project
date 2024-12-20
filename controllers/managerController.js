@@ -93,15 +93,30 @@ exports.getDrivers = async (req, res) => {
   const { m_ssn } = req.body;
   try {
     const result = await pool.query(
-      'SELECT * FROM "Driver" WHERE "m_ssn" = $1',
+      `SELECT 
+        d.ssn, 
+        d.fname, 
+        d.lname, 
+        d.salary,
+        (SELECT AVG(rate) 
+         FROM "Trip" t
+         JOIN "Passenger Trip" pt ON t.trip_id = pt.t_id
+         WHERE t.d_ssn = d.ssn) AS rate,
+        (SELECT COUNT(DISTINCT a.date) 
+         FROM "Attendance" a
+         WHERE a.d_ssn = d.ssn) AS attendance_days
+      FROM "Driver" d
+      WHERE d."m_ssn" = $1`,
       [m_ssn]
     );
+
+    console.log(result.rows);
     res.json({
       data: result.rows,
       success: true,
     });
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    console.error("Error fetching drivers:", error);
     res.status(500).json({
       success: false,
       message: "Database connection failed",
@@ -374,8 +389,6 @@ exports.getManagerFinanace = async (req, res) => {
   }
 };
 
-
-
 exports.addManagerFinancesSalary = async (req, res) => {
   const { m_ssn, salary } = req.body;
 
@@ -399,7 +412,7 @@ exports.addManagerFinancesSalary = async (req, res) => {
     }
 
     // Extract all driver SSNs
-    const driverSsns = driversResult.rows.map(row => row.ssn);
+    const driverSsns = driversResult.rows.map((row) => row.ssn);
 
     // Calculate total profit for the current month for all drivers
     const totalProfitResult = await pool.query(
@@ -432,8 +445,6 @@ exports.addManagerFinancesSalary = async (req, res) => {
     });
   }
 };
-
-
 
 exports.checkManagerVerified = async (req, res) => {
   const { m_ssn } = req.body;
@@ -479,7 +490,7 @@ exports.requests = async (req, res) => {
   try {
     const result = await pool.query(
       `
-        SELECT v.*, 
+        SELECT v.*,   
                CONCAT(d."fname", ' ', d."mname", ' ', d."lname") AS driver_name
         FROM "Vacation" v
         LEFT JOIN "Driver" d ON v."d_ssn" = d."ssn"
@@ -527,38 +538,79 @@ exports.respondRequest = async (req, res) => {
       message: "Database connection failed",
     });
   }
-}
+};
 
 exports.profile = async (req, res) => {
   const { ssn } = req.body;
   try {
+    // Query to get manager profile along with station and trips made
     const result = await pool.query(
-      'SELECT "ssn", "email", "fname", "mname", "lname", "verified_by" FROM "Manager" WHERE "ssn" = $1',
+      `SELECT "ssn", "email", "fname", "mname", "lname", "verified_by" 
+       FROM "Manager" 
+       WHERE "ssn" = $1`,
       [ssn]
     );
 
-    console.log(result.rows);
-
     if (result.rows.length > 0) {
       const manager = result.rows[0];
-      const responseData = {
-        success: true,
-        data: manager,
-      };
 
-      if (manager.verified_by) {
-        const adminResult = await pool.query(
-          'SELECT "fname", "mname", "lname" FROM "Admin" WHERE "ssn" = $1',
-          [manager.verified_by]
+      // Query to get the station associated with the manager
+      const stationResult = await pool.query(
+        'SELECT * FROM "Station" WHERE "m_ssn" = $1',
+        [ssn]
+      );
+
+      if (stationResult.rows.length > 0) {
+        const station = stationResult.rows[0]; // Station information
+
+        // Query to get the number of trips made from the station (source station)
+        const tripsAsSourceResult = await pool.query(
+          'SELECT COUNT(*) FROM "Trip" WHERE "source_station" = $1',
+          [station.station_id]
         );
-        if (adminResult.rows.length > 0) {
-          responseData.admin = `${adminResult.rows[0].fname} ${adminResult.rows[0].lname}`;
+
+        // Query to get the number of trips where the station is the destination
+        const tripsAsDestinationResult = await pool.query(
+          'SELECT COUNT(*) FROM "Trip" WHERE "destination_station" = $1',
+          [station.station_id]
+        );
+
+        // Query to get the average rating of the manager (driver)
+        const ratingResult = await pool.query(
+          'SELECT AVG(rate) AS average_rate FROM "Trip", "Passenger Trip", "Driver" AS D WHERE "trip_id" = "t_id" AND "d_ssn" = D."ssn" AND "m_ssn" = $1',
+          [ssn]
+        );
+
+        const averageRate = ratingResult.rows[0].average_rate || 0; // Default to 0 if no rating
+
+        const responseData = {
+          success: true,
+          data: manager,
+          station: station.station_name, // Add station name to the response
+          tripsAsSource: tripsAsSourceResult.rows[0].count, // Number of trips made from the station
+          tripsAsDestination: tripsAsDestinationResult.rows[0].count, // Number of trips to the station
+          averageRate, // Add the average rating to the response
+        };
+
+        // If the manager is verified, add the admin info
+        if (manager.verified_by) {
+          const adminResult = await pool.query(
+            'SELECT "fname", "mname", "lname" FROM "Admin" WHERE "ssn" = $1',
+            [manager.verified_by]
+          );
+          if (adminResult.rows.length > 0) {
+            responseData.admin = `${adminResult.rows[0].fname} ${adminResult.rows[0].lname}`;
+          }
         }
+        
+        console.log(responseData);
+        res.json(responseData);
+      } else {
+        res.status(404).json({
+          success: false,
+          message: "Station not found for this manager.",
+        });
       }
-
-
-      console.log(responseData);
-      res.json(responseData);
     } else {
       res.status(404).json({
         success: false,
@@ -566,7 +618,7 @@ exports.profile = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error fetching driver profile:", error);
+    console.error("Error fetching manager profile:", error);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -574,12 +626,17 @@ exports.profile = async (req, res) => {
   }
 };
 
+
+
 exports.updateProfile = async (req, res) => {
   const { ssn, fname, mname, lname, email } = req.body;
   console.log(req.body);
 
   try {
-    const result = await pool.query('SELECT * FROM "Manager" WHERE "ssn" = $1', [ssn]);
+    const result = await pool.query(
+      'SELECT * FROM "Manager" WHERE "ssn" = $1',
+      [ssn]
+    );
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -588,7 +645,8 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    const emailCheckResult = await pool.query(`
+    const emailCheckResult = await pool.query(
+      `
       SELECT email FROM "Passenger" WHERE email = $1 AND id <> $2
       UNION
       SELECT email FROM "Admin" WHERE email = $1 AND ssn <> $2
@@ -596,7 +654,9 @@ exports.updateProfile = async (req, res) => {
       SELECT email FROM "Manager" WHERE email = $1 AND ssn <> $2
       UNION
       SELECT email FROM "Driver" WHERE email = $1 AND ssn <> $2
-    `, [email, ssn]);
+    `,
+      [email, ssn]
+    );
 
     if (emailCheckResult.rows.length > 0) {
       return res.status(400).json({
@@ -622,6 +682,39 @@ exports.updateProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.getTotalRate = async (req, res) => {
+  const { ssn } = req.body;
+
+  try {
+    const totalResult = await pool.query(
+      'SELECT AVG(rate) AS average_rate FROM "Trip", "Passenger Trip", "Driver" AS D WHERE "trip_id" = "t_id" AND "d_ssn" = D."ssn" AND "m_ssn" = $1',
+      [ssn]
+    );
+
+    if (totalResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No rate found for the provided SSN.",
+      });
+    }
+
+    const averageRate = totalResult.rows[0].average_rate;
+
+    res.json({
+      success: true,
+      data: {
+        average_rate: averageRate,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching station's trip ratings:", error);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",

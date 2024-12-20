@@ -53,6 +53,8 @@ router.post("/profile", managerController.profile);
 
 router.put("/profile", managerController.updateProfile);    
 
+router.post("/rate", managerController.getTotalRate);
+
 
 // 
 
