@@ -45,6 +45,10 @@ router.post("/manager-finance", managerController.getManagerFinanace);
 
 router.post("/manager-add-salary", managerController.addManagerFinancesSalary);
 
+router.post("/requests", managerController.requests);
+
+router.post("/respond-request", managerController.respondRequest);
+
 
 // 
 

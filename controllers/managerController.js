@@ -470,3 +470,61 @@ exports.checkManagerVerified = async (req, res) => {
     });
   }
 };
+
+exports.requests = async (req, res) => {
+  const { m_ssn } = req.body;
+
+  console.log("Manager SSN:", req.body);
+
+  try {
+    const result = await pool.query(
+      `
+        SELECT v.*, 
+               CONCAT(d."fname", ' ', d."mname", ' ', d."lname") AS driver_name
+        FROM "Vacation" v
+        LEFT JOIN "Driver" d ON v."d_ssn" = d."ssn"
+        WHERE v."m_ssn" = $1 AND v."status" = 'pending'
+      `,
+      [m_ssn]
+    );
+
+    console.log(result.rows);
+
+    res.json({
+      data: result.rows,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching requests:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};
+
+exports.respondRequest = async (req, res) => {
+  const { m_ssn, d_ssn, date, response } = req.body;
+
+  try {
+    const result = await pool.query(
+      `
+        UPDATE "Vacation"
+        SET "status" = $1
+        WHERE "m_ssn" = $2 AND "d_ssn" = $3 AND "date" = $4
+      `,
+      [response, m_ssn, d_ssn, date]
+    );
+
+    res.json({
+      success: true,
+      message: "Request response updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating request response:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+}

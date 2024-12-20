@@ -360,7 +360,7 @@ exports.requestDayOff = async (req, res) => {
 
     const result = await pool.query(
       'INSERT INTO "Vacation" ("m_ssn", "d_ssn", "date", "status") VALUES ($1, $2, $3, $4) RETURNING *',
-      [1, d_ssn, date, false]
+      [1, d_ssn, date, "pending"]
     );
 
     res.json({
