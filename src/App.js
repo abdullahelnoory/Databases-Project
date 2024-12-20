@@ -43,6 +43,7 @@ import Drivers from './Pages/Passenger/Components/Drivers.js';
 import Station from './Pages/Station/StationHome.js';
 import ManagerFnance from './Pages/Manager/Components/MangerFinance.js'
 import ProfileSettings from './Pages/Driver/Components/ProfileSettings.js';
+import ChangeDriverPassword    from './Pages/Driver/Components/ChangeDriverPassword.js';
 function App() {
   return (
     <div className="App">
@@ -78,6 +79,7 @@ function App() {
             <Route path="Driver/Trips" element={<AllTrips />} />
             <Route path="Driver/PrivateTrips" element={<PrivateTrips />} />
             <Route path="Driver/ProfileSettings" element={<ProfileSettings/>} />
+            <Route path="Driver/ChangePassword" element={<ChangeDriverPassword/>} />
           </Route>
 
 
