@@ -39,15 +39,25 @@ import PassengerPrivateTrips from './Pages/Passenger/PrivateTrips.js';
 
 import PassengerTrips from './Pages/Passenger/AllTrips.js';
 import Drivers from './Pages/Passenger/Components/Drivers.js';
-import Station from './Pages/Passenger/Components/Station.js';
+// import Station from './Pages/Passenger/Components/Station.js';
+import Station from './Pages/Station/StationHome.js';
 import ManagerFnance from './Pages/Manager/Components/MangerFinance.js'
 import ProfileSettings from './Pages/Driver/Components/ProfileSettings.js';
+
+import ChangeDriverPassword    from './Pages/Driver/Components/ChangeDriverPassword.js';
+
+import Profile_Settings from './Pages/Manager/Profile_Settings.js';
+
+
+
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+{/* 
+          <Route path="/bulk" element={<RegisterPage />} /> */}
 
           <Route path="/signup" element={<Signup />} />
 
@@ -67,6 +77,7 @@ function App() {
             <Route path="manager/trips" element={<ManagerTrips />} />
             <Route path="manager/requests" element={<ManagerRequests />} />
             <Route path="manager/manager-finance" element={<ManagerFnance />} />
+            <Route path="manager/profile-settings" element={<Profile_Settings />} />
           </Route>
 
 
@@ -77,6 +88,7 @@ function App() {
             <Route path="Driver/Trips" element={<AllTrips />} />
             <Route path="Driver/PrivateTrips" element={<PrivateTrips />} />
             <Route path="Driver/ProfileSettings" element={<ProfileSettings/>} />
+            <Route path="Driver/ChangePassword" element={<ChangeDriverPassword/>} />
           </Route>
 
 

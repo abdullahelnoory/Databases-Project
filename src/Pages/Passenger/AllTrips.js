@@ -40,7 +40,7 @@ function AllTrips() {
           to="/Passenger/Station"
           className="links"
           onClick={() => handlestation(row)}
-          state={{ value: row.SourceId }}
+          state={{ value: row.source_id }}
         >
           {row.source}
         </NavLink>
@@ -55,7 +55,7 @@ function AllTrips() {
           to="/Passenger/Station"
           className="links"
           onClick={() => handlestation(row)}
-          state={{ value: row.DestinationId }}
+          state={{ value: row.destination_id }}
         >
           {row.destination}
         </NavLink>
@@ -68,7 +68,7 @@ function AllTrips() {
           to="/Passenger/Drivers"
           className="links"
           onClick={() => handleDriver(row)}
-          state={{ value: row.driver_fname }}
+          state={{ value: row.driver_ssn }}
         >
           {row.driver_fname}
         </NavLink>

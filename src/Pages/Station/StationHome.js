@@ -1,37 +1,48 @@
 import React, { useState, useEffect } from 'react';
-
+import { useLocation } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import '../../styles.css'
 
 export default function Station()
 {
+  const location = useLocation();
     const [Station,SetStation]=useState({
         station_name: "",
         street: "",
         zipcode: "",
         governorate: "",
+        rate:null,
     }
     )
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(true);
      //assume station id is sent
  useEffect(() => {
-    fetch('http://localhost:6969/Station')
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          SetStation(data.data); // Set rows based on the response's `data` field
+  (async () => {
+    try {
+      const result = await fetch('http://localhost:6969/Passenger/Station'
+    , {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ st_id: location.state.value }),
+    });
+    const resultInjson = await result.json();
+    console.log(resultInjson);
+        if (resultInjson.success) {
+          SetStation(resultInjson.data); // Set rows based on the response's `data` field
           setLoading(false);
         } else {
             setErrorMessage('Failed to fetch data');
             setLoading(false);
           }
-      })
-      .catch((error) => {
+    }catch(error) {
         console.error('Error fetching data:', error);
         setErrorMessage('Failed to fetch data');
         setLoading(false);
-      });
+      };
+    })();
   }, []);
 
   if (loading) {

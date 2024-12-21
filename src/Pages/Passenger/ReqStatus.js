@@ -55,7 +55,7 @@ export default function ReqStatus() {
   let StatusList = statusState.map(function (status) {
     return (
       <li key={status.source} className="status">
-        Date:{status.source} status: {status.destination}
+        Source:{status.source} Destination: {status.destination}
       </li>
     );
   });
