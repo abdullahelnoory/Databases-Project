@@ -53,5 +53,6 @@ router.put("/profile", driverController.updateProfile);
 
 router.post("/rate", driverController.getRate );
 
+router.post("/get-started-trips", driverController.getStartedTrips);
 
 module.exports = router;

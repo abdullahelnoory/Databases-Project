@@ -393,12 +393,10 @@ exports.addManagerFinancesSalary = async (req, res) => {
   const { m_ssn, salary } = req.body;
 
   try {
-    // Get the current date and month
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().slice(0, 10); // Format as YYYY-MM-DD
-    const currentMonth = currentDate.getMonth() + 1; // Current month (1-12)
+    const formattedDate = currentDate.toISOString().slice(0, 10); 
+    const currentMonth = currentDate.getMonth() + 1;
 
-    // Fetch all drivers' SSNs associated with the manager
     const driversResult = await pool.query(
       'SELECT "ssn" FROM "Driver" WHERE m_ssn = $1',
       [m_ssn]

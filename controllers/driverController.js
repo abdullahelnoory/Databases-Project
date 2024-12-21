@@ -141,6 +141,28 @@ exports.getTrips = async (req, res) => {
   }
 };
 
+exports.getStartedTrips = async (req, res) => {
+  const { d_ssn } = req.body;
+  try {
+    const result1 = await pool.query(
+      'SELECT * FROM "Trip" WHERE "d_ssn" = $1 and "status"=$2',
+      [d_ssn, "started"]
+    );
+
+    res.json({
+      success: true,
+      data: result1.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching trips:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+
 exports.rejectTrip = async (req, res) => {
   const { trip_id } = req.body;
 
@@ -324,14 +346,15 @@ exports.getPrivateStatus = async (req, res) => {
   const { d_ssn } = req.body;
   try {
     const result = await pool.query(
-      'SELECT "is_private" FROM "Driver" WHERE "ssn" = $1',
+      'SELECT "is_private", "m_ssn" FROM "Driver" WHERE "ssn" = $1',
       [d_ssn]
     );
 
     if (result.rows.length > 0) {
       const isPrivate = result.rows[0].is_private;
-
+      console.log(result.rows[0].m_ssn === null ? false : true);
       res.json({
+        m_ssn: result.rows[0].m_ssn === null ? false : true,
         isPrivate: isPrivate,
       });
     } else {

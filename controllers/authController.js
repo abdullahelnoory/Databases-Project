@@ -439,12 +439,9 @@ exports.updateProfile = async (req, res) => {
         updateFields.push('"email" = $' + (updateValues.length + 1));
         updateValues.push(email);
       }
-      if (
-        is_private !== undefined &&
-        is_private !== driverResult.rows[0].is_private
-      ) {
+      if (is_private !== driverResult.rows[0].is_private) {
         updateFields.push('"is_private" = $' + (updateValues.length + 1));
-        putValues.push(is_private);
+        updateValues.push(is_private);
       }
 
       tableName = "Driver";
@@ -573,6 +570,8 @@ exports.updateProfile = async (req, res) => {
 exports.profile = async (req, res) => {
   const { ssn, jobRole } = req.body;
 
+  console.log(req.body);
+
   try {
     let userResult;
     let responseData = { success: false };
@@ -614,6 +613,9 @@ exports.profile = async (req, res) => {
           if (managerResult.rows.length > 0) {
             responseData.data.manager_name = `${managerResult.rows[0].fname} ${managerResult.rows[0].lname}`;
           }
+          else{
+            responseData.data.manager_name = "";
+          }
         }
 
         if (user.s_id) {
@@ -625,6 +627,11 @@ exports.profile = async (req, res) => {
             responseData.data.station_name = stationResult.rows[0].station_name;
           }
         }
+        else{
+          responseData.data.station_name="";
+          responseData.data.manager_name="";
+        }
+    
 
         const tripResult = await pool.query(
           'SELECT AVG(rate) AS average_rate FROM "Trip", "Passenger Trip" WHERE "trip_id" = "t_id" AND "d_ssn" = $1',
@@ -636,6 +643,7 @@ exports.profile = async (req, res) => {
         }
       }
 
+      console.log(responseData);
       return res.json(responseData);
     }
     res.status(404).json({
