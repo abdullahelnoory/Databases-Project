@@ -2,7 +2,7 @@ import "./ReqDayoff.css";
 // import Button from "./Button";
 import React from "react";
 import { useState } from "react";
-import PopUp from "./PopUp";
+
 export default function ReqDayoff() {
   const now = new Date();
   let month;
@@ -12,7 +12,6 @@ export default function ReqDayoff() {
   if (now.getDate() / 10 < 1) day = `0${now.getDate()}`;
   else day = `${now.getDate()}`;
   let today = `${now.getFullYear()}-${month}-${day}`;
-  console.log(today);
   let [testState, setTestState] = useState({
     time: today,
     valid: false,
@@ -21,9 +20,8 @@ export default function ReqDayoff() {
     error: false
   });
   const userssn = sessionStorage.getItem('ssn');
-  const handleAddUser = async () => {
+  const handleRequist = async () => {
     try {
-      console.log(testState.time);
       const result = await fetch("http://localhost:6969/driver/request-day-off", {
         method: "POST",
         headers: {
@@ -36,43 +34,28 @@ export default function ReqDayoff() {
         setTestState({ ...testState, error: true });
       else
         setTestState({ ...testState, final: true });
-
-      console.log(resultInjson);
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error Request Day OFF:", error);
     }
   };
 
   function submitReq(event) {
     event.preventDefault();
-    console.log(now.getFullYear());//
-    console.log(+testState.time.slice(0, 4));//
-    console.log(+month);//12
-    console.log(+testState.time.slice(5, 7));
-    console.log(+day);
-    console.log(+testState.time.slice(8, 10));
-    // if(testState.time < today){
-    //   setTestState({ ...testState, valid: true });
-    // }
-    // else{
-    //   handleAddUser();
-    // }
-
     if (now.getFullYear() < +testState.time.slice(0, 4)) {
-      handleAddUser();
+      handleRequist();
     }
     else {
       if (now.getFullYear() == testState.time.slice(0, 4)) {
         if (
           +month < +testState.time.slice(5, 7)
         )
-          handleAddUser();
+          handleRequist();
         else {
           if (
             +month == +testState.time.slice(5, 7)
           ) {
             if (+day < +testState.time.slice(8, 10))
-              handleAddUser();
+              handleRequist();
             else
               setTestState({ ...testState, valid: true });
           }
@@ -109,33 +92,33 @@ export default function ReqDayoff() {
               className="date"
               type="date"
             ></input>
-            <button className="button10"> {"Request "}</button>
+            <button className="submit-button"> {"Request "}</button>
           </form>
 
           {testState.valid ? (
-            <div className="failurepopUp"> FAILURE Wrong Date</div>
+            <div className="response-popUp"> FAILURE Wrong Date</div>
           ) : null}
 
           {testState.error ? (
-            <div className="failurepopUp"> Already Requested Date</div>
+            <div className="response-popUp"> Already Requested Date</div>
           ) : null}
 
           {testState.final ? (
-            <div className="failurepopUp"> Suceess Date</div>
+            <div className="response-popUp"> Suceess Date</div>
           ) : null}
 
           <div
-            className={testState.final ? "formmsucc" : "formm1fail"}
+            className={testState.final ? "success-form" : "fail-form"}
             onClick={() =>
               setTestState({ ...testState, final: false, req: false ,error:false})
             }
           ></div>
           <div
-            className={testState.valid || testState.error ? "formmsucc" : "formm1fail"}
+            className={testState.valid || testState.error ? "success-form" : "fail-form"}
             onClick={() => setTestState({ ...testState, valid: false ,final: false ,error:false})}
           ></div>
           <div
-            className="formm"
+            className="back-form"
             onClick={() => {
               setTestState({ ...testState, req: false ,error:false});
             }}

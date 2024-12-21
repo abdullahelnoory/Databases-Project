@@ -7,20 +7,6 @@ import { IconContext } from "react-icons";
 import { VscAccount, VscChromeClose } from "react-icons/vsc";
 import "./Home.css"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function Home() {
   let { openState, setOpenState } = useState(false);
 //   const showIcons = () => setOpenState(!openState);

@@ -1,7 +1,6 @@
 import "./PrivateTrips.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "./Header";
 import DataTable, { createTheme } from "react-data-table-component";
 function PrivateTrips() {
   const userssn = sessionStorage.getItem('ssn');

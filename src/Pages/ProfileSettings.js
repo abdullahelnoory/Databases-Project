@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import "./ProfileSettings.css";
+import {  useLocation } from "react-router-dom";
 
 function ProfileSettings() {
+    const location = useLocation();
   let [profileState, setProfileState] = useState({
     email: "",
     fname: "",
@@ -24,6 +26,7 @@ function ProfileSettings() {
   });
 
   const userssn = sessionStorage.getItem("ssn");
+  const role=sessionStorage.getItem("userType");
   useEffect(() => {
     (async () => {
       try {
@@ -34,7 +37,7 @@ function ProfileSettings() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ ssn: userssn }),
+            body: JSON.stringify({ ssn: userssn ,jobRole:role }),
           }
         );
         const resultInjson = await result.json();
@@ -62,6 +65,7 @@ function ProfileSettings() {
           body: JSON.stringify({
             ssn: userssn,
             data: profileState,
+            jobRole:role,
           }),
         }
       );
@@ -118,6 +122,8 @@ console.log("fdfdfd");
                   </label>
                   <input
                     type="text"
+                    pattern="[A-Za-z\s]+" // HTML validation pattern
+                     title="Please enter only letters."
                     id="first-name"
                     placeholder={prevProfileState.fname}
                     class="set"
@@ -130,12 +136,15 @@ console.log("fdfdfd");
                     }
                   />
                 </div>
+                 {location.pathname !== "/Passenger/ProfileSettings"  ?
                 <div class="form-input-set">
                   <label for="mname" class="set">
                     mname
                   </label>
                   <input
                     type="text"
+                pattern="[A-Za-z\s]+" // HTML validation pattern
+              title="Please enter only letters."
                     id="mname"
                     placeholder={prevProfileState.mname}
                     class="set"
@@ -148,6 +157,7 @@ console.log("fdfdfd");
                     }
                   />
                 </div>
+                :null}
               </div>
               <div class="form-group-set">
                 <div class="form-input-set">
@@ -156,6 +166,8 @@ console.log("fdfdfd");
                   </label>
                   <input
                     type="text"
+                pattern="[A-Za-z\s]+" // HTML validation pattern
+              title="Please enter only letters."
                     id="lname"
                     placeholder={prevProfileState.lname}
                     class="set"
@@ -187,6 +199,7 @@ console.log("fdfdfd");
                   />
                 </div>
               </div>
+              {location.pathname === "/Driver/ProfileSettings"  ?
               <div class="form-group-set  form-group-private-set">
                 <label for="is_private" class="set">
                   Private Driver
@@ -208,7 +221,7 @@ console.log("fdfdfd");
                   />
                   <div class="checkmark-chkbox"></div>
                 </label>
-              </div>
+              </div> : null}
 
               <div class="mt-5 text-center">
                 <button

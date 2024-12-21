@@ -1,6 +1,6 @@
 import React from "react";
 // import {Link} from 'react-router'
-import { Link, Navigate, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import "./NavBar.css";
 import ReqDayoff from "./ReqDayoff";
 import ReqStatus from "./ReqStatus";
@@ -47,7 +47,9 @@ function NavBar() {
             Home
           </Link>
 
-          <Trips className="req" flagNotifiaction={true} />
+          {location.pathname === "/Driver" ? (
+            <Trips className="req" flagNotifiaction={false} />
+          ) : null}
           {location.pathname === "/Driver/Trips" ? (
             <LostItems className="req" />
           ) : null}
@@ -78,16 +80,19 @@ function NavBar() {
             <input id="toggleChecker" type="checkbox" />
             <label id="togglerLable" for="toggleChecker">
               <div
+                style={{}}
                 class="checkboxtoggler"
                 onClick={() => {
                   setOpenSettings(!openSettings);
                   setDeleteAcc(false);
                 }}
               >
+  
                 <div class="line-1"></div>
                 <div class="line-2"></div>
                 <div class="line-3"></div>
-              </div>
+                </div>
+        
             </label>
           </li>
         </ul>
@@ -131,9 +136,9 @@ function NavBar() {
               <div class="separator"></div>
 
               <li
-                onClick={() =>       navigate("/Driver/ChangePassword")}
+                onClick={() => navigate("/Driver/ChangePassword")}
                 class="element "
-                style={{ "--color": "#5353ff"}}
+                style={{ "--color": "#5353ff" }}
               >
                 <label for="password">
                   <input type="radio" id="password" name="filed" />

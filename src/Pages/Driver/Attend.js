@@ -1,7 +1,5 @@
 import "./Attend.css";
 import { useState, useEffect } from "react";
-import imag from "./pngtree-green-correct-icon-png-image_2912233-removebg-preview__1_-removebg (2).png";
-import axios from "axios";
 export default function Attend() {
   let [appearState, setAppearState] = useState({
     appear: true,
@@ -48,7 +46,6 @@ export default function Attend() {
         body: JSON.stringify(sendData),
       });
       const resultInjson = await result.json();
-      console.log(resultInjson);
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -61,19 +58,13 @@ export default function Attend() {
     <div className="containerAttend" style={{ visibility: appearState.appear ? "visible" : "hidden" }}>
       <span onClick={() => HandleReq()} >Mark Attendance</span>
 
-      {/* <button className={"button attend"}> Mark Attendance</button> */}
-      {/* <img
-        role="button"
-        className="imm"
-        src={imag}
-        onClick={() => HandleReq()}
-      ></img> */}
+
 
       {appearState.final ? (
         <>
-          <div className="failurepopUp"> Suceess Attend</div>
+          <div className="fail-popUp"> Suceess Attend</div>
           <div
-            className={"formmsuccAttend"}
+            className={"success-attend-popup"}
             onClick={() =>
               setAppearState({ ...appearState, final: false, appear: false })
             }

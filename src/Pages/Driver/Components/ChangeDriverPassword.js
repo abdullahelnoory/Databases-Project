@@ -12,43 +12,21 @@ function ChangeDriverPassword() {
   });
 
   const userssn = sessionStorage.getItem("ssn");
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await fetch(
-          "http://localhost:6969/driver/get-password",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ d_ssn: userssn }),
-          }
-        );
-        const resultInjson = await result.json();
-        console.log(resultInjson);
-        setPasswordState({
-          ...passwordState,
-          myOldPassword: resultInjson.password,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-  }, []);
 
   const sendData = async () => {
     try {
       const result = await fetch(
-        "http://localhost:6969/driver/request-changePassword",
+        "http://localhost:6969/accounts/change-password",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            d_ssn: userssn,
+            ssn: userssn,
             password: passwordState.newPassword,
+            confirmPassword:passwordState.confirmPassword,
+            oldPassword: passwordState.oldPassword,
           }),
         }
       );
@@ -58,7 +36,7 @@ function ChangeDriverPassword() {
           confirmPassword:"",
           newPassword:"",
           oldPassword:"",
-          error: " error while changing Password",
+          error: resultInjson.message,
           success: "",
         });
       else
@@ -66,67 +44,22 @@ function ChangeDriverPassword() {
           confirmPassword:"",
           newPassword:"",
           oldPassword:"",
-          success: "Password changed successfully",
+          success: resultInjson.message,
           error: "",
         });
 
-      console.log(resultInjson);
+
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error connecting server:", error);
     }
   };
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (
-      passwordState.oldPassword === "" ||
-      passwordState.newPassword === "" ||
-      passwordState.confirmPassword === ""
-    ) {
-      setPasswordState({
-        ...passwordState,
-        error: "All fields are required",
-        success: "",
-      });
-      return;
-    }
-    if (passwordState.newPassword !== passwordState.confirmPassword) {
-      setPasswordState({
-        confirmPassword:"",
-        newPassword:"",
-        oldPassword:"",
-        error: "Password is not identical",
-        success: "",
-      });
-      return;
-    }
-    if (passwordState.newPassword === passwordState.confirmPassword) {
-      if (passwordState.newPassword === passwordState.oldPassword) {
-        setPasswordState({
-          confirmPassword:"",
-          newPassword:"",
-          oldPassword:"",
-          error: "Password didnot change",
-          success: "",
-        });
-        return;
-      }
-      // setPasswordState({ ...passwordState, success: "Password changed successfully",error:"" });
-      if(passwordState.myOldPassword!==passwordState.oldPassword)
-      {
-        setPasswordState({
-          confirmPassword:"",
-          newPassword:"",
-          oldPassword:"",
-          error: " old Password is not correct ",
-          success: "",
-        });
-        return;
-      }
       sendData();
-      return;
-    }
+
+    
   }
   return (
     <div>
@@ -288,7 +221,7 @@ function ChangeDriverPassword() {
         <div
             className="formm-pass"
             onClick={() => {
-              setPasswordState({ ...passwordState, sucess: ""});
+              setPasswordState({ ...passwordState, success: ""});
             }}
           ></div>
         </>

@@ -11,18 +11,7 @@ export default function ReqStatus() {
     //Fetch data
 
     setReqState(true); // can make problem so make it in one object
-    //   (async () => {
-    //     try {
-    //       const result = await axios.get(
-    //         "http://localhost:3001/Trips"
-    //       );
-    //       console.log(result.data);
-    //       setStatusState(result.data);
-    //     } catch (error) {
-    //       console.error(error);
-    //     }
-    //   })();
-    // }
+
 
     (async () => {
       try {
@@ -37,7 +26,6 @@ export default function ReqStatus() {
           }
         );
         const resultInjson = await result.json();
-        console.log(resultInjson.data);
         setStatusState(resultInjson.data);
       } catch (error) {
         console.error(error);
@@ -45,21 +33,7 @@ export default function ReqStatus() {
     })();
   }
 
-  // useEffect(() => {
-  //   setReqState(true); // can make problem so make it in one object
-  //   const fetchData = async () => {
-  //     const result = await fetch(
-  //       "http://localhost:6969/accounts/Driver/RequestStatus"
-  //     );
-  //     const jsonResult = await result.json();
-  //     setStatusState(jsonResult);
-  //   };
-  // }, []);
 
-  // let [statusState, setStatusState] = useState([
-  //   { date: "curr dte", status: "rejected" },
-  //   { date: "curr dte2", status: "Accepted" },
-  // ]);
 
   let StatusListFirst = statusState.map(function (status) {
     return (
@@ -101,7 +75,7 @@ export default function ReqStatus() {
               </div>
             </div>
           {/* </div> */}
-          <div className="formm" onClick={() => setReqState(false)}></div>
+          <div className="closeform" onClick={() => setReqState(false)}></div>
          
         </>
       ) : null}

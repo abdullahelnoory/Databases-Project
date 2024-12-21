@@ -115,6 +115,8 @@ function RegisterPage() {
 
             type="text"
             name="fname"
+                          pattern="[A-Za-z\s]+" // HTML validation pattern
+              title="Please enter only letters."
             value={formInput.fname}
             onChange={handleChange}
             placeholder="First Name"
@@ -124,7 +126,8 @@ function RegisterPage() {
             style={{ width: "100%", margin: "0", marginBottom: "10px" }}
 
             type="text"
-            name="mname"
+            name="mname"              pattern="[A-Za-z\s]+" // HTML validation pattern
+              title="Please enter only letters."
             value={formInput.mname}
             onChange={handleChange}
             placeholder="Middle Name"
@@ -134,6 +137,8 @@ function RegisterPage() {
 
             type="text"
             name="lname"
+                          pattern="[A-Za-z\s]+" // HTML validation pattern
+              title="Please enter only letters."
             value={formInput.lname}
             onChange={handleChange}
             placeholder="Last Name"
@@ -202,6 +207,7 @@ function RegisterPage() {
               onChange={handleChange}
               placeholder="Age"
               required
+              
             />
           </div>
         )}
@@ -213,6 +219,9 @@ function RegisterPage() {
 
               type="text"
               name="ssn"
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              }}
               value={formInput.ssn}
               onChange={handleChange}
               placeholder="SSN"
@@ -226,13 +235,14 @@ function RegisterPage() {
             <h3>Car Details</h3>
             <input
               style={{ width: "100%", margin: "0", marginBottom: "10px" }}
-
               type="text"
+              
               name="carDetails.car_license"
               value={formInput.carDetails.car_license}
               onChange={handleChange}
               placeholder="Car License"
               required
+              
             />
             <input
               style={{ width: "100%", margin: "0", marginBottom: "10px" }}
@@ -267,6 +277,9 @@ function RegisterPage() {
 
               type="text"
               name="carDetails.additional_price"
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              }}
               value={formInput.carDetails.additional_price}
               onChange={handleChange}
               placeholder="Additional Price"
@@ -279,7 +292,7 @@ function RegisterPage() {
             <h3>Station Details</h3>
             <input
               style={{ width: "100%", margin: "0", marginBottom: "10px" }}
-
+  
               type="text"
               name="stationDetails.station_name"
               value={formInput.stationDetails.station_name}
@@ -312,10 +325,12 @@ function RegisterPage() {
 
               type="text"
               name="stationDetails.governorate"
+
               value={formInput.stationDetails.governorate}
               onChange={handleChange}
               placeholder="Governorate"
               required
+              
             />
           </div>
         )}
@@ -326,7 +341,7 @@ function RegisterPage() {
         </div>
 
         <div className="login-link">
-          <p>Already have an account? <a href="/">Login here</a></p>
+          <p>Already have an account? <a href="/"> Login here </a></p>
         </div>
       </form>
     </div>

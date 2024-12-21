@@ -18,7 +18,6 @@ export default function Resigon() {
         body: JSON.stringify(sendState),
       });
       const resultInjson = await result.json();
-      console.log(resultInjson);
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -41,7 +40,6 @@ export default function Resigon() {
           method="post"
           className="popUpp"
           onSubmit={(event) => {
-            console.log(reasonState);
             handleSubmit();
             event.preventDefault();
           }}

@@ -1,15 +1,4 @@
-/* .containerAttend {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: #ecf0f1;
-  padding: 0.5rem;
-  margin: 1.5rem;
-  border-radius: 0.5rem;
-  height: 27px;
-  width: fit-content;
-} */
+
 
 .containerAttend{
   text-decoration: none;
@@ -61,12 +50,10 @@
   transition: background-color 1000ms ease;
 }
 
-.failurepopUp {
+.fail-popUp {
   height: 300px;
   width: 300px;
   display: flex;
-  background-color: rgb(125, 41, 41);
-
   border-radius: 10px;
   position: fixed;
   transform: translate(150px, -150px);
@@ -86,7 +73,7 @@
   border: 1px solid rgba(255, 255, 255, 1);
 }
 
-.failurepopUp {
+.fail-popUp {
   background-color: rgb(22, 148, 159);
   z-index: 992;
   width: 40vh;
@@ -95,9 +82,9 @@
   top: 23.5%;
 }
 
-.formmsuccAttend {
+.success-attend-popup {
   display: flex; /* starts out with a display of none so it can be changed to block on click */
-  background-color: rgba(143, 22, 143, 0.5);
+  background-color: rgb(193 192 193 / 60%);
   height: 100vh;
   width: 100vw;
   position: fixed;

@@ -1,7 +1,8 @@
-
 import React from "react";
 import "./Profile.css";
 import { useState, useEffect } from "react";
+import StarRatings from "react-star-ratings";
+
 function Profile() {
   let [profileState, setProfileState] = useState({
     email: "",
@@ -9,28 +10,24 @@ function Profile() {
     mname: "",
     lname: "",
     is_private: false,
-    manager_name:"",
-    salary:null,
-    shift:"",
-    station_name:"",
-    rate:null
+    manager_name: "",
+    salary: null,
+    shift: "",
+    station_name: "",
+    rate: "0",
   });
   const userssn = sessionStorage.getItem("ssn");
   useEffect(() => {
     (async () => {
       try {
-        const result = await fetch(
-          "http://localhost:6969/driver/get-profileData",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ d_ssn: userssn }),
-          }
-        );
+        const result = await fetch("http://localhost:6969/accounts/profile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ssn: userssn }),
+        });
         const resultInjson = await result.json();
-        console.log(resultInjson);
         setProfileState(resultInjson.data);
       } catch (error) {
         console.error(error);
@@ -39,33 +36,32 @@ function Profile() {
   }, []);
 
   return (
-    <div >
-      
-    <div class="main-profile">
-    <div class="profile-card-set" style={{justifyContent:"center"}}>
-      <div class="myprofile-sidebar-set">
-        <img
-          class="profile-image-set"
-          src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
-          alt="Profile-Image"
-        />
-        <h2 class="profile-name-set">{profileState.fname}</h2>
-        <p class="profile-email-set">{profileState.email}</p>
-      </div>
-      </div>
-      <div class="profile-card-set">
-        <div class="profile-settings-set">
-          <h2 class="section-title-set"> My Profile </h2>
+<div className="main-profile">
+  <div className="profile-card-set" style={{ width: "100%", margin: "auto" , justifyContent: "center"}} >
+    <div className="myprofile-sidebar-set">
+      <img
+        className="profile-image-set"
+        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
+        alt="Profile-Image"
+      />
+      <h2 className="profile-name-set">{profileState.fname}</h2>
+      <p className="profile-email-set">{profileState.email}</p>
+    </div>
+  </div>
+  <div className="profile-card-set">
+    <div className="profile-settings-set">
+      <h2 className="section-title-set"> My Profile </h2>
+
           <form>
             <div class="form-group-set">
               <div class="form-input-set">
                 <label for="first-name" class="set">
-                  fname
+                  First Name
                 </label>
                 {/* <h3 id="first-name" class="profile-name-set">
-                  {profileState.fname}
-                </h3> */}
-                             <input
+                    {profileState.fname}
+                  </h3> */}
+                <input
                   type="text"
                   id="lname"
                   class="set"
@@ -75,7 +71,7 @@ function Profile() {
               </div>
               <div class="form-input-set">
                 <label for="mname" class="set">
-                  mname
+                  Middle Name
                 </label>
                 <input
                   type="text"
@@ -89,7 +85,7 @@ function Profile() {
             <div class="form-group-set">
               <div class="form-input-set">
                 <label for="lname" class="set">
-                  lname
+                  Last Name
                 </label>
                 <input
                   type="text"
@@ -129,8 +125,8 @@ function Profile() {
                 <div class="checkmark-chkbox "></div>
               </label>
             </div>
-            <div class="form-group-set" >
-            <div class="form-input-set">
+            <div class="form-group-set">
+              <div class="form-input-set">
                 <label for="salary" class="set">
                   Salary
                 </label>
@@ -154,25 +150,29 @@ function Profile() {
                   disabled
                 />
               </div>
-              </div>
-              <div class="form-group-set" >
-
+            </div>
+            <div class="form-group-set">
               <div class="form-input-set">
-                <label for="rate" class="set">
+                <label for="rate-star" class="set">
                   My rate
                 </label>
-                <input
-                  type="text"
-                  id="rate"
-                  class="set"
-                  value={profileState.rate}
-                  disabled
-                />
+                <div id="rate-star">
+                  <StarRatings
+                    rating={
+                      !isNaN(profileState.rate)
+                        ? parseFloat(profileState.rate)
+                        : 0
+                    }
+                    starRatedColor="gold"
+                    numberOfStars={5}
+                    name="rating"
+                    starDimension="30px"
+                    starSpacing="5px"
+                  />
+                </div>
               </div>
 
-
-
-            <div class="form-input-set">
+              <div class="form-input-set">
                 <label for="manager_name" class="set">
                   Manager Name
                 </label>
@@ -186,7 +186,7 @@ function Profile() {
               </div>
               <div class="form-input-set">
                 <label for="station_name" class="set">
-                Station Name
+                  Station Name
                 </label>
                 <input
                   type="text"
@@ -196,16 +196,13 @@ function Profile() {
                   disabled
                 />
               </div>
-              </div>
+            </div>
 
             <div class="mt-5 text-center"></div>
           </form>
         </div>
       </div>
     </div>
-    </div>
-
-
   );
 }
 

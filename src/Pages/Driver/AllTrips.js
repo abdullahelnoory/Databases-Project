@@ -1,7 +1,5 @@
 import "./AllTrips.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import Header from "./Header";
 import DataTable, { createTheme } from "react-data-table-component";
 import React from "react";
 function AllTrips() {
@@ -101,29 +99,7 @@ function AllTrips() {
       selector: (row) => row.date.slice(0, 10),
     },
 
-    // {
-    //   name: "Accept",
-    //   maxWidth: "100px",
-    //   cell: (row) => (
-    //     <button
-    //       className="butt1"
-    //       //   onClick={() => console.log(`Button clicked for ${row.name}`)}
-    //       onClick={() => setTripState({ ...tripState, Accept: true })}
-    //       style={{
-    //         padding: "5px 10px",
-    //         color: "white",
-    //         border: "none",
-    //         borderRadius: "4px",
-    //         cursor: "pointer",
-    //       }}
-    //     >
-    //       Accept
-    //     </button>
-    //   ),
-    //   ignoreRowClick: true, // Prevents row click events when button is clicked
-    //   allowOverflow: true, // Allows the button to overflow if needed
-    //   button: true, // Identifies the column as a button
-    // },
+
     {
       name: "Reject",
       maxWidth: "100px",
@@ -195,7 +171,7 @@ function AllTrips() {
   ];
 
 useEffect(() => {
-  console.log(checkNumPassenger)
+
 
       const fetchData = async () => {
       try {
@@ -210,7 +186,7 @@ useEffect(() => {
           }
         );
         const resultInjson = await result.json();
-        console.log(resultInjson);
+
         setCheckNumPassenger({...checkNumPassenger, num: resultInjson.data.count})
       } catch (error) {
         console.error(error);
@@ -238,7 +214,6 @@ useEffect(() => {
       return row;
     });
 
-    console.log(filteredData);
     setRecievedData(filteredData);
   }
 
@@ -255,7 +230,7 @@ useEffect(() => {
     let newData = [...recievedAcceptedData];
     newData.push({ ...Row, status: "accepted" });
     setRecievedAcceptedData(newData);
-    console.log(newData);
+
   }
 
   const handleStartTrip = async (sendData) => {
@@ -271,7 +246,6 @@ useEffect(() => {
         }),
       });
       const resultInjson = await result.json();
-      console.log(resultInjson);
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -287,33 +261,32 @@ useEffect(() => {
         body: JSON.stringify({ trip_id: sendData.trip_id }),
       });
       const resultInjson = await result.json();
-      console.log(resultInjson);
+
     } catch (error) {
       console.error("Error adding user:", error);
     }
   };
 
   function HandleStart(Row) {
-    console.log(recievedAcceptedData);
+
     let filteredData;
     let flag = false;
-    let flag2=false;
-    console.log(flag);
+
+
     if (Row.status === "accepted") {
       filteredData = recievedAcceptedData.map((row) => {
         if (row.trip_id === Row.trip_id) return { ...row, status: "ongoing" };
         else {
           if (row.status === "ongoing") {
             flag = true;
-            console.log(row.trip_id);
+
           }
         }
-          console.log("jjj")
+ 
         return { ...row };
       });
       if (!flag) {
-        console.log("hi");
-        console.log(recievedAcceptedData);
+
         // Filter out the row by 
         setValidfetches(true);
         setCheckNumPassenger({
@@ -345,7 +318,6 @@ useEffect(() => {
   }
 
   function HandleReject(Row) {
-    console.log(Row);
     const filteredData = recievedData.filter(
       (row) => row.trip_id !== Row.trip_id
     ); // Filter out the row by id
@@ -367,7 +339,6 @@ useEffect(() => {
         body: JSON.stringify(sendData),
       });
       const resultInjson = await result.json();
-      console.log(resultInjson);
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -384,7 +355,6 @@ useEffect(() => {
           body: JSON.stringify({ d_ssn: userssn }),
         });
         const resultInjson = await result.json();
-        console.log(resultInjson);
         setRecievedData(resultInjson.tripsidle);
         setRecievedAcceptedData(resultInjson.tripsaccepted);
         resultInjson.tripsaccepted.map((ele)=>{
@@ -403,9 +373,6 @@ useEffect(() => {
     })();
   }, []);
 
-  // const HandleLost = async () => {
-  //   setReqState(true);
-  // };
 
   // createTheme creates a new theme named solarized that overrides the build in dark theme
   createTheme(
