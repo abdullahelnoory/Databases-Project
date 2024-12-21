@@ -3,13 +3,9 @@ import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import "./NavBar.css";
-import ReqDayoff from "./ReqDayoff";
 import ReqStatus from "./ReqStatus";
-import Attend from "./Attend";
-import Resign from "./Resign";
-import Trips from "./Trips";
-import LostItems from "./LostItems";
 import MyTrips from "./MyTrips";
+import RequestStatus from "./RequestStatus";
 import { useNavigate } from "react-router-dom";
 function NavBar() {
   const navigate = useNavigate();
@@ -44,7 +40,7 @@ function NavBar() {
     <>
       <nav>
         <Link className="mainPage" to="/Passenger">
-          Home
+          Passenger
         </Link>
         <ul>
           {/* {location.pathname === "/Trips" ? (
@@ -56,11 +52,15 @@ function NavBar() {
           {/* <li>
             <Trips className="req" flagNotifiaction={true} />
           </li> */}
-          {location.pathname === "/Passenger" ||location.pathname ==="/Passenger/Profile" ?
+          {/* {location.pathname === "/Passenger" ||location.pathname ==="/Passenger/Profile" ?
           <li>
             <ReqStatus className="req" />
           </li>
-          :null}
+          :null} */}
+
+          <li>
+          <NavLink  className="req"   to="/Passenger/RequestStatus">Request Status</NavLink>
+          </li>
           <li>
           <NavLink  className="req"   to="/Passenger/MyTrips">My Trips</NavLink>
           </li>

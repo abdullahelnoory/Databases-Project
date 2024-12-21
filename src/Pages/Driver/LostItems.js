@@ -37,7 +37,7 @@ useEffect(() => {
   if (testState.req === true) {
     (async () => {
       try {
-        const result = await fetch("http://localhost:6969/driver/get-trips",{
+        const result = await fetch("http://localhost:6969/driver/get-started-trips",{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -194,11 +194,11 @@ return (
         ></div>
 
         {testState.valid ? (
-          <div className="failurepopUp"> FAILURE Wrong ID</div>
+          <div className="response-id-popup "> FAILURE Wrong ID</div>
         ) : null}
 
         {testState.final ? (
-          <div className="failurepopUp"> Suceess Send</div>
+          <div className="response-id-popup "> Suceess Send</div>
         ) : null}
 
         <div

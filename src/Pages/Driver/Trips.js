@@ -21,6 +21,7 @@ export default function Trips({ flagNotifiaction }) {
   }
 
   let [privateDriver, setPrivateDriver] = useState(false);
+  let [manager, setManager] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -37,13 +38,14 @@ export default function Trips({ flagNotifiaction }) {
         );
         const resultInjson = await result.json();
         setPrivateDriver(resultInjson.isPrivate);
+        setManager(resultInjson.m_ssn);
       } catch (error) {
         console.error(error);
       }
     })();
   }, []);
 
-  return (
+  return manager || privateDriver ? (
     <div className="mainPage">
       <Popup
         open={popState.openPop}
@@ -64,29 +66,28 @@ export default function Trips({ flagNotifiaction }) {
       >
         <div
           className="containerr"
-          style={{ height: privateDriver ? "200px" : "100px" }}
+          style={{ height: privateDriver&&manager ? "200px" :"100px" }}
         >
-          {" "}
-          <Link
-            to="/Driver/Trips"
-            className="items"
-            onClick={() => OpenTrips()}
-          >
-            {" "}
-            Trips
-          </Link>
-          {privateDriver && (
+          {manager ?(
+            <Link
+              to="/Driver/Trips"
+              className="items"
+              onClick={() => OpenTrips()}
+            >
+              Trips
+            </Link>
+          ) : null}
+          {privateDriver ?(
             <Link
               to="/Driver/PrivateTrips"
               className="item2"
               onClick={() => OpenPrivateTrips()}
             >
-              {" "}
-              Private{" "}
+              Private
             </Link>
-          )}
+          ):null}
         </div>
       </Popup>
     </div>
-  );
+  ) : null;
 }

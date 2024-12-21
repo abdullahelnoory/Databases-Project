@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 // import PopUp from "./PopUp";
 import "./ReqStatus.css";
-import axios from "axios";
+
 export default function ReqStatus() {
   let [reqState, setReqState] = useState(false);
   let [statusState, setStatusState] = useState([]);

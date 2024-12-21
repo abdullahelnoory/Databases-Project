@@ -2,9 +2,11 @@ import "./Resign.css";
 import { useState, useEffect } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
+
 export default function Resigon() {
   let [reasonState, setReasonState] = useState("");
   const [PopupOpen, setPopupOpen] = useState(false);
+
   const handleSubmit = async () => {
     const userssn = sessionStorage.getItem('ssn');
     const sendState = { d_ssn: userssn, Reason: reasonState };
@@ -22,6 +24,7 @@ export default function Resigon() {
       console.error("Error adding user:", error);
     }
     setReasonState("");
+    window.location.reload();
     //setPopupOpen(false);   check
   };
   return (

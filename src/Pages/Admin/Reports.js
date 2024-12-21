@@ -1,0 +1,125 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+const Station_report= () => {
+  const [stationTripsData, setStationTripsData] = useState([]);
+  const [stationRatingsData, setStationRatingsData] = useState([]);
+  const [stationSalaryData, setStationSalaryData] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:6969/report/trips-per-station")
+      .then((response) => {
+        const data = response.data.data;
+        if (data && data.length > 0) {
+          const transformedData = data.map((item) => ({
+            station: item.station,                                      //
+            trips: item.trips,                                          //
+          }));
+          setStationTripsData(transformedData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching station trips data:", error);
+      });
+
+    axios
+      .get("http://localhost:6969/report/station-rate")
+      .then((response) => {
+        const data = response.data.data;
+        if (data && data.length > 0) {
+          const transformedData = data.map((item) => ({
+            station: item.station,                         //
+            rating: item.rating,                            //
+          }));
+          setStationRatingsData(transformedData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching station ratings data:", error);
+      });
+      axios
+      .get("http://localhost:6969/report/station_salaries") // Replace with your actual API URL
+      .then((response) => {
+        const data = response.data.data;
+
+        if (data && data.length > 0) {
+          // Process the data to extract station names and avg salaries
+          const processedData = data.map((item) => ({
+            station_name: item.station_name,             //     
+            avg_salary: item.avg_salary,                  //
+          }));
+
+          // Set the processed data for the BarChart
+          setStationSalaryData(processedData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching station salary data:", error);
+      });
+  }, []);
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2 style={{ textAlign: "center" }}>Station Trips per Month</h2>
+      {stationTripsData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={stationTripsData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="station" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="trips" fill="#82ca9d" />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p style={{ textAlign: "center" }}>Loading trips data...</p>
+      )}
+
+      <h2 style={{ textAlign: "center", marginTop: "40px" }}>
+        Station Ratings
+      </h2>
+      {stationRatingsData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={stationRatingsData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="station" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="rating" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p style={{ textAlign: "center" }}>Loading ratings data...</p>
+      )}
+       {/* Station Average Salary Graph */}
+       <h2>Station Average Salary</h2>
+      {stationSalaryData.length > 0 && (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={stationSalaryData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="station_name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="avg_salary" fill="#82ca9d" />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+};
+
+export default Station_report;

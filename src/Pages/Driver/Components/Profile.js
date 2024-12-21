@@ -17,6 +17,7 @@ function Profile() {
     rate: "0",
   });
   const userssn = sessionStorage.getItem("ssn");
+  const role = sessionStorage.getItem("userType");
   useEffect(() => {
     (async () => {
       try {
@@ -25,7 +26,7 @@ function Profile() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ssn: userssn }),
+          body: JSON.stringify({ ssn: userssn , jobRole:role }),
         });
         const resultInjson = await result.json();
         setProfileState(resultInjson.data);
@@ -37,15 +38,17 @@ function Profile() {
 
   return (
 <div className="main-profile">
-  <div className="profile-card-set" style={{ width: "100%", margin: "auto" , justifyContent: "center"}} >
+  <div className="profile-card-set" style={{ width: "100%", margin: "5px" , justifyContent: "center"}} >
     <div className="myprofile-sidebar-set">
       <img
         className="profile-image-set"
         src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
         alt="Profile-Image"
       />
+      <div>
       <h2 className="profile-name-set">{profileState.fname}</h2>
-      <p className="profile-email-set">{profileState.email}</p>
+      {/* <p className="profile-email-set">{profileState.email}</p> */}
+    </div>
     </div>
   </div>
   <div className="profile-card-set">
@@ -151,6 +154,7 @@ function Profile() {
                 />
               </div>
             </div>
+            
             <div class="form-group-set">
               <div class="form-input-set">
                 <label for="rate-star" class="set">
@@ -159,6 +163,7 @@ function Profile() {
                 <div id="rate-star">
                   <StarRatings
                     rating={
+                      (profileState.rate===null)?0:
                       !isNaN(profileState.rate)
                         ? parseFloat(profileState.rate)
                         : 0

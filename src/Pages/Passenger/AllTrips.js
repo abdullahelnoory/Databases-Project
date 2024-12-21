@@ -20,12 +20,6 @@ function AllTrips() {
   let [checkState, setCheckState] = useState(false);
   let [showTrips, setShowTrips] = useState(false);
 
-  function handlestation(row) {
-    console.log(row);
-  }
-  function handleDriver(row) {
-    console.log(row);
-  }
 
   const columns = [
     // {
@@ -39,7 +33,6 @@ function AllTrips() {
         <NavLink
           to="/Passenger/Station"
           className="links"
-          onClick={() => handlestation(row)}
           state={{ value: row.source_id }}
         >
           {row.source}
@@ -54,7 +47,6 @@ function AllTrips() {
         <NavLink
           to="/Passenger/Station"
           className="links"
-          onClick={() => handlestation(row)}
           state={{ value: row.destination_id }}
         >
           {row.destination}
@@ -67,7 +59,6 @@ function AllTrips() {
         <NavLink
           to="/Passenger/Drivers"
           className="links"
-          onClick={() => handleDriver(row)}
           state={{ value: row.driver_ssn }}
         >
           {row.driver_fname}
@@ -126,160 +117,7 @@ function AllTrips() {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
 
-      Source: "Hello",
-      Destination: "Yousef",
-      Driver: "Adel",
-      Price: 100,
-      Date: "15/2",
-      EstimatedTime: 2,
-      SourceId: "120",
-      DestinationId: "124",
-    },
-    {
-      id: 2,
-
-      Source: "yousef2",
-      Destination: "Nsoo7y2",
-      Driver: "Nsoo7y21",
-      Price: 110,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 3,
-
-      Source: "yousef3",
-      Destination: "Nsoo7y3",
-      Driver: "Nsoo7y31",
-      Price: 130,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 4,
-
-      Source: "yousef1",
-      Destination: "Nsoo7y1",
-      Driver: "Nsoo7y1",
-      Price: 140,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 5,
-
-      Source: "yousef2",
-      Destination: "Nsoo7y2",
-      Driver: "Nsoo7y2",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 6,
-
-      Source: "yousef3",
-      Destination: "Nsoo7y3",
-      Driver: "Nsoo7y3",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 7,
-
-      Source: "yousef1",
-      Destination: "Nsoo7y1",
-      Driver: "Nsoo7y1",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 8,
-
-      Source: "yousef2",
-      Destination: "Nsoo7y2",
-      Driver: "Nsoo7y2",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 9,
-
-      Source: "yousef3",
-      Destination: "Nsoo7y3",
-      Driver: "Nsoo7y3",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 10,
-
-      Source: "yousef1",
-      Destination: "Nsoo7y1",
-      Driver: "Nsoo7y1",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 11,
-
-      Source: "yousef2",
-      Destination: "Nsoo7y2",
-      Driver: "Nsoo7y2",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 12,
-
-      Source: "yousef3",
-      Destination: "Nsoo7y3",
-      Driver: "Nsoo7y3",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 13,
-
-      Source: "yousef1",
-      Destination: "Nsoo7y1",
-      Driver: "Nsoo7y1",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 14,
-
-      Source: "yousef2",
-      Destination: "Nsoo7y2",
-      Driver: "Nsoo7y2",
-      Price: 150,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-    {
-      id: 15,
-
-      Source: "yousef3",
-      Destination: "Nsoo7y3",
-      Driver: "Vamoos",
-      Price: 20,
-      Date: "15/2",
-      EstimatedTime: 2,
-    },
-  ];
 
   let [recievedData, setRecievedData] = useState([]);
 

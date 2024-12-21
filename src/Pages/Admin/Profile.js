@@ -2,19 +2,12 @@ import React from "react";
 import "./Profile.css";
 import { useState, useEffect } from "react";
 
-
 function Profile() {
   let [profileState, setProfileState] = useState({
     email: "",
     fname: "",
     mname: "",
     lname: "",
-    is_private: false,
-    manager_name: "",
-    salary: null,
-    shift: "",
-    station_name: "",
-    rate: "0",
   });
   const userssn = sessionStorage.getItem("ssn");
   const role = sessionStorage.getItem("userType");
@@ -26,9 +19,7 @@ function Profile() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ssn: userssn , jobRole:role
-
-          }),
+          body: JSON.stringify({ ssn: userssn, jobRole: role }),
         });
         const resultInjson = await result.json();
         setProfileState(resultInjson.data);
@@ -39,21 +30,24 @@ function Profile() {
   }, []);
 
   return (
-<div className="main-profile">
-  <div className="profile-card-set" style={{ width: "100%", margin: "5px" , justifyContent: "center"}} >
-    <div className="myprofile-sidebar-set">
-      <img
-        className="profile-image-set"
-        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
-        alt="Profile-Image"
-      />
-      <h2 className="profile-name-set">{profileState.fname}</h2>
-      <p className="profile-email-set">{profileState.email}</p>
-    </div>
-  </div>
-  <div className="profile-card-set">
-    <div className="profile-settings-set">
-      <h2 className="section-title-set"> My Profile </h2>
+    <div className="main-profile">
+      <div
+        className="profile-card-set"
+        style={{ width: "100%", margin: "auto", justifyContent: "center" }}
+      >
+        <div className="myprofile-sidebar-set">
+          <img
+            className="profile-image-set"
+            src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
+            alt="Profile-Image"
+          />
+          <h2 className="profile-name-set">{profileState.fname}</h2>
+          <p className="profile-email-set">{profileState.email}</p>
+        </div>
+      </div>
+      <div className="profile-card-set">
+        <div className="profile-settings-set">
+          <h2 className="section-title-set"> My Profile </h2>
 
           <form>
             <div class="form-group-set">
@@ -73,6 +67,20 @@ function Profile() {
                 />
               </div>
               <div class="form-input-set">
+                <label for="mname" class="set">
+                  Middle Name
+                </label>
+                <input
+                  type="text"
+                  id="mname"
+                  class="set"
+                  value={profileState.mname}
+                  disabled
+                />
+              </div>
+            </div>
+            <div class="form-group-set">
+              <div class="form-input-set">
                 <label for="lname" class="set">
                   Last Name
                 </label>
@@ -84,9 +92,6 @@ function Profile() {
                   disabled
                 />
               </div>
-            </div>
-            <div class="form-group-set">
-  
               <div class="form-input-set">
                 <label for="email" class="set">
                   Email
@@ -100,9 +105,6 @@ function Profile() {
                 />
               </div>
             </div>
-          
-    
-
             <div class="mt-5 text-center"></div>
           </form>
         </div>

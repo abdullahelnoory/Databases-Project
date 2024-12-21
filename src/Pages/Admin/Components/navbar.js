@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
 import { IoMdPersonAdd } from "react-icons/io";
+
 export default function NavbarA() {
   const navigate = useNavigate();
   let [openSettings, setOpenSettings] = useState(false);
@@ -47,6 +48,36 @@ export default function NavbarA() {
             <Link className="nav-btn" to="/admin/requests">
               Requests
             </Link>
+          </li>
+          <li>
+            <button style={{border:"none" , cursor: "pointer"}}
+              className="nav-btn"
+              onClick={() => {
+                navigate("/admin/Reports");
+              }}
+            >
+              Reports Stations
+            </button>
+          </li>
+          <li>
+            <button style={{border:"none" , cursor: "pointer"}}
+              className="nav-btn"
+              onClick={() => {
+                navigate("/admin/Reports/Managers");
+              }}
+            >
+              Reports Managers
+            </button>
+          </li>
+          <li>
+            <button style={{border:"none" , cursor: "pointer"}}
+              className="nav-btn"
+              onClick={() => {
+                navigate("/admin/Reports/Drivers");
+              }}
+            >
+              Reports Drivers
+            </button>
           </li>
 
           <li className="sidepop">
@@ -142,7 +173,7 @@ export default function NavbarA() {
                   </label>
                 </li>
                 <div class="separator"></div>
-                
+
                 <li
                   onClick={() => navigate("/admin/create-admin")}
                   class="element "

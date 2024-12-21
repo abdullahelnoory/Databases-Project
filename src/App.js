@@ -7,7 +7,7 @@ import ManagerDrivers from './Pages/Manager/Drivers.js';
 import Signup from './Pages/Signup.js';
 import Login from './Pages/Login.js';
 import ManagerAddTrip from './Pages/Manager/Add_Trip.js';
-import AdminHome from './Pages/Admin/Home.js';
+import AdminHome from './Pages/Admin/Profile.js';
 import AdminAddStation from './Pages/Admin/Add_Station.js';
 import AdminStations from './Pages/Admin/Stations.js';
 import ManagerAddDriver from './Pages/Manager/Add_Driver.js';
@@ -22,21 +22,21 @@ import "./Pages/Driver/index.css";
 import reportWebVitals from "./reportWebVitals";
 import AllTrips from "./Pages/Driver/AllTrips";
 import PrivateTrips from "./Pages/Driver/PrivateTrips";
-
+import Reports from './Pages/Admin/Reports.js'; 
+import DriverRep from './Pages/Admin/Driver_reports.js';
 // import { Navbar } from "./Pages/Driver/react-bootstrap";
 
 
 import Profile from "./Pages/Driver/Components/Profile";
+import ManagerReport from './Pages/Admin/Manager_report.js';
 
 
-
-import PassengerHome from './Pages/Passenger/Home.js';
+import PassengerHome from './Pages/Passenger/Components/Profile.js';
 import PassengerProfile from './Pages/Passenger/Components/Profile.js';
 import MyTrips from './Pages/Passenger/MyTrips.js';
-import PassengerLogOut from './Pages/Passenger/Components/LogOut.js';
 import PassengerPrivateTrips from './Pages/Passenger/PrivateTrips.js';
 // import PassengerTrips from './Pages/Passenger/Trips.js';
-
+import RequestStatus from './Pages/Passenger/RequestStatus.js';
 import PassengerTrips from './Pages/Passenger/AllTrips.js';
 import Drivers from './Pages/Passenger/Components/Drivers.js';
 // import Station from './Pages/Passenger/Components/Station.js';
@@ -69,7 +69,9 @@ function App() {
             <Route path="/admin/create-admin" element={<CreateAdmin />} />
             <Route path="/admin/ChangePassword" element={<ChangePassword/>} />
             <Route path="/admin/ProfileSettings" element={<ProfileSettings/>} />
-
+            <Route path="/admin/Reports" element={<Reports/>} />
+            <Route path="/admin/Reports/Drivers" element={<DriverRep/>} />
+            <Route path="/admin/Reports/Managers" element={<ManagerReport/>} />
           </Route>
 
           <Route element={<PrivateRoute requiredRole="Manager" />}>
@@ -100,7 +102,6 @@ function App() {
           <Route element={<PrivateRoute requiredRole="Passenger" />}>
             <Route path="Passenger" element={<PassengerHome />} />
             <Route path="Passenger/Profile" element={<PassengerProfile />} />
-            <Route path="Passenger/LogOut" element={<PassengerLogOut />} />
             <Route path="Passenger/MyTrips" element={<MyTrips />} />
             <Route path="Passenger/PrivateTrips" element={<PassengerPrivateTrips />} />
             <Route path="Passenger/RequestTrips" element={<PassengerTrips />} />
@@ -108,6 +109,7 @@ function App() {
             <Route path="Passenger/Station" element={<Station/>} />
             <Route path="Passenger/ChangePassword" element={<ChangePassword/>} />
             <Route path="Passenger/ProfileSettings" element={<ProfileSettings/>} />
+            <Route path="Passenger/RequestStatus" element={<RequestStatus/>} />
             
           </Route>
 

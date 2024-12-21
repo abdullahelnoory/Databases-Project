@@ -1,7 +1,6 @@
 import React from "react";
 import "./MyTrips.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import DataTable, { createTheme } from "react-data-table-component";
 import { Link, NavLink, useLocation } from "react-router-dom";
 export default function MyTrips() {

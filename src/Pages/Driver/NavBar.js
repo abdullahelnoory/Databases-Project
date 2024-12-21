@@ -44,7 +44,7 @@ function NavBar() {
       <nav className="nav_Driver">
         <div className="main-container">
           <Link className="mainPage" to="/Driver">
-            Home
+            Driver
           </Link>
 
           {location.pathname === "/Driver" ? (
