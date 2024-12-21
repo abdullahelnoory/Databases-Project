@@ -11,22 +11,23 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const  Driver_report = () => {
-const [driverTripsData, setDriverTripsData] = useState([]);
-const [driverTripsDataprivate, setDriverTripsDataprivate] = useState([]);
+const Driver_report = () => {
+  const [driverTripsData, setDriverTripsData] = useState([]);
+  const [driverTripsDataprivate, setDriverTripsDataprivate] = useState([]);
 
   // Fetch Driver Trips Data
   useEffect(() => {
+    // Fetch non-private trips
     axios
       .get("http://localhost:6969/report/driver-trips-not-private") // Replace with your actual API URL
       .then((response) => {
         const data = response.data.data;
-         
+
         if (data && data.length > 0) {
           // Process the data to extract driver names and trips
           const processedData = data.map((item) => ({
-            driver_name: item.driver,               //driver_name
-            trips: item.trips,                            //trips
+            driver_name: item.driver, // driver_name
+            trips: item.trips, // trips
           }));
 
           // Set the processed data for the BarChart
@@ -37,19 +38,19 @@ const [driverTripsDataprivate, setDriverTripsDataprivate] = useState([]);
         console.error("Error fetching driver trips data:", error);
       });
 
-      axios
+    // Fetch private trips
+    axios
       .get("http://localhost:6969/report/driver-trips-private") // Replace with your actual API URL
       .then((response) => {
         const data = response.data.data;
-         
+
         if (data && data.length > 0) {
           // Process the data to extract driver names and trips
           const processedData = data.map((item) => ({
-            driver_name: item.driver,               //driver_name
-            trips: item.trips,                            //trips
+            driver_name: item.driver, // driver_name
+            trips: item.trips, // trips
           }));
 
-          // Set the processed data for the BarChart
           setDriverTripsDataprivate(processedData);
         }
       })
@@ -60,7 +61,7 @@ const [driverTripsDataprivate, setDriverTripsDataprivate] = useState([]);
 
   return (
     <div>
-      <h2>Driver Trips Count</h2>
+      <h2>Driver Trips Count (Non-Private)</h2>
       {driverTripsData.length > 0 && (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={driverTripsData}>
@@ -73,16 +74,17 @@ const [driverTripsDataprivate, setDriverTripsDataprivate] = useState([]);
           </BarChart>
         </ResponsiveContainer>
       )}
-       <h2>Driver Trips Count</h2>
+
+      <h2>Driver Trips Count (Private)</h2>
       {driverTripsDataprivate.length > 0 && (
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={driverTripsData}>
+          <BarChart data={driverTripsDataprivate}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="driver_name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="trips" fill="#82ca9d" />
+            <Bar dataKey="trips" fill="#8884d8" />
           </BarChart>
         </ResponsiveContainer>
       )}

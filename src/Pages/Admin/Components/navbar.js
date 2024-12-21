@@ -9,6 +9,7 @@ export default function NavbarA() {
   let [openSettings, setOpenSettings] = useState(false);
   let [deleteAcc, setDeleteAcc] = useState(false);
   const userssn = sessionStorage.getItem("ssn");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const handleDeleteAcc = async () => {
     try {
       const result = await fetch(
@@ -49,35 +50,94 @@ export default function NavbarA() {
               Requests
             </Link>
           </li>
-          <li>
-            <button style={{border:"none" , cursor: "pointer"}}
-              className="nav-btn"
-              onClick={() => {
-                navigate("/admin/Reports");
+          <li
+            style={{
+              listStyleType: "none",
+              position: "relative", // Allows absolute positioning of the dropdown
+              display: "inline-block", // Makes the button act like a dropdown
+            }}
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
+          >
+            <button
+              style={{
+                backgroundColor: "#3498db", // Blue background for the button
+                border: "none",
+                cursor: "pointer",
+                padding: "10px",
+                fontSize: "16px",
+                fontWeight: "bold",
+                color: "#fff", // White text color
               }}
-            >
-              Reports Stations
-            </button>
-          </li>
-          <li>
-            <button style={{border:"none" , cursor: "pointer"}}
               className="nav-btn"
-              onClick={() => {
-                navigate("/admin/Reports/Managers");
-              }}
             >
-              Reports Managers
+              Reports
             </button>
-          </li>
-          <li>
-            <button style={{border:"none" , cursor: "pointer"}}
-              className="nav-btn"
-              onClick={() => {
-                navigate("/admin/Reports/Drivers");
-              }}
-            >
-              Reports Drivers
-            </button>
+            {isDropdownOpen && (
+              <ul
+                style={{
+                  listStyleType: "none",
+                  position: "absolute",
+                  top: "100%", // Positions the dropdown below the button
+                  left: "50%", // Centers the dropdown horizontally
+                  transform: "translateX(-50%)", // Corrects the offset caused by 'left: 50%' to truly center
+                  backgroundColor: "#fff",
+                  boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
+                  padding: "10px",
+                  margin: "0",
+                  width: "140px", // You can adjust the width as needed
+                }}
+              >
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports");
+    
+                    }}
+                  >
+                    Reports Stations
+                  </button>
+                </li>
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports/Managers");
+                    }}
+                  >
+                    Reports Managers
+                  </button>
+                </li>
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports/Drivers");
+                    }}
+                  >
+                    Reports Drivers
+                  </button>
+                </li>
+              </ul>
+            )}
           </li>
 
           <li className="sidepop">
