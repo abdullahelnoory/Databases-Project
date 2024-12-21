@@ -719,3 +719,30 @@ exports.getTotalRate = async (req, res) => {
     });
   }
 };
+
+exports.getLostStatus = async (req, res) => {
+  const m_ssn = req.body.m_ssn;
+  const query = `select l.t_id as tripID,l.item,l.quantity,t.price,t.date,t.estimated_time,d.ssn driverSSN,
+                 d.fname driverFirstName,s.station_id sourceID, s.station_name sourceStationName,de.station_id destinationID, de.station_name destinationStationName 
+                 from "Lost & Found" l,"Driver" d,"Trip" t,"Station" s,"Station" de where l.t_id = t.trip_id and t.d_ssn = d.ssn and t.source_station = s.station_id and t.destination_station = de.station_id and d.m_ssn = $1`;
+  try
+  {
+       const result = await pool.query(query, [m_ssn]);
+       res.json({success : true, data : result.rows});              
+  }
+  catch (error) {
+      if (error.code == "23503") {
+            res.json({
+                success: false,
+                message: "The inserted trip doesn't exist in the system!",
+                details: error.detail,
+                });
+      } else {
+             console.error("Error connecting to the database:", error);
+            res.status(500).json({
+                success: false,
+                message: "Database connection failed",
+            });
+      }
+  }
+}

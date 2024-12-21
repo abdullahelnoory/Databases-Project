@@ -21,9 +21,9 @@ router.get("/driver-trips-not-private", reportController.getTripsCountDriverNotP
 router.get("/driver-trips-private", reportController.getTripsCountDriverPrivatePerMonth);
 router.get("/passenger-average-trips", reportController.getAveragePassangersTripPerMonth);
 router.get("/passenger-trips", reportController.getPassengerTripsPerMonth);
-
-
-
-
+router.get("/average-station-salary", reportController.getAverageStationSalary);
+router.get("/count_all",reportController.count_all);
+router.get("/managers_per_location",reportController.managers_per_location);
+router.get("/drivers_per_location",reportController.drivers_per_location);
 
 module.exports = router;

@@ -55,6 +55,8 @@ router.put("/profile", managerController.updateProfile);
 
 router.post("/rate", managerController.getTotalRate);
 
+router.post("/getLostStatus", managerController.getLostStatus);
+
 
 // 
 

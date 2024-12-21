@@ -155,7 +155,7 @@ exports.login = async (req, res) => {
   let verifiedBy = null; // Variable to hold verified_by for Manager
   let userType;
   let userProfile = {}; // Object to hold profile information
-
+  
   try {
     // Query for Admin user
     const result1 = await pool.query(

@@ -35,14 +35,16 @@ exports.getMostSourceStationReport = async (req, res) => {
 exports.getMostDestinationStationReport = async (req, res) => {
   try {
     const query = `
-            SELECT station_name, COUNT(t.id) AS visit_count
-            FROM  "Trips", "Stations" 
-            WHERE "destination_station" = "station_name"
-            GROUP BY  station_name
+            SELECT "station_name", COUNT(station_id) AS visit_count
+            FROM  "Trip", "Station" 
+            WHERE "destination_station" = "station_id"
+            GROUP BY  "station_name"
             ORDER BY  visit_count DESC LIMIT 10;
           `;
 
     const result = await pool.query(query);
+
+    console.log(result.rows);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -572,3 +574,76 @@ exports.getPassengerTripsPerMonth = async (req, res) => {
   }
 };
 
+exports.count_all = async (req, res) => {
+    const query1 = 'select count(*) from "Passenger"';
+    const query2 = 'select count(*) from "Driver"';
+    const query3 = 'select count(*) from "Manager"';
+    try
+    {
+        const result1 = await pool.query(query1);
+        const result2 = await pool.query(query2);
+        const result3 = await pool.query(query3);
+        res.json({success : true, passenger : result1.rows[0].count, driver : result2.rows[0].count, manager : result3.rows[0].count});
+    }
+    catch(error)
+    {
+      console.error("Error fetching:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error. Please try again later.",
+      });
+    }
+}
+
+exports.managers_per_location = async (req, res) => {
+    const query = 'select count(*) as managersCount,governorate from "Manager","Station" where m_ssn = ssn group by governorate';
+    try
+    {
+        const result = await pool.query(query);
+        res.json({success : true, data : result.rows});
+    }
+    catch(error)
+    {
+      console.error("Error fetching:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error. Please try again later.",
+      });
+    }
+}
+
+exports.drivers_per_location = async (req, res) => {
+   const query = 'select count(*) as driversCount,governorate from "Driver","Station" where s_id = station_id group by governorate';
+   try
+    {
+        const result = await pool.query(query);
+        res.json({success : true, data : result.rows});
+    }
+    catch(error)
+    {
+      console.error("Error fetching:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error. Please try again later.",
+      });
+    }
+}
+
+exports.getAverageStationSalary = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT station_name, AVG(salary) AS avg_salary
+      FROM "Driver", "Station"
+      WHERE "s_id" = "station_id"
+      GROUP BY station_name
+      ORDER BY avg_salary DESC;
+    `);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
