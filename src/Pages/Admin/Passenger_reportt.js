@@ -42,8 +42,8 @@ const Passenger_rep = () => {
         if (data && data.length > 0) {
           // Process the data to extract passenger names and their trips
           const processedData = data.map((item) => ({
-            passenger_name: item.passenger_name,
-            no_of_trips: item.no_of_trips,
+            passenger_name: item.passenger_name,   //
+            no_of_trips: item.no_of_trips,        //
           }));
 
           // Set the processed data for the BarChart
