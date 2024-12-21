@@ -22,14 +22,14 @@ import "./Pages/Driver/index.css";
 import reportWebVitals from "./reportWebVitals";
 import AllTrips from "./Pages/Driver/AllTrips";
 import PrivateTrips from "./Pages/Driver/PrivateTrips";
-import Reports from './Pages/Admin/Reports.js'; 
+import Reports from './Pages/Admin/Station_reports.js';                                     /////////////////////////////done
 import DriverRep from './Pages/Admin/Driver_reports.js';
 // import { Navbar } from "./Pages/Driver/react-bootstrap";
 
-
+import PassengerReport from './Pages/Admin/Passenger_report.js';
 import Profile from "./Pages/Driver/Components/Profile";
 import ManagerReport from './Pages/Admin/Manager_report.js';
-
+import LostStatus from"./Pages/Manager/LostStatus.js"
 
 import PassengerHome from './Pages/Passenger/Components/Profile.js';
 import PassengerProfile from './Pages/Passenger/Components/Profile.js';
@@ -72,6 +72,7 @@ function App() {
             <Route path="/admin/Reports" element={<Reports/>} />
             <Route path="/admin/Reports/Drivers" element={<DriverRep/>} />
             <Route path="/admin/Reports/Managers" element={<ManagerReport/>} />
+            <Route path="/admin/Reports/Passengers" element={<PassengerReport/>} />
           </Route>
 
           <Route element={<PrivateRoute requiredRole="Manager" />}>
@@ -84,6 +85,9 @@ function App() {
             <Route path="manager/manager-finance" element={<ManagerFnance />} />
             <Route path="manager/ProfileSettings" element={<ProfileSettings />} />
             <Route path="manager/ChangePassword" element={<ChangePassword/>} />
+            <Route path="manager/LostStatus" element={<LostStatus/>} />
+            <Route path="manager/Driver" element={<Drivers/>} />
+            <Route path="manager/Station" element={<Station/>} />
             
           </Route>
 

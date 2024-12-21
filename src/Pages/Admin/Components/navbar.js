@@ -84,7 +84,8 @@ export default function NavbarA() {
                   boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
                   padding: "10px",
                   margin: "0",
-                  width: "140px", // You can adjust the width as needed
+                  width: "140px",
+                  flexDirection: "column"// You can adjust the width as needed
                 }}
               >
                 <li style={{ width: "100px" }}>

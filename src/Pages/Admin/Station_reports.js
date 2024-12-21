@@ -11,10 +11,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const Station_report= () => {
+const Station_report = () => {
   const [stationTripsData, setStationTripsData] = useState([]);
   const [stationRatingsData, setStationRatingsData] = useState([]);
   const [stationSalaryData, setStationSalaryData] = useState([]);
+  const [mostVisitedStations, setMostVisitedStations] = useState([]); // Changed to handle multiple stations
 
   useEffect(() => {
     axios
@@ -23,8 +24,8 @@ const Station_report= () => {
         const data = response.data.data;
         if (data && data.length > 0) {
           const transformedData = data.map((item) => ({
-            station: item.station,                                      //
-            trips: item.trips,                                          //
+            station: item.station, //
+            trips: item.trips, //
           }));
           setStationTripsData(transformedData);
         }
@@ -39,8 +40,8 @@ const Station_report= () => {
         const data = response.data.data;
         if (data && data.length > 0) {
           const transformedData = data.map((item) => ({
-            station: item.station,                         //
-            rating: item.rating,                            //
+            station: item.station, //
+            rating: item.rating, //
           }));
           setStationRatingsData(transformedData);
         }
@@ -48,24 +49,34 @@ const Station_report= () => {
       .catch((error) => {
         console.error("Error fetching station ratings data:", error);
       });
-      axios
-      .get("http://localhost:6969/report/station_salaries") // Replace with your actual API URL
+
+    axios
+      .get("http://localhost:6969/report/average-station-salary")
       .then((response) => {
         const data = response.data.data;
-
         if (data && data.length > 0) {
-          // Process the data to extract station names and avg salaries
           const processedData = data.map((item) => ({
-            station_name: item.station_name,             //     
-            avg_salary: item.avg_salary,                  //
+            station_name: item.station_name, ////
+            avg_salary: parseFloat(item.avg_salary), // Ensure it's a number
           }));
-
-          // Set the processed data for the BarChart
           setStationSalaryData(processedData);
         }
       })
       .catch((error) => {
         console.error("Error fetching station salary data:", error);
+      });
+
+    axios
+      .get("http://localhost:6969/report/most-destination-station")
+      .then((response) => {
+        const data = response.data.data;
+        if (data && data.length > 0) {
+          // Set the most visited stations data
+          setMostVisitedStations(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching most visited station data:", error);
       });
   }, []);
 
@@ -104,8 +115,8 @@ const Station_report= () => {
       ) : (
         <p style={{ textAlign: "center" }}>Loading ratings data...</p>
       )}
-       {/* Station Average Salary Graph */}
-       <h2>Station Average Salary</h2>
+
+      <h2>Station Average Salary</h2>
       {stationSalaryData.length > 0 && (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={stationSalaryData}>
@@ -117,6 +128,24 @@ const Station_report= () => {
             <Bar dataKey="avg_salary" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
+      )}
+
+      <h2>Most Visited Stations</h2>
+      {mostVisitedStations.length > 0 ? (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={mostVisitedStations}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="station_name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="visit_count" fill="#ff7300" />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p style={{ textAlign: "center" }}>
+          Loading most visited stations data...
+        </p>
       )}
     </div>
   );

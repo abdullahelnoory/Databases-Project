@@ -22,11 +22,7 @@ function AllTrips() {
 
 
   const columns = [
-    // {
-    //   name: "ID",
-    //   selector: (row) => row.id,
-    //   sortable: true,
-    // },
+
     {
       name: "Source",
       cell: (row) => (
@@ -38,8 +34,6 @@ function AllTrips() {
           {row.source}
         </NavLink>
       ),
-      // selector: (row) => row.Source,
-      // (row) => ({ style={{backgroundColor:  'pink'}}}),
     },
     {
       name: "Destination",

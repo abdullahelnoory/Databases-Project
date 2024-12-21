@@ -109,4 +109,15 @@
       font-size: 18px;
     }
   }
-  
+  #location-station{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    }
+    #station-street,#station-zipcod,#station-governorate,#station-name
+    {
+      display:flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 10px;
+    }

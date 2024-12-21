@@ -3,7 +3,6 @@ import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import "./NavBar.css";
-import ReqStatus from "./ReqStatus";
 import MyTrips from "./MyTrips";
 import RequestStatus from "./RequestStatus";
 import { useNavigate } from "react-router-dom";

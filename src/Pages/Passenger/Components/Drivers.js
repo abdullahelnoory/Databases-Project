@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import StarRatings from "react-star-ratings"; // Importing the star ratings component
 import "./Profile.css";
-import { useState, useEffect } from "react";
+
 function Drivers() {
   const location = useLocation();
   let [profileState, setProfileState] = useState({
     email: "",
     fname: "",
+    lname: "", // Added lname to avoid any undefined issue
     station_name: "",
     rate: null,
   });
   const userssn = location.state.value;
+
   useEffect(() => {
     (async () => {
       try {
@@ -22,96 +25,109 @@ function Drivers() {
           body: JSON.stringify({ ssn: userssn, jobRole: "Driver" }),
         });
         const resultInjson = await result.json();
-        console.log(resultInjson);
         setProfileState(resultInjson.data);
       } catch (error) {
         console.error(error);
       }
     })();
-  }, []);
+  }, [userssn]);
 
   return (
     <div>
-      <div class="main-profile">
-        <div class="profile-card-set" style={{ justifyContent: "center" }}>
-          <div class="myprofile-sidebar-set">
+      <div className="main-profile">
+        <div className="profile-card-set" style={{ justifyContent: "center" }}>
+          <div className="myprofile-sidebar-set">
             <img
-              class="profile-image-set"
+              className="profile-image-set"
               src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
               alt="Profile-Image"
             />
-            <h2 class="profile-name-set">{profileState.fname}</h2>
-            <p class="profile-email-set">{profileState.email}</p>
+            <h2 className="profile-name-set">{profileState.fname}</h2>
+            <p className="profile-email-set">{profileState.email}</p>
           </div>
         </div>
-        <div class="profile-card-set">
-          <div class="profile-settings-set">
-            <h2 class="section-title-set"> My Profile </h2>
+        <div className="profile-card-set">
+          <div className="profile-settings-set">
+            <h2 className="section-title-set">My Profile</h2>
             <form>
-              <div class="form-group-set">
-                <div class="form-input-set">
-                  <label for="first-name" class="set">
+              <div className="form-group-set">
+                <div className="form-input-set">
+                  <label htmlFor="first-name" className="set">
                     First Name
                   </label>
-                  {/* <h3 id="first-name" class="profile-name-set">
-                  {profileState.fname}
-                </h3> */}
                   <input
                     type="text"
-                    id="lname"
-                    class="set"
+                    id="first-name"
+                    className="set"
                     value={profileState.fname}
                     disabled
                   />
                 </div>
+
+                <div className="form-input-set">
+                  <label htmlFor="last-name" className="set">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="last-name"
+                    className="set"
+                    value={profileState.lname}
+                    disabled
+                  />
+                </div>
               </div>
-              <div class="form-group-set">
-                <div class="form-input-set">
-                  <label for="email" class="set">
+              <div className="form-group-set">
+                <div className="form-input-set">
+                  <label htmlFor="email" className="set">
                     Email
                   </label>
                   <input
                     type="text"
                     id="email"
-                    class="set"
+                    className="set"
                     value={profileState.email}
                     disabled
                   />
                 </div>
+                <div class="form-input-set" style={{ flexDirection: "row" }}>
+                  <label for="rate-star" class="set" style={{width:"30%", margin: "auto 0 auto 0" , marginleft: "0px", padding: "0px", left: "0px", textAlign: "left"}}> 
+                    My rate
+                  </label>
+                  <div id="rate-star" style={{ margin: "auto", justifyContent: "flex-start", width: "70%" }}>
+                    <StarRatings
+                      rating={
+                        profileState.rate === null
+                          ? 0
+                          : !isNaN(profileState.rate)
+                          ? parseFloat(profileState.rate)
+                          : 0
+                      }
+                      starRatedColor="gold"
+                      numberOfStars={5}
+                      name="rating"
+                      starDimension="30px"
+                      starSpacing="5px"
+                    />
+                  </div>
+                </div>
               </div>
-
-              <div class="form-group-set">
-                <div class="form-input-set">
-                  <label for="rate" class="set">
-                    Rate
+              {profileState.station_name !== "" && (
+                <div className="form-input-set">
+                  <label htmlFor="station_name" className="set">
+                    Station Name
                   </label>
                   <input
                     type="text"
-                    id="rate"
-                    class="set"
-                    value={profileState.rate}
+                    id="station_name"
+                    className="set"
+                    value={profileState.station_name}
                     disabled
                   />
                 </div>
+              )}
 
-                {profileState.station_name !=='' ?
-                  (
-                    <div class="form-input-set">
-                      <label for="station_name" class="set">
-                        Station Name
-                      </label>
-                      <input
-                        type="text"
-                        id="station_name"
-                        class="set"
-                        value={profileState.station_name}
-                        disabled
-                      />
-                    </div>
-                  ):null}
-              </div>
-
-              <div class="mt-5 text-center"></div>
+              <div className="mt-5 text-center"></div>
             </form>
           </div>
         </div>

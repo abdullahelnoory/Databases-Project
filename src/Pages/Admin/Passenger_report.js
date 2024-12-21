@@ -14,11 +14,11 @@ import {
 const Passenger_rep = () => {
   const [avgAge, setAvgAge] = useState(null);
   const [passengerTripsData, setPassengerTripsData] = useState([]);
-
+  const [passengerSpentData, setPassengerSpentData] = useState([]);
   // Fetch Passenger Age Data
   useEffect(() => {
     axios
-      .get("http://localhost:6969/report//passenger-average-age") // Replace with your actual API URL
+      .get("http://localhost:6969/report/passenger-average-age") // Replace with your actual API URL
       .then((response) => {
         const data = response.data.data;
 
@@ -26,8 +26,7 @@ const Passenger_rep = () => {
           // Set the average age
           setAvgAge(data.avg_age);       
 
-          // Set the processed data for the BarChart
-          setPassengerAgeData(processedData);
+       
         }
       })
       .catch((error) => {
@@ -35,15 +34,15 @@ const Passenger_rep = () => {
       });
 
       axios
-      .get("http://your-backend-url/api/passenger_trips") // Replace with your actual API endpoint
+      .get("http://localhost:6969/report/passenger-trips") // Replace with your actual API endpoint
       .then((response) => {
         const data = response.data;
 
         if (data && data.length > 0) {
           // Process the data to extract passenger names and their trips
           const processedData = data.map((item) => ({
-            passenger_name: item.passenger_name,   //
-            no_of_trips: item.no_of_trips,        //
+            passenger_name: item.passenger,   //
+            no_of_trips: item.trips,        //
           }));
 
           // Set the processed data for the BarChart
@@ -52,6 +51,25 @@ const Passenger_rep = () => {
       })
       .catch((error) => {
         console.error("Error fetching passenger trips data:", error);
+      });
+      axios
+      .get("http://localhost:6969/report/passenger-expence") // Replace with your actual API URL
+      .then((response) => {
+        const data = response.data;
+
+        if (data && data.length > 0) {
+          // Process the data to extract passenger names and their total spent
+          const processedData = data.map((item) => ({
+            passenger_name: item.passenger_name,  //
+            total_spent: item.total_spent,     //
+          }));
+
+          // Set the processed data for the BarChart
+          setPassengerSpentData(processedData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching passenger spending data:", error);
       });
   }, []);
 
@@ -91,8 +109,23 @@ const Passenger_rep = () => {
       ) : (
         <p>Loading data...</p>
       )}
+       <h2>Passenger Spending</h2>
+      {passengerSpentData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={passengerSpentData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="passenger_name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="total_spent" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p>Loading data...</p>
+      )}
   </div>
   );
 };
 
-export default Pasasenger_rep;
+export default Passenger_rep;

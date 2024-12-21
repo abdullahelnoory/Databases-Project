@@ -64,6 +64,21 @@ const Navbar = () => {
         Manager
       </Link>
       <ul className="nav-links">
+
+      <li>
+          <Link
+            onClick={(e) => {
+              if (!isVerified) {
+                e.preventDefault();
+              }
+            }}
+            className="nav-btn"
+            to="/manager/LostStatus"
+            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
+          >
+            Lost Items Status
+          </Link>
+        </li>
         <li>
           <Link
             onClick={(e) => {
