@@ -255,29 +255,36 @@ exports.markAttendance = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
   const { d_ssn } = req.body;
+
   try {
+    const currentDate = new Date().toISOString().split("T")[0];
+
     const result = await pool.query(
-      'SELECT * FROM "Attendance" WHERE "d_ssn" = $1',
-      [d_ssn]
+      'SELECT * FROM "Attendance" WHERE "d_ssn" = $1 AND "date" = $2',
+      [d_ssn, currentDate]
     );
+    console.log(result.rows);
+
     if (result.rows.length > 0) {
       res.json({
-        attend: false,
+        success: true,
+        attend: false, 
+        data: result.rows[0], 
       });
     } else {
       res.json({
-        attend: true,
+        success: true,
+        attend: true, 
       });
-    }
+    } 
   } catch (error) {
     console.error("Error fetching attendance data:", error);
     res.status(500).json({
-      success: true,
+      success: false,
       message: "Server error. Please try again later.",
     });
   }
 };
-
 exports.acceptRejectPrivateTrip = async (req, res) => {
   const { order_id, d_ssn, Accept } = req.body;
   console.log(req.body);
@@ -464,7 +471,8 @@ exports.resignDriver = async (req, res) => {
 };
 
 exports.profile = async (req, res) => {
-  const { ssn } = req.body;
+  const { ssn , jobRole} = req.body;
+  console.log(req.body);
   try {
     const result = await pool.query(
       'SELECT "ssn", "email", "fname", "mname", "lname", "is_private", "m_ssn", "shift", "salary", "s_id"  FROM "Driver" WHERE "ssn" = $1',
@@ -486,7 +494,7 @@ exports.profile = async (req, res) => {
           [driver.m_ssn]
         );
         if (managerResult.rows.length > 0) {
-          responseData.manager = `${managerResult.rows[0].fname} ${managerResult.rows[0].lname}`;
+          responseData.data.manager_name = `${managerResult.rows[0].fname} ${managerResult.rows[0].lname}`;
         }
       }
 
@@ -496,8 +504,18 @@ exports.profile = async (req, res) => {
           [driver.s_id]
         );
         if (stationResult.rows.length > 0) {
-          responseData.station = stationResult.rows[0].station_name;
+          responseData.data.station_name = stationResult.rows[0].station_name;
         }
+      }
+
+      const tripResult = await pool.query(
+        'SELECT AVG(rate) AS average_rate FROM "Trip", "Passenger Trip" WHERE "trip_id" = "t_id" AND "d_ssn" = $1',
+        [ssn]
+      );
+
+      const averageRate = tripResult.rows[0].average_rate;
+      if (tripResult.rows.length > 0) {
+        responseData.data.rate = tripResult.rows[0].average_rate;
       }
 
       console.log(responseData);
@@ -518,7 +536,9 @@ exports.profile = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { ssn, fname, mname, lname, email, is_private } = req.body;
+  const {ssn} = req.body;
+  const {fname, mname, lname, email, is_private } = req.body.data;
+  console.log(req.body.data);
 
   try {
     const result = await pool.query('SELECT * FROM "Driver" WHERE "ssn" = $1', [ssn]);
@@ -538,7 +558,7 @@ exports.updateProfile = async (req, res) => {
       SELECT email FROM "Manager" WHERE email = $1 AND ssn <> $2
       UNION
       SELECT email FROM "Driver" WHERE email = $1 AND ssn <> $2
-    `, [email , ssn]);
+    `, [email, ssn]);
 
     if (emailCheckResult.rows.length > 0) {
       return res.status(400).json({
@@ -565,14 +585,49 @@ exports.updateProfile = async (req, res) => {
         [result.rows[0].s_id]
       );
       if (stationResult.rows.length > 0) {
-        station = stationResult.rows[0].station_name; 
+        station = stationResult.rows[0].station_name;
       }
     }
 
-    await pool.query(
-      'UPDATE "Driver" SET "fname" = $1, "mname" = $2, "lname" = $3, "email" = $4, "is_private" = $5 WHERE "ssn" = $6',
-      [fname, mname, lname, email, is_private, ssn]
-    );
+    const updateFields = [];
+    const updateValues = [];
+
+    if (fname) {
+      console.log("fname", fname);
+      updateFields.push('"fname" = $' + (updateValues.length + 1));
+      updateValues.push(fname);
+    }
+    if (mname) {
+      updateFields.push('"mname" = $' + (updateValues.length + 1));
+      updateValues.push(mname);
+    }
+    if (lname) {
+      updateFields.push('"lname" = $' + (updateValues.length + 1));
+      updateValues.push(lname);
+    }
+    if (email) {
+      updateFields.push('"email" = $' + (updateValues.length + 1));
+      updateValues.push(email);
+    }
+    if (is_private !== result.rows[0].is_private) {
+      updateFields.push('"is_private" = $' + (updateValues.length + 1));
+      updateValues.push(is_private);
+    }
+
+    console.log(updateFields, updateValues);
+
+    if (updateFields.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields provided to update.",
+      });
+    }
+
+    updateFields.push('"ssn" = $' + (updateValues.length + 1));
+    updateValues.push(ssn);
+
+    const updateQuery = 'UPDATE "Driver" SET ' + updateFields.join(', ') + ' WHERE "ssn" = $' + updateValues.length;
+    await pool.query(updateQuery, updateValues);
 
     res.json({
       success: true,
@@ -595,6 +650,7 @@ exports.updateProfile = async (req, res) => {
     });
   }
 };
+
 
 exports.getRate = async (req, res) => {
   const { ssn } = req.body;

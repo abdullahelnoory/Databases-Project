@@ -1,23 +1,39 @@
 const pool = require("../models/db");
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  const { fname, mname, lname, job, ssn, email, password, age, carDetails, stationDetails } = req.body;
+  const {
+    fname,
+    mname,
+    lname,
+    job,
+    ssn,
+    email,
+    password,
+    age,
+    carDetails,
+    stationDetails,
+  } = req.body;
   const saltRounds = 10;
 
   try {
     if (job !== "Passenger" && (isNaN(ssn) || ssn.trim() === "")) {
-      return res.status(400).json({ success: false, message: "SSN must be a valid number." });
+      return res
+        .status(400)
+        .json({ success: false, message: "SSN must be a valid number." });
     }
 
     if (job === "Passenger" && (isNaN(age) || age.trim() === "")) {
-      return res.status(400).json({ success: false, message: "Age must be a valid number." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Age must be a valid number." });
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const emailCheck = await pool.query(`
+    const emailCheck = await pool.query(
+      `
       SELECT email FROM "Passenger" WHERE email = $1
       UNION
       SELECT email FROM "Admin" WHERE email = $1
@@ -25,23 +41,32 @@ exports.register = async (req, res) => {
       SELECT email FROM "Manager" WHERE email = $1
       UNION
       SELECT email FROM "Driver" WHERE email = $1
-    `, [email]);
+    `,
+      [email]
+    );
 
     if (emailCheck.rows.length > 0) {
-      return res.status(400).json({ success: false, message: "Email already exists" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email already exists" });
     }
 
     if (job !== "Passenger") {
-      const ssnCheck = await pool.query(`
+      const ssnCheck = await pool.query(
+        `
         SELECT ssn FROM "Admin" WHERE ssn = $1
         UNION
         SELECT ssn FROM "Manager" WHERE ssn = $1
         UNION
         SELECT ssn FROM "Driver" WHERE ssn = $1
-      `, [ssn]);
+      `,
+        [ssn]
+      );
 
       if (ssnCheck.rows.length > 0) {
-        return res.status(400).json({ success: false, message: "SSN already exists" });
+        return res
+          .status(400)
+          .json({ success: false, message: "SSN already exists" });
       }
     }
 
@@ -62,7 +87,13 @@ exports.register = async (req, res) => {
         if (stationDetails) {
           await pool.query(
             'INSERT INTO "Station" (station_name, street, zipcode, governorate, m_ssn ) VALUES ($1, $2, $3, $4, $5)',
-            [stationDetails.station_name, stationDetails.street, stationDetails.zipcode, stationDetails.governorate, ssn]
+            [
+              stationDetails.station_name,
+              stationDetails.street,
+              stationDetails.zipcode,
+              stationDetails.governorate,
+              ssn,
+            ]
           );
         }
         break;
@@ -75,7 +106,14 @@ exports.register = async (req, res) => {
         if (carDetails) {
           await pool.query(
             'INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)',
-            [carDetails.car_license, carDetails.number_of_seats, carDetails.air_conditioning, carDetails.car_type, carDetails.additional_price, ssn]
+            [
+              carDetails.car_license,
+              carDetails.number_of_seats,
+              carDetails.air_conditioning,
+              carDetails.car_type,
+              carDetails.additional_price,
+              ssn,
+            ]
           );
         }
         break;
@@ -86,7 +124,9 @@ exports.register = async (req, res) => {
         );
         break;
       default:
-        return res.status(400).json({ success: false, message: "Invalid job type" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid job type" });
     }
 
     res.json({ Register: true, success: true });
@@ -108,8 +148,6 @@ exports.register = async (req, res) => {
   }
 };
 
-
-
 exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -124,19 +162,19 @@ exports.login = async (req, res) => {
       'SELECT ssn, email, password, fname, mname, lname FROM "Admin" WHERE email = $1',
       [email]
     );
-    
+
     // Query for Manager user
     const result2 = await pool.query(
       'SELECT ssn, email, password, fname, mname, lname, verified_by FROM "Manager" WHERE email = $1',
       [email]
     );
-    
+
     // Query for Driver user
     const result3 = await pool.query(
       'SELECT ssn, email, password, fname, mname, lname, is_private, shift, salary, s_id, m_ssn FROM "Driver" WHERE email = $1',
       [email]
     );
-    
+
     // Query for Passenger user
     const result4 = await pool.query(
       'SELECT id, email, password, fname, lname FROM "Passenger" WHERE email = $1',
@@ -181,8 +219,8 @@ exports.login = async (req, res) => {
       // Generate JWT token
       const token = jwt.sign(
         { ssn: ssn, userType: userType },
-        'your_secret_key',
-        { expiresIn: '1h' }
+        "your_secret_key",
+        { expiresIn: "1h" }
       );
       console.log("Login Successful");
 
@@ -222,13 +260,17 @@ exports.login = async (req, res) => {
   }
 };
 
-
 exports.changePassword = async (req, res) => {
-  const { ssn, currentPassword, newPassword } = req.body;
+  const { ssn, oldPassword, password, confirmPassword } = req.body;
   console.log(req.body);
 
   try {
-    // Query to find user by ssn
+    if (!oldPassword || !password || !confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please enter all required fields" });
+    }
+
     const userQuery = `
       SELECT "ssn", "email", "password" FROM "Admin" WHERE ssn = $1
       UNION
@@ -241,30 +283,43 @@ exports.changePassword = async (req, res) => {
     const result = await pool.query(userQuery, [ssn]);
 
     if (result.rows.length === 0) {
-      return res.status(400).json({ success: false, message: "User not found" });
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
     }
 
     const user = result.rows[0];
 
-    // Verify current password
-    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
     if (!passwordMatch) {
-      return res.status(400).json({ success: false, message: "Current password is incorrect" });
+      console.log("Current password is incorrect");
+      return res
+        .status(400)
+        .json({ success: false, message: "Current password is incorrect" });
     }
 
-    // Hash the new password
-    const saltRounds = 10;
-    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords do not match" });
+    }
 
-    // Separate queries for each table
+    if (password === oldPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password didn't change" });
+    }
+
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(password, saltRounds);
+
     const updateQueries = [
       `UPDATE "Admin" SET password = $1 WHERE ssn = $2`,
       `UPDATE "Manager" SET password = $1 WHERE ssn = $2`,
       `UPDATE "Driver" SET password = $1 WHERE ssn = $2`,
-      `UPDATE "Passenger" SET password = $1 WHERE id = $2`
+      `UPDATE "Passenger" SET password = $1 WHERE id = $2`,
     ];
 
-    // Execute each update query individually
     for (const query of updateQueries) {
       await pool.query(query, [hashedNewPassword, ssn]);
     }
@@ -274,7 +329,7 @@ exports.changePassword = async (req, res) => {
     console.error("Error updating password:", error);
     res.status(500).json({
       success: false,
-      message: "Database error occurred while updating password",
+      message: "An error occurred while updating the password",
     });
   }
 };
@@ -288,7 +343,7 @@ exports.deleteAccount = async (req, res) => {
       `DELETE FROM "Admin" WHERE ssn = $1`,
       `DELETE FROM "Manager" WHERE ssn = $1`,
       `DELETE FROM "Driver" WHERE ssn = $1`,
-      `DELETE FROM "Passenger" WHERE id = $1`
+      `DELETE FROM "Passenger" WHERE id = $1`,
     ];
 
     for (const query of deleteQueries) {
@@ -303,5 +358,295 @@ exports.deleteAccount = async (req, res) => {
       message: "Database error occurred while deleting account",
     });
   }
+};
 
-}
+exports.updateProfile = async (req, res) => {
+  const { ssn, jobRole } = req.body;
+
+  const { fname, mname, lname, email, is_private } = req.body.data;
+  console.log(req.body);
+
+  try {
+    if (!["Driver", "Manager", "Admin", "Passenger"].includes(jobRole)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid job role provided.",
+      });
+    }
+
+    const emailCheckQuery = `
+        SELECT "email", "ssn" FROM "Driver" WHERE "email" = $1
+        UNION
+        SELECT "email", "ssn" FROM "Manager" WHERE "email" = $1
+        UNION
+        SELECT "email", "ssn" FROM "Admin" WHERE "email" = $1
+        UNION
+        SELECT "email", "id" AS "ssn" FROM "Passenger" WHERE "email" = $1
+      `;
+
+    const emailCheckResult = await pool.query(emailCheckQuery, [email]);
+    const currentUser = emailCheckResult.rows[0];
+
+    if (emailCheckResult.rows.length > 0)
+    if (email == currentUser.email && ssn == currentUser.ssn) {
+      return res.json({
+        success: false,
+        message: "Please enter a different Email",
+      });
+    }
+    
+    
+    if (emailCheckResult.rows.length > 0) {
+      const existingUser = emailCheckResult.rows[0];
+      if (existingUser.ssn !== ssn) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already in use by another user.",
+        });
+      }
+    }
+    
+    let tableName = "";
+    let updateFields = [];
+    let updateValues = [];
+
+    if (jobRole === "Driver") {
+      const driverResult = await pool.query(
+        'SELECT * FROM "Driver" WHERE "ssn" = $1',
+        [ssn]
+      );
+
+      if (driverResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Driver not found.",
+        });
+      }
+
+      if (fname) {
+        updateFields.push('"fname" = $' + (updateValues.length + 1));
+        updateValues.push(fname);
+      }
+      if (mname) {
+        updateFields.push('"mname" = $' + (updateValues.length + 1));
+        updateValues.push(mname);
+      }
+      if (lname) {
+        updateFields.push('"lname" = $' + (updateValues.length + 1));
+        updateValues.push(lname);
+      }
+      if (email) {
+        updateFields.push('"email" = $' + (updateValues.length + 1));
+        updateValues.push(email);
+      }
+      if (
+        is_private !== undefined &&
+        is_private !== driverResult.rows[0].is_private
+      ) {
+        updateFields.push('"is_private" = $' + (updateValues.length + 1));
+        putValues.push(is_private);
+      }
+
+      tableName = "Driver";
+    } else if (jobRole === "Manager") {
+      const managerResult = await pool.query(
+        'SELECT * FROM "Manager" WHERE "ssn" = $1',
+        [ssn]
+      );
+
+      if (managerResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Manager not found.",
+        });
+      }
+
+      if (fname) {
+        updateFields.push('"fname" = $' + (updateValues.length + 1));
+        updateValues.push(fname);
+      }
+      if (mname) {
+        updateFields.push('"mname" = $' + (updateValues.length + 1));
+        updateValues.push(mname);
+      }
+      if (lname) {
+        updateFields.push('"lname" = $' + (updateValues.length + 1));
+        updateValues.push(lname);
+      }
+      if (email) {
+        updateFields.push('"email" = $' + (updateValues.length + 1));
+        updateValues.push(email);
+      }
+
+      tableName = "Manager";
+    } else if (jobRole === "Admin") {
+      const adminResult = await pool.query(
+        'SELECT * FROM "Admin" WHERE "ssn" = $1',
+        [ssn]
+      );
+
+      if (adminResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Admin not found.",
+        });
+      }
+
+      if (fname) {
+        updateFields.push('"fname" = $' + (updateValues.length + 1));
+        updateValues.push(fname);
+      }
+      if (mname) {
+        updateFields.push('"mname" = $' + (updateValues.length + 1));
+        updateValues.push(mname);
+      }
+      if (lname) {
+        updateFields.push('"lname" = $' + (updateValues.length + 1));
+        updateValues.push(lname);
+      }
+      if (email) {
+        updateFields.push('"email" = $' + (updateValues.length + 1));
+        updateValues.push(email);
+      }
+
+      tableName = "Admin";
+    } else if (jobRole === "Passenger") {
+      const passengerResult = await pool.query(
+        'SELECT * FROM "Passenger" WHERE "id" = $1',
+        [ssn]
+      );
+
+      if (passengerResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Passenger not found.",
+        });
+      }
+
+      if (fname) {
+        updateFields.push('"fname" = $' + (updateValues.length + 1));
+        updateValues.push(fname);
+      }
+      if (lname) {
+        updateFields.push('"lname" = $' + (updateValues.length + 1));
+        updateValues.push(lname);
+      }
+      if (email) {
+        updateFields.push('"email" = $' + (updateValues.length + 1));
+        updateValues.push(email);
+      }
+
+      tableName = "Passenger";
+    }
+
+    console.log(updateFields, updateValues);
+
+    if (updateFields.length > 0) {
+      let updateQuery = 'UPDATE "' + tableName + '" SET ' + updateFields.join(", ") + ' WHERE ';
+      
+      if (jobRole === "Passenger") {
+        updateQuery += '"id" = $' + (updateValues.length + 1);
+      } else {
+        updateQuery += '"ssn" = $' + (updateValues.length + 1);
+      }
+      
+      await pool.query(updateQuery, [...updateValues, ssn]);
+    }
+
+      return res.json({
+        success: true,
+        message: `${jobRole} profile updated successfully!`,
+      });
+    res.status(400).json({
+      success: false,
+      message: "No valid fields provided to update.",
+    });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.profile = async (req, res) => {
+  const { ssn, jobRole } = req.body;
+
+  try {
+    let userResult;
+    let responseData = { success: false };
+
+    if (jobRole === "Driver") {
+      userResult = await pool.query(
+        'SELECT "ssn", "email", "fname", "mname", "lname", "is_private", "m_ssn", "shift", "salary", "s_id" FROM "Driver" WHERE "ssn" = $1',
+        [ssn]
+      );
+    } else if (jobRole === "Manager") {
+      userResult = await pool.query(
+        'SELECT "ssn", "email", "fname", "mname", "lname" FROM "Manager" WHERE "ssn" = $1',
+        [ssn]
+      );
+    } else if (jobRole === "Admin") {
+      userResult = await pool.query(
+        'SELECT "ssn", "email", "fname", "mname", "lname" FROM "Admin" WHERE "ssn" = $1',
+        [ssn]
+      );
+    } else if (jobRole === "Passenger") {
+      userResult = await pool.query(
+        'SELECT "id", "email", "fname", "lname" FROM "Passenger" WHERE "id" = $1',
+        [ssn]
+      );
+    }
+
+    if (userResult && userResult.rows.length > 0) {
+      const user = userResult.rows[0];
+
+      responseData.success = true;
+      responseData.data = user;
+
+      if (jobRole === "Driver") {
+        if (user.m_ssn) {
+          const managerResult = await pool.query(
+            'SELECT "fname", "mname", "lname" FROM "Manager" WHERE "ssn" = $1',
+            [user.m_ssn]
+          );
+          if (managerResult.rows.length > 0) {
+            responseData.data.manager_name = `${managerResult.rows[0].fname} ${managerResult.rows[0].lname}`;
+          }
+        }
+
+        if (user.s_id) {
+          const stationResult = await pool.query(
+            'SELECT "station_name" FROM "Station" WHERE "station_id" = $1',
+            [user.s_id]
+          );
+          if (stationResult.rows.length > 0) {
+            responseData.data.station_name = stationResult.rows[0].station_name;
+          }
+        }
+
+        const tripResult = await pool.query(
+          'SELECT AVG(rate) AS average_rate FROM "Trip", "Passenger Trip" WHERE "trip_id" = "t_id" AND "d_ssn" = $1',
+          [ssn]
+        );
+
+        if (tripResult.rows.length > 0) {
+          responseData.data.rate = tripResult.rows[0].average_rate;
+        }
+      }
+
+      return res.json(responseData);
+    }
+    res.status(404).json({
+      success: false,
+      message: "User not found.",
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
