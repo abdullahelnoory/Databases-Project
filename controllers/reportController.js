@@ -297,13 +297,14 @@ exports.getAverageAgePassenger = async (req, res) => {
 exports.getTripsMonthStation = async (req, res) => {
   try {
     const query = `
-        SELECT 
-          "station_name" AS station, 
-          COUNT(*) AS trips
-        FROM "Trip", "Station"
-        WHERE "source_station" = "station_id"
-        GROUP BY station, SUBSTRING("date" FROM 6 FOR 7)
-        ORDER BY station, SUBSTRING("date" FROM 6 FOR 7) DESC;
+SELECT 
+  s."station_name" AS station, 
+  COALESCE(COUNT(t.*), 0) AS trips
+FROM "Station" s
+LEFT JOIN "Trip" t ON t."source_station" = s."station_id"
+GROUP BY s."station_name", SUBSTRING(t."date" FROM 6 FOR 7)
+ORDER BY s."station_name", SUBSTRING(t."date" FROM 6 FOR 7) DESC;
+
       `;
     const result = await pool.query(query);
 

@@ -11,4 +11,6 @@ router.post('/getStatusPrivateTrips',passengerController.getStatusPrivateTrips);
 router.post('/station',passengerController.station)
 router.post('/removePrivateTrip',passengerController.removePrivateTrip);
 
+router.get('/events', passengerController.sendPassengerCountUpdates);
+
 module.exports = router;

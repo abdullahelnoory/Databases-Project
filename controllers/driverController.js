@@ -116,6 +116,7 @@ exports.startAcceptedTrips = async (req, res) => {
 
 exports.getTrips = async (req, res) => {
   const { d_ssn } = req.body;
+  console.log(req.body);
   try {
     const result1 = await pool.query(
       'SELECT * FROM "Trip" WHERE "d_ssn" = $1 and "status"=$2',
@@ -127,10 +128,18 @@ exports.getTrips = async (req, res) => {
       [d_ssn, "accepted", "ongoing"]
     );
 
+    const result3 = await pool.query(
+      'SELECT "number_of_seats" FROM "Car" WHERE "d_ssn" = $1',
+      [d_ssn]
+    );
+
+    console.log(result1.rows, result2.rows, result3.rows);
+
     res.json({
       success: true,
       tripsidle: result1.rows,
       tripsaccepted: result2.rows,
+      number_of_seats: result3.rows[0].number_of_seats,
     });
   } catch (error) {
     console.error("Error fetching trips:", error);
@@ -161,7 +170,6 @@ exports.getStartedTrips = async (req, res) => {
     });
   }
 };
-
 
 exports.rejectTrip = async (req, res) => {
   const { trip_id } = req.body;
@@ -214,10 +222,13 @@ exports.getNumberofPassengers = async (req, res) => {
       'SELECT count(*) FROM "Passenger Trip" WHERE "t_id" = $1',
       [trip_id]
     );
+
     console.log(result.rows[0]);
+    const passengerCount = result.rows[0].count;
+
     res.json({
       success: true,
-      data: result.rows[0],
+      data: { count: passengerCount },
     });
   } catch (error) {
     console.error("Error fetching number of passengers:", error);
@@ -226,6 +237,40 @@ exports.getNumberofPassengers = async (req, res) => {
       message: "Server error. Please try again later.",
     });
   }
+};
+
+exports.sendPassengerCountUpdates = (req, res) => {
+  const { trip_id } = req.query;
+  console.log(req.query);
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  const sendPassengerCount = async () => {
+    try {
+      const result = await pool.query(
+        'SELECT count(*) FROM "Passenger Trip" WHERE "t_id" = $1',
+        [trip_id]
+      );
+
+      const passengerCount = result.rows[0].count;
+
+      res.write(
+        `data: ${JSON.stringify({ trip_id, count: passengerCount })}\n\n`
+      );
+    } catch (error) {
+      console.error("Error fetching passenger count:", error);
+    }
+  };
+
+  const interval = setInterval(sendPassengerCount, 5000);
+
+  req.on("close", () => {
+    clearInterval(interval);
+    console.log("Client disconnected");
+  });
 };
 
 exports.markAttendance = async (req, res) => {
@@ -290,15 +335,15 @@ exports.getAttendance = async (req, res) => {
     if (result.rows.length > 0) {
       res.json({
         success: true,
-        attend: false, 
-        data: result.rows[0], 
+        attend: false,
+        data: result.rows[0],
       });
     } else {
       res.json({
         success: true,
-        attend: true, 
+        attend: true,
       });
-    } 
+    }
   } catch (error) {
     console.error("Error fetching attendance data:", error);
     res.status(500).json({
@@ -308,14 +353,14 @@ exports.getAttendance = async (req, res) => {
   }
 };
 exports.acceptRejectPrivateTrip = async (req, res) => {
-  const { order_id, d_ssn, Accept } = req.body;
+  const { order_id, d_ssn, Accept, estimated_time } = req.body;
   console.log(req.body);
 
   try {
     if (Accept) {
       const result = await pool.query(
-        'UPDATE "Private Trip" SET "d_ssn" = $1 WHERE "order_id" = $2 RETURNING *',
-        [d_ssn, order_id]
+        'UPDATE "Private Trip" SET "d_ssn" = $1 , "estimated_time" = $3 WHERE "order_id" = $2 RETURNING *',
+        [d_ssn, order_id, estimated_time]
       );
       res.json({
         success: true,
@@ -423,7 +468,6 @@ exports.requestDayOff = async (req, res) => {
   }
 };
 
-
 exports.getDayOffRequests = async (req, res) => {
   const { d_ssn } = req.body;
   try {
@@ -446,13 +490,13 @@ exports.getDayOffRequests = async (req, res) => {
 };
 
 exports.reportLostItem = async (req, res) => {
-  const { trip_id, item, quantity, item_description } = req.body;
+  const { trip_id, item, quantity, description } = req.body;
   console.log(req.body);
 
   try {
     const result = await pool.query(
-      'INSERT INTO "Lost & Found" ("t_id", "item", "quantity") VALUES ($1, $2, $3) RETURNING *',
-      [trip_id, item, quantity]
+      'INSERT INTO "Lost & Found" ("t_id", "item", "quantity", "description") VALUES ($1, $2, $3, $4) RETURNING *',
+      [trip_id, item, quantity, description]
     );
 
     res.json({
@@ -494,7 +538,7 @@ exports.resignDriver = async (req, res) => {
 };
 
 exports.profile = async (req, res) => {
-  const { ssn , jobRole} = req.body;
+  const { ssn, jobRole } = req.body;
   console.log(req.body);
   try {
     const result = await pool.query(
@@ -559,12 +603,14 @@ exports.profile = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const {ssn} = req.body;
-  const {fname, mname, lname, email, is_private } = req.body.data;
+  const { ssn } = req.body;
+  const { fname, mname, lname, email, is_private } = req.body.data;
   console.log(req.body.data);
 
   try {
-    const result = await pool.query('SELECT * FROM "Driver" WHERE "ssn" = $1', [ssn]);
+    const result = await pool.query('SELECT * FROM "Driver" WHERE "ssn" = $1', [
+      ssn,
+    ]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -573,7 +619,8 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    const emailCheckResult = await pool.query(`
+    const emailCheckResult = await pool.query(
+      `
       SELECT email FROM "Passenger" WHERE email = $1 AND id <> $2
       UNION
       SELECT email FROM "Admin" WHERE email = $1 AND ssn <> $2
@@ -581,7 +628,9 @@ exports.updateProfile = async (req, res) => {
       SELECT email FROM "Manager" WHERE email = $1 AND ssn <> $2
       UNION
       SELECT email FROM "Driver" WHERE email = $1 AND ssn <> $2
-    `, [email, ssn]);
+    `,
+      [email, ssn]
+    );
 
     if (emailCheckResult.rows.length > 0) {
       return res.status(400).json({
@@ -649,7 +698,11 @@ exports.updateProfile = async (req, res) => {
     updateFields.push('"ssn" = $' + (updateValues.length + 1));
     updateValues.push(ssn);
 
-    const updateQuery = 'UPDATE "Driver" SET ' + updateFields.join(', ') + ' WHERE "ssn" = $' + updateValues.length;
+    const updateQuery =
+      'UPDATE "Driver" SET ' +
+      updateFields.join(", ") +
+      ' WHERE "ssn" = $' +
+      updateValues.length;
     await pool.query(updateQuery, updateValues);
 
     res.json({
@@ -673,7 +726,6 @@ exports.updateProfile = async (req, res) => {
     });
   }
 };
-
 
 exports.getRate = async (req, res) => {
   const { ssn } = req.body;
