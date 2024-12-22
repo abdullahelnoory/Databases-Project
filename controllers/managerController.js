@@ -124,6 +124,32 @@ exports.getDrivers = async (req, res) => {
   }
 };
 
+exports.getResignedDrivers = async (req, res) => {
+  const { m_ssn } = req.body;
+  console.log(req.body);
+  try {
+    const result = await pool.query(
+      `SELECT d.ssn AS d_ssn, d.fname AS d_fname, r.reason, r.date
+      FROM "Driver" AS d, "Resign" AS r
+      WHERE r.m_ssn = $1 AND d.ssn = r.d_ssn`,
+      [m_ssn]
+    );
+    console.log(result.rows);
+
+    res.json({
+      data: result.rows,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching resigned drivers:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
+};
+
+
 exports.getPrivateTrips = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM "Private Trip"');
@@ -193,6 +219,18 @@ exports.hireDriver = async (req, res) => {
       });
     }
 
+    const resignationResult = await pool.query(
+      'SELECT * FROM "Resign" WHERE "d_ssn" = $1 AND "m_ssn" = $2',
+      [d_ssn, m_ssn]
+    );
+
+    if (resignationResult.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Driver has resigned from this manager and cannot be hired back",
+      });
+    }
+
     const managerResult = await pool.query(
       'SELECT "station_id" FROM "Station" WHERE "m_ssn" = $1',
       [m_ssn]
@@ -225,6 +263,7 @@ exports.hireDriver = async (req, res) => {
     });
   }
 };
+
 
 exports.updateDriverSalary = async (req, res) => {
   const { m_ssn, d_ssn, new_salary } = req.body;
@@ -394,7 +433,7 @@ exports.addManagerFinancesSalary = async (req, res) => {
 
   try {
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().slice(0, 10); 
+    const formattedDate = currentDate.toISOString().slice(0, 10);
     const currentMonth = currentDate.getMonth() + 1;
 
     const driversResult = await pool.query(
@@ -540,8 +579,8 @@ exports.respondRequest = async (req, res) => {
 
 exports.profile = async (req, res) => {
   const { ssn } = req.body;
+  console.log(req.body);
   try {
-    // Query to get manager profile along with station and trips made
     const result = await pool.query(
       `SELECT "ssn", "email", "fname", "mname", "lname", "verified_by" 
        FROM "Manager" 
@@ -552,7 +591,6 @@ exports.profile = async (req, res) => {
     if (result.rows.length > 0) {
       const manager = result.rows[0];
 
-      // Query to get the station associated with the manager
       const stationResult = await pool.query(
         'SELECT * FROM "Station" WHERE "m_ssn" = $1',
         [ssn]
@@ -600,7 +638,7 @@ exports.profile = async (req, res) => {
             responseData.admin = `${adminResult.rows[0].fname} ${adminResult.rows[0].lname}`;
           }
         }
-        
+
         console.log(responseData);
         res.json(responseData);
       } else {
@@ -623,8 +661,6 @@ exports.profile = async (req, res) => {
     });
   }
 };
-
-
 
 exports.updateProfile = async (req, res) => {
   const { ssn, fname, mname, lname, email } = req.body;
@@ -725,24 +761,22 @@ exports.getLostStatus = async (req, res) => {
   const query = `select l.t_id as tripID,description,l.item,l.quantity,t.price,t.date,t.estimated_time,d.ssn driverSSN,
                  d.fname driverFirstName,s.station_id sourceID, s.station_name sourceStationName,de.station_id destinationID, de.station_name destinationStationName 
                  from "Lost & Found" l,"Driver" d,"Trip" t,"Station" s,"Station" de where l.t_id = t.trip_id and t.d_ssn = d.ssn and t.source_station = s.station_id and t.destination_station = de.station_id and d.m_ssn = $1`;
-  try
-  {
-       const result = await pool.query(query, [m_ssn]);
-       res.json({success : true, data : result.rows});              
+  try {
+    const result = await pool.query(query, [m_ssn]);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    if (error.code == "23503") {
+      res.json({
+        success: false,
+        message: "The inserted trip doesn't exist in the system!",
+        details: error.detail,
+      });
+    } else {
+      console.error("Error connecting to the database:", error);
+      res.status(500).json({
+        success: false,
+        message: "Database connection failed",
+      });
+    }
   }
-  catch (error) {
-      if (error.code == "23503") {
-            res.json({
-                success: false,
-                message: "The inserted trip doesn't exist in the system!",
-                details: error.detail,
-                });
-      } else {
-             console.error("Error connecting to the database:", error);
-            res.status(500).json({
-                success: false,
-                message: "Database connection failed",
-            });
-      }
-  }
-}
+};

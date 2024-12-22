@@ -55,4 +55,6 @@ router.post("/rate", driverController.getRate );
 
 router.post("/get-started-trips", driverController.getStartedTrips);
 
+router.post("/rejectPrivateTrip", driverController.rejectPrivateTrip);
+
 module.exports = router;

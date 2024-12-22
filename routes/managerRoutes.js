@@ -57,6 +57,8 @@ router.post("/rate", managerController.getTotalRate);
 
 router.post("/getLostStatus", managerController.getLostStatus);
 
+router.post("/getResignedDrivers", managerController.getResignedDrivers);
+
 
 // 
 

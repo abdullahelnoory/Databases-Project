@@ -31,10 +31,12 @@ exports.setEstimatedTime = async (req, res) => {
 };
 
 exports.getPrivateTrips = async (req, res) => {
+  const d_ssn = req.body.d_ssn;
   try {
     const result = await pool.query(
-      'SELECT * FROM "Private Trip" WHERE "d_ssn" is NULL'
-    );
+      'SELECT * FROM "Private Trip" WHERE "d_ssn" is NULL and d_ssn not in (SELECT d_ssn FROM "Rejected Private Trip" WHERE pt_id = order_id and d_ssn = $1)',
+    [d_ssn]);
+    console.log(result.rows);
     res.json({
       success: true,
       data: result.rows,
@@ -300,6 +302,13 @@ exports.markAttendance = async (req, res) => {
         message: "Attendance has already been marked for today.",
       });
     }
+    const getShiftDriver = await pool.query(
+      'SELECT "shift" FROM "Driver" WHERE "ssn" = $1',
+      [d_ssn]
+    );
+    const shift = getShiftDriver.rows[0].shift;
+
+    leave_time = "5:00:00 PM";
 
     const result = await pool.query(
       'INSERT INTO "Attendance" ("d_ssn", "date", "arrival_time", "leave_time") VALUES ($1, $2, $3, $4) RETURNING *',
@@ -326,24 +335,47 @@ exports.getAttendance = async (req, res) => {
   try {
     const currentDate = new Date().toISOString().split("T")[0];
 
+    // Query to get attendance and ensure the driver has an associated m_ssn
     const result = await pool.query(
-      'SELECT * FROM "Attendance" WHERE "d_ssn" = $1 AND "date" = $2',
+      `SELECT a.*, d."m_ssn"
+       FROM "Attendance" a
+       JOIN "Driver" d ON a."d_ssn" = d."ssn"
+       WHERE a."d_ssn" = $1 AND a."date" = $2`,
       [d_ssn, currentDate]
     );
-    console.log(result.rows);
 
-    if (result.rows.length > 0) {
-      res.json({
+    const result2 = await pool.query(
+      'SELECT "m_ssn" FROM "Driver" WHERE "ssn" = $1',
+      [d_ssn]
+    );
+    if(result2.rows[0].m_ssn === null){
+      return res.json({
         success: true,
-        attend: false,
-        data: result.rows[0],
-      });
-    } else {
-      res.json({
-        success: true,
-        attend: true,
+        attend: false, 
       });
     }
+
+    if (result.rows.length === 0) {
+      return res.json({
+        success: true,
+        attend: true, 
+      });
+    }
+
+    const attendanceRecord = result.rows[0];
+
+    if (attendanceRecord.m_ssn) {
+      return res.json({
+        success: true,
+        attend: false, 
+      });
+    }
+
+    res.json({
+      success: true,
+      attend: false, // Driver attended
+      data: attendanceRecord,
+    });
   } catch (error) {
     console.error("Error fetching attendance data:", error);
     res.status(500).json({
@@ -352,6 +384,7 @@ exports.getAttendance = async (req, res) => {
     });
   }
 };
+
 exports.acceptRejectPrivateTrip = async (req, res) => {
   const { order_id, d_ssn, Accept, estimated_time } = req.body;
   console.log(req.body);
@@ -372,6 +405,7 @@ exports.acceptRejectPrivateTrip = async (req, res) => {
         'UPDATE "Private Trip" SET "d_ssn" = NULL WHERE "order_id" = $1 RETURNING *',
         [order_id]
       );
+      const result2 = await pool.query('insert into "Rejected Private Trip" values ($1, $2)',[d_ssn,order_id]);
       res.json({
         success: true,
         message: "Private trip request rejected.",
@@ -514,15 +548,27 @@ exports.reportLostItem = async (req, res) => {
 };
 
 exports.resignDriver = async (req, res) => {
-  const { d_ssn, reason } = req.body;
+  const { d_ssn, Reason } = req.body;
   console.log(req.body);
+  const dateNow = new Date(Date.now()); // Converts Date.now() to a Date object
 
   try {
+    const result1 = await pool.query(
+      'SELECT "m_ssn" FROM "Driver" WHERE "ssn" = $1',
+      [d_ssn]
+    );
+    const mssn = result1.rows[0].m_ssn;
+
     const result = await pool.query(
       'UPDATE "Driver" SET "m_ssn" = null, "shift" = null, "salary" = null, "s_id" = null WHERE "ssn" = $1 RETURNING *',
       [d_ssn]
     );
+
     console.log(result.rows[0]);
+    const result2 = await pool.query(
+      'INSERT INTO "Resign" ("m_ssn", "d_ssn", "reason", "date") VALUES ($1, $2, $3, $4) RETURNING *',
+      [mssn, d_ssn, Reason, dateNow]
+    );
     res.json({
       success: true,
       message: "Driver resignation processed successfully.",
@@ -531,7 +577,7 @@ exports.resignDriver = async (req, res) => {
   } catch (error) {
     console.error("Error processing resignation:", error);
     res.status(500).json({
-      success: false,
+      success: false, 
       message: "Server error. Please try again later.",
     });
   }
@@ -753,6 +799,21 @@ exports.getRate = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching driver's trip ratings:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.rejectPrivateTrip = async (req, res) => {
+  const { d_ssn, pt_id } = req.body;
+  const query = 'insert into "Rejected Private Trip" values ($1, $2)';
+  try {
+    await pool.query(query, [d_ssn, pt_id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error fetching driver's rejected private trips:", error);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
