@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 17.0
+-- Dumped by pg_dump version 17.0
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -96,7 +96,8 @@ ALTER TABLE public."Driver" OWNER TO postgres;
 CREATE TABLE public."Lost & Found" (
     t_id integer NOT NULL,
     item character varying NOT NULL,
-    quantity integer NOT NULL
+    quantity integer NOT NULL,
+    description character varying
 );
 
 
@@ -226,6 +227,20 @@ ALTER SEQUENCE public."Private Trip_order_id_seq" OWNED BY public."Private Trip"
 
 
 --
+-- Name: Resign; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Resign" (
+    m_ssn integer,
+    d_ssn integer,
+    date character varying,
+    reason character varying
+);
+
+
+ALTER TABLE public."Resign" OWNER TO postgres;
+
+--
 -- Name: Station; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -350,13 +365,11 @@ ALTER TABLE ONLY public."Trip" ALTER COLUMN trip_id SET DEFAULT nextval('public.
 --
 
 COPY public."Admin" (ssn, email, fname, mname, lname, password) FROM stdin;
-12341234	karimfarid@gmail.com	Karim	M	Farid	$2b$10$Ml8IV2WHxoDNTcqmz7rjeu2iJWgQ0KhsrByceKRtRrHj0V0N.DRym
-1234	abc@gmail.com	Karim	Farid	Zakzouk	$2b$10$ryDDev7xZ9o1K6RqJR.dUeDcOUl7hMIztcCLeSERvq5QcFKA4aXCe
-12341111	karimfarid2004@gmail.com	Karim	M	Farid	$2b$10$328dB.L3WUmpbKHRpymbMeD2S/BUAwIpi/0xjWTNIIyG1kEAZg4Pu
-112233	asdasdasd@gmail.com	Karim	M	Farid	$2b$10$wMcy.uyaLKlqUishzN/xD.5zHbRfAZm6okGUxojmjWJYvNklKVn56
-123321	abcabc@gmail.com	aaa	bbb	ccc	$2b$10$qrWFBzv.y5ZVBPymGpMEf.rieMMh.SyzrLhPYMo.c3D/aZYT02rRe
-123456789	YousefAdel@gmail.com	Yousef	Adel	A	$2b$10$P75kVjS.nBlLY/g.Nkoe4uXge.U0s0ckdSbo1LqOlVkZ4phhW3GAS
-13987	admin@gmail.com	Karim	Farid	Zakzouk	$2b$10$qEvZ2nWl4IPMmw0rY141.eiWXuQ2tP4VXSDfaX6u7YsVevWNOpxmm
+1234567890	admin@admin.com	admin	admin	admin	$2b$10$fn9Aiv3a2.RmNaW1ZNME.uh7AfzuvUT7ncjhPRC/zndfPW3hufSle
+94712854	Karim@admin.com	Karim	Farid	Zakzouk	$2b$10$vTJhaDT5iUBF5fVUq4zu3O7J46LNdk1RrEFFFPoALoMxndTD/x7fS
+12351234	mazen@admin.com	Mazen	H	Hatem	$2b$10$rQDjPgC0g3Q4.f2EiP3Rl.Nn.CiaKAQRgnBRGnwZtl9M8z0oUUloG
+4817724	Yousef@gmail.com	Yousef	A	Adel	$2b$10$hvCqS1IxA/bJLR/Cn5RkKOIPCZZ5616nMgN3pxeDnuaXji/a8V4eG
+4125612	Abdullahh@admin.com	Abdullah	A	Ahmed	$2b$10$dyup8epaBGPAz7LlRMVHD.ie00bUjJMA29cP/KGHgnwYf9I0SbmMu
 \.
 
 
@@ -374,8 +387,25 @@ COPY public."Attendance" (d_ssn, date, arrival_time, leave_time) FROM stdin;
 --
 
 COPY public."Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) FROM stdin;
-123456789	14	t	Sedan	50	141224613
 3152312	14	t	Sedan	34	321321
+ABC12345 	4	t	Sedan	10	41251612
+DEF54321 	14	t	SUV	12	12412563
+GHI67890	14	f	Sedan	15	63179146
+JKL76543 	14	f	Van	15	72167241
+MNO87654	14	t	Sedan	11	81571265
+PQR98765 	12	t	SEV	12	51272135
+STU54321 	4	t	Sedan 	22	5235616
+VWX21098 	12	t	Van	0	41361612
+YZA43210 	12	t	Sedan	12	12151122
+EFG76543 	5	t	Sedan 	8	51214353
+JKL43210	5	f	SUV	1	124412
+MNO32109	9	t	Van	12	41235623
+PQR21098	12	t	Sedan	10	12451242
+STU54221 	12	t	SUV	1	51267362
+VWX43210 	12	f	SUV	10	12516122
+YZA76543	12	t	Sedan	12	12617124
+BCD65432	12	t	SUV	0	12516124
+EFG32109 	14	t	Sedan	10	12512673
 \.
 
 
@@ -384,8 +414,26 @@ COPY public."Car" (car_license, number_of_seats, air_conditioning, car_type, add
 --
 
 COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, shift, salary, s_id, is_available) FROM stdin;
-141224613	john.doe123@example.com	John	A	Doe	$2b$10$KAm46Edi6XTtEbHQdIc2quSGn7wUAR08urH4SLBCByi5Jc1V2.O.q	f	\N	\N	\N	\N	t
 321321	driver@gmail.com	Karim	Farid	Zakzouk	$2b$10$5taqCAm.JTdPXgVMY1y0z.t52Qqb6wuC4AtQVJXNJk5dQHMvyXJJS	t	\N	32	2111	\N	t
+41251612	ahmed.fahad@example.com	Ahmed 	Mohammed 	AlFahad	$2b$10$iDi8U8c2VJ/.Hr1XOEqOCu.oo9kUEjjc.pHp2sGC.1ZH9VOl70ur6	f	\N	\N	\N	\N	t
+12412563	sara.hashimi@example.com	Sara 	Khaled	Hashimi	$2b$10$geSTJmnFrNfb/tMobpBEkuHb/EGGn.yCTAFnI3Pp5ISAYzuMM8YwG	f	\N	\N	\N	\N	t
+63179146	omar.mansoor@example.com	Omar 	Tariq 	Mansoor	$2b$10$OAVlqUHt3zjI2s/c93COYOo7HMzkecArozPiarqrWc7lZ3dYezYbW	f	\N	\N	\N	\N	t
+72167241	layla.amin@example.com	Layla 	Zainab 	Amin 	$2b$10$PpmFSS8SYqgCLVdarGOyveIz798N0WnZGOTRxCDtlK0yyC.2bb9Km	f	\N	\N	\N	\N	t
+81571265	ali.rashid@example.com	Ali 	Yusuf 	Rashid 	$2b$10$jlHgA9N8w7C0xRNCNuWYXeHXqC9X8VFD/j7PU7NiZjhrEfiTXD5dO	f	\N	\N	\N	\N	t
+51272135	mona.sayeed@example.com	Mona 	Nadia 	Sayeed 	$2b$10$esNi6huhTbyxWkL3CgYK8.W1r0zJ3o9e/yEfYFQOL8lQpF0Vo2chS	f	\N	\N	\N	\N	t
+5235616	hassan.obaid@example.com	Hassan	Sami 	Obaid 	$2b$10$NDX8CmOTN9HsioAkkkGRte.dngKR4uF4p0OXYRGYvF/PWbbsD4QqS	f	\N	\N	\N	\N	t
+41361612	fatima.khattab@example.com	Fatima 	Amira 	Khattab 	$2b$10$t2mhlR5MAVhd2qhy2ih0oOjHV9lTg8MMKLeu7voSGYorxTbv1h27W	f	\N	\N	\N	\N	t
+12151122	khalil.mutlaq@example.com	Khalil 	Rami 	Mutlaq	$2b$10$g7JV9IIbBu4k13R4gheCXuwQ478/lu2GPg8rri2bbQBo3hIsVQ7PW	f	\N	\N	\N	\N	t
+51236162	noor.jabari@example.com	Noor 	Amal 	Jabari 	$2b$10$Ur0ZgXTU3.Je9F83bkK9iOJK5LSBb/3QhAaSwNQhq7T76uBv7qbcG	f	\N	\N	\N	\N	t
+51214353	ziad.harbi@example.com	Ziad	Fadi	Harbi	$2b$10$UMDe4f1BcfetBAfMTQ8oC.4.Ovm2kWx7RIPgG/xEXEtRQlku6COam	f	\N	\N	\N	\N	t
+124412	khaled.khalifa@example.com	Khaled	Nashit	Khalifa	$2b$10$t.wPKwB.Sx.pU90qzmGaFusdB0GnTAEGY7ydnH9S0D2oy7KL3YaU2	f	\N	\N	\N	\N	t
+41235623	dina.qassem@example.com	Dina	Rana	Qassem	$2b$10$foEzHiY2d06I8XUc2JV7lOdOZRoa74Ls0UxPR.9Te82YxvckSMCRy	f	\N	\N	\N	\N	t
+12451242	mazen.hassan@example.com	Mazen	Rashi	Hassan	$2b$10$qSKjQOtQ00len.PFuqJPlOReperTUfzjQ4v5lPTJdwB4VpY/bN39a	f	\N	\N	\N	\N	t
+51267362	jameela.kabir@example.com	Jameela	Zahra	Kabir	$2b$10$TO31XG2HUx71TR9HFajwBOWqj/w8y5uJ0ny2D1ofbGqgA/tJC4l7S	f	\N	\N	\N	\N	t
+12516122	moustafa.bassiouni@example.com	Moustafa	Adel	Bassiouni	$2b$10$NFvh7aHkreWPsGgp5lNERufGaR4cxK78nEiZvv9nBxV2oVtXkdRcK	f	\N	\N	\N	\N	t
+12617124	reem.farsi@example.com	Reem	Salma	Farsi	$2b$10$xIxMQFh4hzYT6zxUn8YGi.XgISiZ4Pv/VvG0y4.f8g.Qa1emfbL6G	f	\N	\N	\N	\N	t
+12516124	tariq.jaziri@example.com	Tariq 	Mazin 	Jaziri 	$2b$10$tSFY9gArWgio6uz3n4/D9.rE6yefvZj71lkLdM7Vhwzz6giBGCfFW	f	\N	\N	\N	\N	t
+12512673	rania.mahmoud@example.com	Rania 	Zaina 	Mahmoud	$2b$10$rvrJXKOLIDWZ1aXd7OyxgukgxaUTUB6qEWNbp3Rk7UlmQ82ecab9G	f	\N	\N	\N	\N	t
 \.
 
 
@@ -393,7 +441,7 @@ COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_s
 -- Data for Name: Lost & Found; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Lost & Found" (t_id, item, quantity) FROM stdin;
+COPY public."Lost & Found" (t_id, item, quantity, description) FROM stdin;
 \.
 
 
@@ -422,6 +470,11 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 1205459	fady.naguib@stations.eg	Fady	Ramy	Naguib	$2b$10$tuUe8YDehy4W53P83RIVU.nprrDU70.fk7UC3LtMQxL2hjnSB3mvy	\N
 2101545	ahmed.mansour@stations.eg	Ahmed	Khaled	Mansour	$2b$10$Pmvce1E/JCrY54sbzGvX6OjzpIIZhfnBja6S9LL2742Wu/2p9TXtq	\N
 3045453	salma.abdelrahman@stations.eg	Salma	Hesham	Abdelrahman	$2b$10$XYcYdTqIVBNcZq10C.fWIeEj53TZMv5VsS/YEyg6EWYyj7KAPnQvS	\N
+947719812	Mazen@admin.com	Mazen	H	Hatem	$2b$10$mggAc60SlNE1zVLwBNPBc.U3x3x9wQJqW0bVsahPPO88ArpqFkBue	\N
+12351241	Yousef@admin.com	Yousef	A	Adel	$2b$10$GmQ0u/d8cndXmBq12afOk.1docPCCQ7dM7FvozdNUj/2PLu.ovKSC	\N
+49167492	Abdullah@admin.com	Abdullah	A	Ahmed	$2b$10$ZcAu/D5GyHiftPYCdsk4b.Ca0rXbT2.s.KK5fnvYhYCPlaJqM07lG	\N
+51245	dsaga@admin.com	asd	asd	asd	$2b$10$59mPdNhJ34EMqNjvTsx8e.LBzZd9rgTw7n7H5V1vwt.TfInAvAUPO	\N
+421315	kakak@gmail.com	gasdasg	gasdasga	sdasdsag	$2b$10$b5Xvsbp2MLqR8Budtw.kEeTIFKBiaAmm0gvhBmMJgBaAjNXPoJ2/e	\N
 \.
 
 
@@ -476,6 +529,14 @@ COPY public."Passenger Trip" (p_id, t_id, is_favourite, rate) FROM stdin;
 --
 
 COPY public."Private Trip" (order_id, source, destination, price, estimated_time, date, d_ssn, p_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: Resign; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."Resign" (m_ssn, d_ssn, date, reason) FROM stdin;
 \.
 
 
@@ -733,6 +794,30 @@ ALTER TABLE ONLY public."Private Trip"
 
 ALTER TABLE ONLY public."Private Trip"
     ADD CONSTRAINT "Private Trip_p_id_fkey" FOREIGN KEY (p_id) REFERENCES public."Passenger"(id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+
+
+--
+-- Name: Resign Resign_d_ssn_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Resign"
+    ADD CONSTRAINT "Resign_d_ssn_fkey" FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
+
+
+--
+-- Name: Resign Resign_m_ssn_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Resign"
+    ADD CONSTRAINT "Resign_m_ssn_fkey" FOREIGN KEY (m_ssn) REFERENCES public."Manager"(ssn) NOT VALID;
+
+
+--
+-- Name: Trip Trip_d_ssn_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Trip"
+    ADD CONSTRAINT "Trip_d_ssn_fkey" FOREIGN KEY (d_ssn) REFERENCES public."Driver"(ssn) NOT VALID;
 
 
 --
