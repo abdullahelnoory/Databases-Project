@@ -27,26 +27,72 @@ exports.orderPrivateTrip = async (req, res) => {
   }
 };
 
+const sendPassengerCountUpdate = (trip_id, res) => {
+  pool.query(
+    'SELECT count(*) FROM "Passenger Trip" WHERE "t_id" = $1',
+    [trip_id],
+    (err, result) => {
+      if (err) {
+        console.error("Error fetching passenger count:", err);
+        return;
+      }
+
+      const passengerCount = result.rows[0].count;
+      console.log("Passenger count:", passengerCount);
+      res.write(
+        `data: ${JSON.stringify({ trip_id, count: passengerCount })}\n\n`
+      );
+    }
+  );
+};
+
 exports.requestTrip = async (req, res) => {
   const { p_id, t_id, rate } = req.body;
   console.log(req.body);
+
   const query1 =
-    'select c.number_of_seats from "Car" c,"Driver" d,"Trip" t where c.d_ssn = d.ssn and d.ssn = t.d_ssn and t.trip_id = $1';
+    'select c.number_of_seats from "Car" c, "Driver" d, "Trip" t where c.d_ssn = d.ssn and d.ssn = t.d_ssn and t.trip_id = $1';
   const query2 = 'select count(*) from "Passenger Trip" where t_id = $1';
-  const query3 = 'insert into "Passenger Trip" values($1,$2,false,$3)';
+  const query3 = 'insert into "Passenger Trip" values($1, $2, false, $3)';
+
   try {
     const result1 = await pool.query(query1, [t_id]);
-    if (result1.rows.length == 0)
-      res.json({ success: true, message: "This trip is not found!" });
-    const number_of_seats = 25;
+    if (result1.rows.length === 0) {
+      return res.json({ success: false, message: "This trip is not found!" });
+    }
+
+    const number_of_seats = result1.rows[0].number_of_seats;
     const result2 = await pool.query(query2, [t_id]);
-    if (result2.rows[0].count < number_of_seats) {
+
+    if (parseInt(result2.rows[0].count) < number_of_seats) {
       await pool.query(query3, [p_id, t_id, rate]);
+
+      // Set up SSE headers for streaming
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
+
       res.json({
         success: true,
         message: "The trip is requested successfully!",
       });
-    } else res.json({ success: true, message: "Sorry, the trip is full now!" });
+
+      console.log("Sending passenger count update");
+      sendPassengerCountUpdate(t_id, res);
+
+      // Optionally, you can keep sending updates periodically or when certain events occur
+      const interval = setInterval(() => {
+        sendPassengerCountUpdate(t_id, res);
+      }, 10000); // Send updates every 10 seconds (you can adjust this)
+
+      // Cleanup on connection close
+      req.on("close", () => {
+        console.log("Connection closed");
+        clearInterval(interval);
+      });
+    } else {
+      res.json({ success: false, message: "Sorry, the trip is full now!" });
+    }
   } catch (error) {
     if (error.code == "23503") {
       res.json({
@@ -62,6 +108,52 @@ exports.requestTrip = async (req, res) => {
       });
     }
   }
+};
+exports.sendPassengerCountUpdates = (req, res) => {
+  const { trip_id } = req.query; // Get the trip_id from the query parameters
+  console.log(req.body);
+  if (!trip_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Trip ID is required" });
+  }
+
+  // Set the headers for SSE
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  console.log("Sending passenger count updates for trip:", trip_id);
+
+  const sendUpdate = () => {
+    pool.query(
+      'SELECT count(*) FROM "Passenger Trip" WHERE "t_id" = $1',
+      [trip_id],
+      (err, result) => {
+        if (err) {
+          console.error("Error fetching passenger count:", err);
+          return;
+        }
+
+        const passengerCount = result.rows[0].count;
+        res.write(
+          `data: ${JSON.stringify({ trip_id, count: passengerCount })}\n\n`
+        );
+      }
+    );
+  };
+
+  // Send initial update
+  sendUpdate();
+
+  // Optionally, send updates at a regular interval (e.g., every 10 seconds)
+  const interval = setInterval(sendUpdate, 10000);
+
+  // Clean up when the connection is closed
+  req.on("close", () => {
+    console.log("Connection closed");
+    clearInterval(interval); // Stop sending updates
+  });
 };
 
 exports.getMyTrips = async (req, res) => {
@@ -85,11 +177,44 @@ exports.getMyTrips = async (req, res) => {
 exports.getTrips = async (req, res) => {
   const accepted = "ongoing";
   const p_id = req.body.p_id;
-  const query =
-    'select d1.ssn driver_ssn, d1.fname driver_fname, d1.mname, d1.lname, s.station_id as source_id, s.station_name source, s.street source_street, s.governorate source_governorate, d.station_id as destination_id, d.station_name destination, d.street as destination_street, d.governorate as destination_governorate, t.trip_id , t.price , t.estimated_time from "Driver" d1, "Station" s, "Station" d, "Trip" t where d1.ssn = t.d_ssn and t.source_station = s.station_id and t.destination_station = d.station_id and t.status = $1 and t.trip_id not in (select t_id from "Passenger Trip" where p_id = $2)';
+
+  const query = `
+    SELECT 
+      d1.ssn AS driver_ssn, 
+      d1.fname AS driver_fname, 
+      d1.mname, 
+      d1.lname, 
+      s.station_id AS source_id, 
+      s.station_name AS source, 
+      s.street AS source_street, 
+      s.governorate AS source_governorate, 
+      d.station_id AS destination_id, 
+      d.station_name AS destination, 
+      d.street AS destination_street, 
+      d.governorate AS destination_governorate, 
+      t.trip_id, 
+      t.price, 
+      t.estimated_time, 
+      c.number_of_seats,
+      (SELECT COUNT(*) FROM "Passenger Trip" WHERE t_id = t.trip_id) AS passenger_count
+    FROM 
+      "Driver" d1
+      JOIN "Trip" t ON d1.ssn = t.d_ssn
+      JOIN "Station" s ON t.source_station = s.station_id
+      JOIN "Station" d ON t.destination_station = d.station_id
+      JOIN "Car" c ON d1.ssn = c.d_ssn
+    WHERE 
+      t.status = $1
+      AND t.trip_id NOT IN (SELECT t_id FROM "Passenger Trip" WHERE p_id = $2)
+  `;
+
   try {
     const result = await pool.query(query, [accepted, p_id]);
-    res.json({ success: true, data: result.rows });
+    const filteredTrips = result.rows.filter((trip) => {
+      return trip.passenger_count < trip.number_of_seats;
+    });
+
+    res.json({ success: true, data: filteredTrips });
   } catch (error) {
     console.error("Error connecting to the database:", error);
     res.status(500).json({
@@ -98,6 +223,8 @@ exports.getTrips = async (req, res) => {
     });
   }
 };
+
+
 
 exports.getStatusPrivateTrips = async (req, res) => {
   const p_id = req.body.p_id;
@@ -150,28 +277,23 @@ exports.setFavouriteTrip = async (req, res) => {
 };
 
 exports.removePrivateTrip = async (req, res) => {
-   const {order_id, p_id} = req.body;
-   console.log(req.body);
-   const query = 'delete from "Private Trip" where order_id = $1 and p_id = $2';
-   try
-   {
-      const result = await pool.query(query, [order_id, p_id]);
-      console.log(result.rowCount);
-      if(result.rowCount == 0)
-      {
-          res.json({success : true, removed : false});
-      }
-      else
-      {
-        res.json({success : true, removed : true});
-      }
-   }
-   catch(error)
-   {
+  const { order_id, p_id } = req.body;
+  console.log(req.body);
+  const query = 'delete from "Private Trip" where order_id = $1 and p_id = $2';
+  try {
+    const result = await pool.query(query, [order_id, p_id]);
+    console.log(result.rowCount);
+    if (result.rowCount == 0) {
+      res.json({ success: true, removed: false });
+    } else {
+      res.json({ success: true, removed: true });
+    }
+  } catch (error) {
     if (error.code == "23503") {
       res.json({
         success: false,
-        message: "The passenger or the private trip doesn't exist in the system!",
+        message:
+          "The passenger or the private trip doesn't exist in the system!",
         details: error.detail,
       });
     } else {
@@ -181,23 +303,30 @@ exports.removePrivateTrip = async (req, res) => {
         message: "Database connection failed",
       });
     }
-   }
-}
+  }
+};
 
 exports.station = async (req, res) => {
-    const st_id = req.body.st_id;
-    const query = 'select station_name, street, zipcode, governorate, rate from "Station" where station_id = $1';
-    try
-    {
-        const result = await pool.query(query, [st_id]);
-        res.json({success : true, data : {station_name : result.rows[0].station_name, street : result.rows[0].street, zipcode : result.rows[0].zipcode, governorate : result.rows[0].governorate, rate : result.rows[0].rate}});
-    }
-    catch(error)
-    {
-        console.error("Error connecting to the database:", error);
-        res.status(500).json({
-          success: false,
-          message: "Database connection failed",
-        }); 
-    } 
+  const st_id = req.body.st_id;
+  const query =
+    'select station_name, street, zipcode, governorate, rate from "Station" where station_id = $1';
+  try {
+    const result = await pool.query(query, [st_id]);
+    res.json({
+      success: true,
+      data: {
+        station_name: result.rows[0].station_name,
+        street: result.rows[0].street,
+        zipcode: result.rows[0].zipcode,
+        governorate: result.rows[0].governorate,
+        rate: result.rows[0].rate,
+      },
+    });
+  } catch (error) {
+    console.error("Error connecting to the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed",
+    });
+  }
 };

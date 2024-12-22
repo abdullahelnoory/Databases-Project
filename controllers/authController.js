@@ -97,26 +97,39 @@ exports.register = async (req, res) => {
           );
         }
         break;
-      case "Driver":
-        result = await pool.query(
-          'INSERT INTO "Driver" (ssn, email, fname, mname, lname, password, is_private) VALUES ($1, $2, $3, $4, $5, $6, false)',
-          [ssn, email, fname, mname, lname, hashedPassword]
-        );
-
-        if (carDetails) {
-          await pool.query(
-            'INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)',
-            [
-              carDetails.car_license,
-              carDetails.number_of_seats,
-              carDetails.air_conditioning,
-              carDetails.car_type,
-              carDetails.additional_price,
-              ssn,
-            ]
+        case "Driver":
+          // Check if the car license already exists
+          const carLicenseCheck = await pool.query(
+            'SELECT car_license FROM "Car" WHERE car_license = $1',
+            [carDetails.car_license]
           );
-        }
-        break;
+        
+          if (carLicenseCheck.rows.length > 0) {
+            return res.status(400).json({
+              success: false,
+              message: "Car license already exists",
+            });
+          }
+        
+          result = await pool.query(
+            'INSERT INTO "Driver" (ssn, email, fname, mname, lname, password, is_private) VALUES ($1, $2, $3, $4, $5, $6, false)',
+            [ssn, email, fname, mname, lname, hashedPassword]
+          );
+        
+          if (carDetails) {
+            await pool.query(
+              'INSERT INTO "Car" (car_license, number_of_seats, air_conditioning, car_type, additional_price, d_ssn) VALUES ($1, $2, $3, $4, $5, $6)',
+              [
+                carDetails.car_license,
+                carDetails.number_of_seats,
+                carDetails.air_conditioning,
+                carDetails.car_type,
+                carDetails.additional_price,
+                ssn,
+              ]
+            );
+          }
+          break;
       case "Passenger":
         result = await pool.query(
           'INSERT INTO "Passenger" (email, age, fname, lname, password) VALUES ($1, $2, $3, $4, $5)',
