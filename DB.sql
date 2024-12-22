@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.0
--- Dumped by pg_dump version 17.0
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -384,8 +384,8 @@ COPY public."Car" (car_license, number_of_seats, air_conditioning, car_type, add
 --
 
 COPY public."Driver" (ssn, email, fname, mname, lname, password, is_private, m_ssn, shift, salary, s_id, is_available) FROM stdin;
-321321	driver@gmail.com	Karim	Farid	Zakzouk	$2b$10$5taqCAm.JTdPXgVMY1y0z.t52Qqb6wuC4AtQVJXNJk5dQHMvyXJJS	t	11223344	32	2111	6	t
 141224613	john.doe123@example.com	John	A	Doe	$2b$10$KAm46Edi6XTtEbHQdIc2quSGn7wUAR08urH4SLBCByi5Jc1V2.O.q	f	\N	\N	\N	\N	t
+321321	driver@gmail.com	Karim	Farid	Zakzouk	$2b$10$5taqCAm.JTdPXgVMY1y0z.t52Qqb6wuC4AtQVJXNJk5dQHMvyXJJS	t	\N	32	2111	\N	t
 \.
 
 
@@ -402,17 +402,26 @@ COPY public."Lost & Found" (t_id, item, quantity) FROM stdin;
 --
 
 COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) FROM stdin;
-1	karim@gmail.com	karim\n	z	farid	12341234	\N
-2	farid@gmail.com	farid	z	ahem	12341234	\N
-3257932	example412@gmail.com	fulan	ellan	elfulany	$2b$10$UjcLBKZoA7bw6LTZrLsRfe2JAlqdAamvJ6EMa7isgnaVK4CuZcrBu	12341234
-111112222	asdasd@gmail.com	Karim	M	Farid	$2b$10$BfK/NKqgxvx/m4OvrxLamemuj6ibVyB8lwltAwfOG8gK9lWofjMzG	\N
-66996699	asdasdasdasd@gmail.com	asd	asd	asd	$2b$10$7udhqx5EHeqRtmbxdqwvLuAMlimMR3tKRJLx6V63KlMb6/qfw3yHG	\N
-123123	asdasd231sd@gmail.com	asd	asd	asd	$2b$10$AqUiyquTpDHFlbI2GrUSNOROlKyOnmZJhahva0DZEQ1m/DLu1B3v2	\N
-1231223	aasd1sd@gmail.com	asd	asd	asd	$2b$10$5LJZPYsBIbPf91RVyMPY5OJxEZHmEeI3oek3ZxwX3QURzQlFY5JGa	\N
-4332	asa@gmail.com	asd	asd	asd	$2b$10$QvyeCHkp/Rc2uq3sQCSI3.a2ExevvfAk6LfAsfo6k9VXlmT2qeNZS	\N
-12221222	karim1234@gmail.com	Karim	Farid	Zakzouk	$2b$10$T.Edi3soo3rmvtnMyIhGBOJ5h33cOAxAPEsmAaXxivmA/OVgde.Yq	\N
-11113333	aaa@gmail.com	aaa	aaa	aaa	$2b$10$aoKhO48RbnqXqFRSvpd3oOGRwONsBwf2Ohdp5BsMkMaTAuXHFASIK	\N
-11223344	manager@gmail.com	Karim	Farid	Zakzouk	$2b$10$vh6xETSPS5Pv9bhEUoAIJOu14oyCbxXDqU8JwJin9wTNK.UPt6Rm2	123321
+1025451	amira.ezzat@stations.eg	Amira	Mohamed	Ezzat	$2b$10$jRh6qHaMiuPQVA6lu.B0SeLwjC2gDuuZdySYKmOAwwILplgy9S56u	\N
+2035452	Karim.salem@stations.eg	Karim	Youssef	Salem	$2b$10$qRRtscQBTUJFnTgCQTLEze/c0LazE0xxDe1IHDTmBlYOXgCUDCwxe	\N
+4055454	tarek.nassar@stations.eg	Tarek	Ayman	Nassar	$2b$10$eHsU97PPUTo/25OfEg7gGuDmfe2.ybPyESzonpBOsu47DOKm2Ptaa	\N
+5065455	mahmoud.said@stations.eg	Mahmoud	Galal	Said	$2b$10$7nknWbHZSa3NmkuOmE/squRhcoWQd/buOez7K42PN6MiD3mTyCf1K	\N
+6075456	yasser.ramadan@stations.eg	Yasser	Fathi	Ramadan	$2b$10$oCpdinbBTb7UwHq.xKTU1e35M5WJ.f22cWP4OGAYMm4KwXrkAApYm	\N
+7085457	dalia.sayed@stations.eg	Dalia	Adel	Sayed	$2b$10$Xz8r48eUa5oo6kl/ZBTm/uFxP4XKNpSsvja6lJDbWbEvqRKTjIZ1W	\N
+8095458	omar.helmy@stations.eg	Omar	Mostafa	Helmy	$2b$10$pYr1wBVzI3GsDA5ObFQYZO28c5kvSNsqOoz2TskArqJENmz.90DBm	\N
+9105459	sara.reda@stations.eg	Sara	Ahmed	Reda	$2b$10$zbCa8bb6sCIeHliuUtdRsutr.Yz5YBKinBFPoYj4Gva9E1hphu37i	\N
+1115450	khaled.saber@stations.eg	Khaled	Ibrahim	Saber	$2b$10$0J9c5D2gPqA1ckJVRRIQcexPh/5eAMcKogeDNF0Pq1MI7ndiIm7Ee	\N
+2125451	nour.hassan@stations.eg	Nour	Adel	Hassan	$2b$10$fW10fpn434d4FULHr9xLw.azIpjnEZt9DuE5h9o6Fhk6x2dgG.Tsq	\N
+3135452	mostafa.ezzeldin@stations.eg	Mostafa	Tarek	Ezzeldin	$2b$10$XhJkVR573yie5C2zUZ4MQ.sUSrhu2L9eBmWOIfUv2ql5y6VaMwasO	\N
+4145453	yasmine.lotfy@stations.eg	Yasmine	Amr	Lotfy	$2b$10$q.IIkwQ.CkibXcgEG1GidOA8e1LbZhcQM9NWp9tQ6ZFoLXd/BBvy2	\N
+5155454	rami.badr@stations.eg	Rami	Sherif	Badr	$2b$10$vIlju0xnfxyG6tRgyvPMeuOvdBGs3mKHvfS0onAsgLG4/q3qR7K1S	\N
+6165455	hanan.elsheikh@stations.eg	Hanan	Samir	Elsheikh	$2b$10$bDASnooENnDvVg3j7IYCaOIlfqq.CwlfRB.Utw6ct.cUtgbf/.a/6	\N
+7175456	mohamed.rashed@stations.eg	Mohamed	Zaki	Rashed	$2b$10$3jqqszyznfsjdscq7bL2tOKNZ1Nj3XPHuj1S7Qq.uUyarOe7gLLyK	\N
+8185457	tamer.shaker@stations.eg	Tamer	Ali	Shaker	$2b$10$6P8rciuLrteF9JdzQ70wveqNCrZIlsVth0kTOCASfr8Otf6ud3dm.	\N
+9195458	walid.eid@stations.eg	Walid	Hossam	Eid	$2b$10$bZ2MVye9CYpugVcFwmItbOhAFLYbFJnRUbvWBCI/qSYDZP2IwdXqa	\N
+1205459	fady.naguib@stations.eg	Fady	Ramy	Naguib	$2b$10$tuUe8YDehy4W53P83RIVU.nprrDU70.fk7UC3LtMQxL2hjnSB3mvy	\N
+2101545	ahmed.mansour@stations.eg	Ahmed	Khaled	Mansour	$2b$10$Pmvce1E/JCrY54sbzGvX6OjzpIIZhfnBja6S9LL2742Wu/2p9TXtq	\N
+3045453	salma.abdelrahman@stations.eg	Salma	Hesham	Abdelrahman	$2b$10$XYcYdTqIVBNcZq10C.fWIeEj53TZMv5VsS/YEyg6EWYyj7KAPnQvS	\N
 \.
 
 
@@ -421,9 +430,6 @@ COPY public."Manager" (ssn, email, fname, mname, lname, password, verified_by) F
 --
 
 COPY public."Manager Finance" (m_ssn, date, salary, total_profit) FROM stdin;
-11223344	2024-10-20	0	18504
-11223344	2024-11-20	17504	18504
-11223344	2024-12-20	7504	18504
 \.
 
 
@@ -462,9 +468,6 @@ COPY public."Passenger" (id, email, age, fname, lname, password) FROM stdin;
 --
 
 COPY public."Passenger Trip" (p_id, t_id, is_favourite, rate) FROM stdin;
-6	23	f	5
-6	24	t	1
-6	22	t	5
 \.
 
 
@@ -481,9 +484,26 @@ COPY public."Private Trip" (order_id, source, destination, price, estimated_time
 --
 
 COPY public."Station" (station_id, station_name, street, zipcode, governorate, m_ssn) FROM stdin;
-1	12341	dsadsa	dsadsa	dsadasd	1
-5	asd	asd	asd	asd	\N
-6	Giza Station	El Mehwar	38164	Cario	11223344
+8	Ramses Station	4	342145	Giza	1025451
+9	Alexandria Main	34	456213	Alexandria	2035452
+10	Suez City Station	45	6457883	Suez	4055454
+11	Aswan Terminal	1	342567	Aswan	5065455
+12	Sharm El Sheikh Hub	11	6575345	Sharm El Sheikh	6075456
+13	Ismailia Station	2	41246312	Ismailia	7085457
+14	Tanta Terminal	32	782632	Tanta	8095458
+15	Zagazig Station	35	235432	Zagazig	9105459
+16	Hurghada Central	231	234323	Hurghada	1115450
+17	Minya Station	42	3454561	Minya	2125451
+18	Asyut Terminal	542	2134345	Asyut	3135452
+19	Fayoum Station	46	3455231	Fayoum	4145453
+20	Marsa Matruh Hub	534	343521	Marsa Matruh	5155454
+21	Qena Main Station	22	563820	Qena	6165455
+22	Beni Suef Station	65	7493021	Beni Suef	7175456
+23	Matariya Station	21	537873	Cairo	8185457
+24	Kafr El Sheikh Station	81	2456268	Kafr El Sheikh	9195458
+25	Beheira Central	41	6529378	Beheira	1205459
+7	Cairo Central Station	13	456246	Cairo	2101545
+26	Mansoura Station	53	566231	Mansoura	3045453
 \.
 
 
@@ -492,31 +512,6 @@ COPY public."Station" (station_id, station_name, street, zipcode, governorate, m
 --
 
 COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station, destination_station, status) FROM stdin;
-25	2313	2024-12-20T11:38:20.325Z	1	321321	6	1	accepted
-18	2313	2024-12-20T11:38:18.693Z	1	321321	6	1	accepted
-19	2313	2024-12-20T11:38:19.397Z	1	321321	6	1	accepted
-20	2313	2024-12-20T11:38:19.589Z	1	321321	6	1	accepted
-21	2313	2024-12-20T11:38:19.733Z	1	321321	6	1	accepted
-22	2313	2024-12-20T11:38:19.869Z	1	321321	6	1	started
-23	2313	2024-12-20T11:38:20.021Z	1	321321	6	1	started
-24	2313	2024-12-20T11:38:20.173Z	1	321321	6	1	started
-14	213	2024-12-15T00:46:26.278Z	1	253850923	5	1	started
-6	12313	2024-12-15T00:45:39.133Z	1	253850923	5	1	started
-15	12313	2024-12-15T00:46:26.406Z	1	253850923	5	1	started
-16	12313	2024-12-15T00:46:26.550Z	1	253850923	5	1	started
-17	12313	2024-12-15T00:46:26.710Z	1	253850923	5	1	started
-2	123131	2024-12-15T00:42:25.326Z	1	253850923	5	1	started
-1	12313	2024-12-15T00:45:36.997Z	1	253850923	5	1	started
-4	12313	2024-12-15T00:45:38.030Z	1	253850923	5	1	started
-5	12313	2024-12-15T00:45:38.189Z	1	253850923	5	1	started
-3	123132123	2024-12-13T20:09:40.233Z	1	253850923	5	1	rejected
-8	12313	2024-12-15T00:45:39.742Z	1	253850923	5	1	started
-9	12313	2024-12-15T00:45:39.958Z	1	253850923	5	1	started
-10	12313	2024-12-15T00:45:40.102Z	1	253850923	5	1	started
-11	12313	2024-12-15T00:46:25.854Z	1	253850923	5	1	started
-12	12313	2024-12-15T00:46:26.014Z	1	253850923	5	1	started
-13	12313	2024-12-15T00:46:26.151Z	1	253850923	5	1	started
-7	123	2024-12-15T00:45:39.517Z	1	253850923	5	1	started
 \.
 
 
@@ -525,9 +520,6 @@ COPY public."Trip" (trip_id, price, date, estimated_time, d_ssn, source_station,
 --
 
 COPY public."Vacation" (m_ssn, d_ssn, date, status) FROM stdin;
-1	321321	2024-12-24	pending
-11223344	321321	2024-12-26	accepted
-11223344	321321	2024-12-31	rejected
 \.
 
 
@@ -549,7 +541,7 @@ SELECT pg_catalog.setval('public."Private Trip_order_id_seq"', 17, true);
 -- Name: Station_station_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Station_station_id_seq"', 5, true);
+SELECT pg_catalog.setval('public."Station_station_id_seq"', 26, true);
 
 
 --
