@@ -1,70 +1,89 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-const ManagerialReport= () => {
-  const [userCounts, setUserCounts] = useState(null);
+const ManagerialReport = () => {
+  const [userCounts, setUserCounts] = useState([]);
   const [managerData, setManagerData] = useState([]);
   const [driverData, setDriverData] = useState([]);
-  const [passengerData, setPassengerData] = useState([]);
-  // Fetch User Count Data
-  useEffect(() => {
-    axios
-      .get("http://localhost:6969/report/count_all") // Replace with your actual API endpoint
-      .then((response) => {
-        const data = response.data.data;
 
+  // Fetch data on mount
+  useEffect(() => {
+    // Fetch user count data
+    axios
+      .get("http://localhost:6969/report/count_all")
+      .then((response) => {
+        const data = response.data;
+        //console.log(data);
         if (data) {
           setUserCounts([
-            { name: "Drivers", value: data.drivers },
-            { name: "Managers", value: data.managers },
-            { name: "Passengers", value: data.passengers },
+            { name: "Drivers", value: parseInt(data.driver, 10) },
+            { name: "Managers", value: parseInt(data.manager, 10) },
+            { name: "Passengers", value: parseInt(data.passenger, 10) },
           ]);
         }
       })
       .catch((error) => {
         console.error("Error fetching user count data:", error);
       });
-      axios
-      .get("http://localhost:6969/report/managers_per_location") // Replace with your actual API endpoint
+
+    axios
+      .get("http://localhost:6969/report/managers_per_location")
       .then((response) => {
         const data = response.data.data;
-
-        if (data && data.length > 0) {
-          // Process and store the data
-          setManagerData(data);
+        //console.log(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setManagerData(
+            data.map((item) => ({
+              location: item.governorate,
+              managers: parseInt(item.managerscount, 10), // Ensure numeric consistency
+            }))
+          );
         }
       })
       .catch((error) => {
         console.error("Error fetching manager data by location:", error);
       });
-      axios
-      .get("http://localhost:6969/report/drivers_per_location") // Replace with your actual API endpoint
+
+    // Fetch drivers per location
+    axios
+      .get("http://localhost:6969/report/drivers_per_location")
       .then((response) => {
         const data = response.data.data;
-
-        if (data && data.length > 0) {
-          // Process and store the data
-          setDriverData(data);
+        console.log(response);
+        if (Array.isArray(data) && data.length > 0) {
+          setDriverData(
+            data.map((item) => ({
+              location: item.governorate,
+              drivers: parseInt(item.driverscount, 10), // Ensure numeric consistency
+            }))
+          );
         }
       })
       .catch((error) => {
         console.error("Error fetching driver data by location:", error);
       });
-
-      
-
   }, []);
-
-
- 
 
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658"]; // Colors for the pie chart
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
+      {/* User Distribution Section */}
       <h2>User Distribution</h2>
-      {userCounts ? (
+      {userCounts.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <PieChart>
             <Pie
@@ -78,7 +97,10 @@ const ManagerialReport= () => {
               label
             >
               {userCounts.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip />
@@ -86,10 +108,11 @@ const ManagerialReport= () => {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading data...</p>
+        <p>Loading user distribution data...</p>
       )}
 
-<h2>Number of Managers by Location</h2>
+      {/* Managers Per Location Section */}
+      <h2>Number of Managers by Location</h2>
       {managerData.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={managerData}>
@@ -102,9 +125,11 @@ const ManagerialReport= () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading data...</p>
+        <p>Loading manager data...</p>
       )}
-       <h2>Number of Drivers by Location</h2>
+
+      {/* Drivers Per Location Section */}
+      <h2>Number of Drivers by Location</h2>
       {driverData.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={driverData}>
@@ -117,7 +142,7 @@ const ManagerialReport= () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading data...</p>
+        <p>Loading driver data...</p>
       )}
     </div>
   );

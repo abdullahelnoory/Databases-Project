@@ -137,6 +137,70 @@ export default function NavbarA() {
                     Reports Drivers
                   </button>
                 </li>
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports/Passengers");
+                    }}
+                  >
+                    Reports Passengers
+                  </button>
+                </li>
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports/Managerial");
+                    }}
+                  >
+                    Managrial Reports
+                  </button>
+                </li>
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports/Passengers");
+                    }}
+                  >
+                    Reports Passengers
+                  </button>
+                </li>
+                <li style={{ width: "100px" }}>
+                  <button
+                    style={{
+                      border: "none",
+                      cursor: "pointer",
+                      width: "100px",
+                      padding: "10px",
+                    }}
+                    className="nav-btn"
+                    onClick={() => {
+                      navigate("/admin/Reports/Detailed");
+                    }}
+                  >
+                    Detailed Reports
+                  </button>
+                </li>
               </ul>
             )}
           </li>

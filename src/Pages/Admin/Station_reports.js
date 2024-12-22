@@ -71,8 +71,11 @@ const Station_report = () => {
       .then((response) => {
         const data = response.data.data;
         if (data && data.length > 0) {
-          // Set the most visited stations data
-          setMostVisitedStations(data);
+          const processedData = data.map((item) => ({
+            station_name: item.station_name, ////
+           visits: parseFloat(item.visit_count), // Ensure it's a number
+          }));
+          setMostVisitedStations(processedData);
         }
       })
       .catch((error) => {
@@ -139,7 +142,7 @@ const Station_report = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="visit_count" fill="#ff7300" />
+            <Bar dataKey="visits" fill="#ff7300" />
           </BarChart>
         </ResponsiveContainer>
       ) : (

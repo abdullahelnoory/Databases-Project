@@ -15,56 +15,49 @@ const Passenger_rep = () => {
   const [avgAge, setAvgAge] = useState(null);
   const [passengerTripsData, setPassengerTripsData] = useState([]);
   const [passengerSpentData, setPassengerSpentData] = useState([]);
-  // Fetch Passenger Age Data
+
   useEffect(() => {
+    // Fetch average age data
     axios
-      .get("http://localhost:6969/report/passenger-average-age") // Replace with your actual API URL
+      .get("http://localhost:6969/report/passenger-average-age")
       .then((response) => {
-        const data = response.data.data;
-
-        if (data && data.avg_age !== undefined) {
-          // Set the average age
-          setAvgAge(data.avg_age);       
-
-       
+        const data = response.data;
+        console.log(response.data);
+        if (data && data.average_age !== undefined) {
+          setAvgAge(data.average_age);
         }
       })
       .catch((error) => {
         console.error("Error fetching passenger age data:", error);
       });
 
-      axios
-      .get("http://localhost:6969/report/passenger-trips") // Replace with your actual API endpoint
+    // Fetch passenger trips data
+    axios
+      .get("http://localhost:6969/report/passenger-trips")
       .then((response) => {
-        const data = response.data;
-
+        const data = response.data.data; // Ensure this matches the actual API structure
         if (data && data.length > 0) {
-          // Process the data to extract passenger names and their trips
           const processedData = data.map((item) => ({
-            passenger_name: item.passenger,   //
-            no_of_trips: item.trips,        //
+            passenger_name: item.passenger, // Ensure 'passenger' matches your API response key
+            no_of_trips: parseInt(item.trips, 10), // Convert to integer
           }));
-
-          // Set the processed data for the BarChart
           setPassengerTripsData(processedData);
         }
       })
       .catch((error) => {
         console.error("Error fetching passenger trips data:", error);
       });
-      axios
-      .get("http://localhost:6969/report/passenger-expence") // Replace with your actual API URL
+
+    // Fetch passenger spending data
+    axios
+      .get("http://localhost:6969/report/passenger-expence")
       .then((response) => {
-        const data = response.data;
-
+        const data = response.data.data; // Ensure this matches the actual API structure
         if (data && data.length > 0) {
-          // Process the data to extract passenger names and their total spent
           const processedData = data.map((item) => ({
-            passenger_name: item.passenger_name,  //
-            total_spent: item.total_spent,     //
+            passenger_name: item.passenger, // Ensure 'passenger_name' matches your API response key
+            total_spent: parseFloat(item.total_expense), // Convert to float for consistent numeric representation
           }));
-
-          // Set the processed data for the BarChart
           setPassengerSpentData(processedData);
         }
       })
@@ -74,27 +67,28 @@ const Passenger_rep = () => {
   }, []);
 
   return (
-    <div>
-    <h2>Average Age</h2>
-    {avgAge !== null ? (
-      <div
-        style={{
-          padding: "20px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-          display: "inline-block",
-          backgroundColor: "#f9f9f9",
-          fontSize: "24px",
-          fontWeight: "bold",
-        }}
-      >
-        {avgAge} years
-      </div>
-    ) : (
-      <p>Loading average age...</p>
-    )}
+    <div style={{ padding: "20px" }}>
+      <h2>Average Age</h2>
+      {avgAge !== null ? (
+        <div
+          style={{
+            padding: "20px",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            backgroundColor: "#f9f9f9",
+            fontSize: "24px",
+            fontWeight: "bold",
+            display: "inline-block",
+            marginBottom: "20px",
+          }}
+        >
+          {avgAge} years
+        </div>
+      ) : (
+        <p>Loading average age...</p>
+      )}
 
-<h2>Passenger Trips</h2>
+      <h2>Passenger Trips</h2>
       {passengerTripsData.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={passengerTripsData}>
@@ -107,9 +101,10 @@ const Passenger_rep = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading data...</p>
+        <p>Loading trips data...</p>
       )}
-       <h2>Passenger Spending</h2>
+
+      <h2>Passenger Spending</h2>
       {passengerSpentData.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={passengerSpentData}>
@@ -118,13 +113,13 @@ const Passenger_rep = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="total_spent" fill="#8884d8" />
+            <Bar dataKey="total_spent" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading data...</p>
+        <p>Loading spending data...</p>
       )}
-  </div>
+    </div>
   );
 };
 

@@ -45,9 +45,9 @@ import ManagerFnance from './Pages/Manager/Components/MangerFinance.js'
 // import ProfileSettings from './Pages/Driver/Components/ProfileSettings.js';
 import ProfileSettings from './Pages/ProfileSettings.js';
 // import ChangeDriverPassword    from './Pages/Driver/Components/ChangeDriverPassword.js';
-
+import ManegerialReport from './Pages/Admin/Manegerial_report.js';
 // import Profile_Settings from './Pages/Manager/Profile_Settings.js';
-
+import DetailedReport from './Pages/Admin/Detaiel_report.js'
 
 
 function App() {
@@ -73,6 +73,8 @@ function App() {
             <Route path="/admin/Reports/Drivers" element={<DriverRep/>} />
             <Route path="/admin/Reports/Managers" element={<ManagerReport/>} />
             <Route path="/admin/Reports/Passengers" element={<PassengerReport/>} />
+            <Route path="/admin/Reports/Managerial" element={<ManegerialReport/>} />
+            <Route path="/admin/Reports/Detailed" element={<DetailedReport/>} />
           </Route>
 
           <Route element={<PrivateRoute requiredRole="Manager" />}>
