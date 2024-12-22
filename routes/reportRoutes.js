@@ -13,7 +13,10 @@ router.get("/most-lost-items", reportController.mostLostItemsInTrips);
 router.get("/avg-trip-duration", reportController.getAverageTripDuration);
 router.get("/avg-trip-cost", reportController.getAverageTripCost);
 router.get("/user-counts", reportController.getUserCounts);
+
 router.get("/passenger-average-age", reportController.getAverageAgePassenger);
+
+
 router.get("/trips-per-station", reportController.getTripsMonthStation);
 router.get("/manager-finances", reportController.getManagerFinance);
 router.get("/station-rate", reportController.getStationsRating);
@@ -25,5 +28,12 @@ router.get("/average-station-salary", reportController.getAverageStationSalary);
 router.get("/count_all",reportController.count_all);
 router.get("/managers_per_location",reportController.managers_per_location);
 router.get("/drivers_per_location",reportController.drivers_per_location);
+router.get("/passenger-expence",reportController.getPassengerExpence);
+
+router.get("/driver-details",reportController.getDriverDetails);
+
+router.get("/passenger-details",reportController.getPassengerDetails);
+
+router.get("/manager-details",reportController.getManagerDetails);
 
 module.exports = router;

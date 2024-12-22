@@ -261,7 +261,9 @@ exports.getUserCounts = async (req, res) => {
   }
 };
 
-exports.getAverageAgePassenger = async (req, res) => {     // 
+exports.getAverageAgePassenger = async (req, res) => {
+  //
+  console.log("getAverageAgePassenger");
   try {
     const query = `
           SELECT AVG("age") AS average_age
@@ -269,6 +271,7 @@ exports.getAverageAgePassenger = async (req, res) => {     //
         `;
 
     const result = await pool.query(query);
+    console.log(result.rows);
 
     if (result.rows.length === 0 || result.rows[0].average_age === null) {
       return res.status(404).json({
@@ -386,7 +389,6 @@ exports.getStationsRating = async (req, res) => {
       success: true,
       data: result.rows,
     });
-
   } catch (error) {
     console.error("Error fetching stations rating:", error);
     res.status(500).json({
@@ -425,7 +427,10 @@ exports.getTripsCountDriverNotPrivatePerMonth = async (req, res) => {
       data: result.rows,
     });
   } catch (error) {
-    console.error("Error fetching trips per month for each driver (not private):", error);
+    console.error(
+      "Error fetching trips per month for each driver (not private):",
+      error
+    );
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -463,7 +468,10 @@ exports.getTripsCountDriverPrivatePerMonth = async (req, res) => {
       data: result.rows,
     });
   } catch (error) {
-    console.error("Error fetching trips per month for each driver (not private):", error);
+    console.error(
+      "Error fetching trips per month for each driver (not private):",
+      error
+    );
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -496,7 +504,6 @@ exports.getAverageSalaryPerStation = async (req, res) => {
       success: true,
       data: result.rows,
     });
-
   } catch (error) {
     console.error("Error fetching average salary per station:", error);
     res.status(500).json({
@@ -563,7 +570,7 @@ exports.getPassengerTripsPerMonth = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: result.rows,  // This will return each passenger's trips
+      data: result.rows, // This will return each passenger's trips
     });
   } catch (error) {
     console.error("Error fetching passenger trips:", error);
@@ -575,59 +582,57 @@ exports.getPassengerTripsPerMonth = async (req, res) => {
 };
 
 exports.count_all = async (req, res) => {
-    const query1 = 'select count(*) from "Passenger"';
-    const query2 = 'select count(*) from "Driver"';
-    const query3 = 'select count(*) from "Manager"';
-    try
-    {
-        const result1 = await pool.query(query1);
-        const result2 = await pool.query(query2);
-        const result3 = await pool.query(query3);
-        res.json({success : true, passenger : result1.rows[0].count, driver : result2.rows[0].count, manager : result3.rows[0].count});
-    }
-    catch(error)
-    {
-      console.error("Error fetching:", error);
-      res.status(500).json({
-        success: false,
-        message: "Server error. Please try again later.",
-      });
-    }
-}
+  const query1 = 'select count(*) from "Passenger"';
+  const query2 = 'select count(*) from "Driver"';
+  const query3 = 'select count(*) from "Manager"';
+  try {
+    const result1 = await pool.query(query1);
+    const result2 = await pool.query(query2);
+    const result3 = await pool.query(query3);
+    res.json({
+      success: true,
+      passenger: result1.rows[0].count,
+      driver: result2.rows[0].count,
+      manager: result3.rows[0].count,
+    });
+  } catch (error) {
+    console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
 
 exports.managers_per_location = async (req, res) => {
-    const query = 'select count(*) as managersCount,governorate from "Manager","Station" where m_ssn = ssn group by governorate';
-    try
-    {
-        const result = await pool.query(query);
-        res.json({success : true, data : result.rows});
-    }
-    catch(error)
-    {
-      console.error("Error fetching:", error);
-      res.status(500).json({
-        success: false,
-        message: "Server error. Please try again later.",
-      });
-    }
-}
+  const query =
+    'select count(*) as managersCount,governorate from "Manager","Station" where m_ssn = ssn group by governorate';
+  try {
+    const result = await pool.query(query);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
 
 exports.drivers_per_location = async (req, res) => {
-   const query = 'select count(*) as driversCount,governorate from "Driver","Station" where s_id = station_id group by governorate';
-   try
-    {
-        const result = await pool.query(query);
-        res.json({success : true, data : result.rows});
-    }
-    catch(error)
-    {
-      console.error("Error fetching:", error);
-      res.status(500).json({
-        success: false,
-        message: "Server error. Please try again later.",
-      });
-    }
-}
+  const query =
+    'select count(*) as driversCount,governorate from "Driver","Station" where s_id = station_id group by governorate';
+  try {
+    const result = await pool.query(query);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
 
 exports.getAverageStationSalary = async (req, res) => {
   try {
@@ -641,6 +646,157 @@ exports.getAverageStationSalary = async (req, res) => {
     res.json({ success: true, data: result.rows });
   } catch (error) {
     console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+exports.getPassengerExpence = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT CONCAT("fname", ' ', "lname") AS passenger, SUM(price) AS total_expense
+      FROM "Passenger Trip", "Passenger", "Trip"
+      WHERE "p_id" = "id" AND "t_id" = "trip_id"
+      GROUP BY passenger
+      ORDER BY total_expense DESC;
+    `);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+exports.getDriverDetails = async (req, res) => {
+  try {
+    const result = await pool.query(`
+SELECT 
+    CONCAT(d.fname, ' ', d.mname, ' ', d.lname) AS driver_name,
+    COUNT(t.trip_id) AS trips_completed,
+    AVG(t.estimated_time) AS avg_trip_duration,
+    AVG(pt.rate) AS avg_rating
+FROM 
+    "Driver" d
+LEFT JOIN 
+    "Trip" t ON d.ssn = t.d_ssn
+LEFT JOIN 
+    "Passenger Trip" pt ON t.trip_id = pt.t_id
+GROUP BY 
+    d.ssn, d.fname, d.mname, d.lname
+ORDER BY 
+    driver_name;
+
+
+    `);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.getPassengerDetails = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      WITH FrequentDestinations AS (
+        SELECT 
+          p.id AS passenger_id,
+          dest.station_name,
+          COUNT(*) AS destination_count
+        FROM 
+          "Passenger" p
+        LEFT JOIN 
+          "Passenger Trip" b ON p.id = b.p_id
+        LEFT JOIN 
+          "Trip" t ON b.t_id = t.trip_id
+        LEFT JOIN 
+          "Station" dest ON t.destination_station = dest.station_id
+        GROUP BY 
+          p.id, dest.station_name
+        ORDER BY 
+          destination_count DESC
+      ),
+      TotalSpending AS (
+        SELECT 
+          p.id AS passenger_id,
+          SUM(t.price) AS total_spent
+        FROM 
+          "Passenger" p
+        LEFT JOIN 
+          "Passenger Trip" b ON p.id = b.p_id
+        LEFT JOIN 
+          "Trip" t ON b.t_id = t.trip_id
+        GROUP BY 
+          p.id
+      )
+      SELECT 
+        CONCAT(p.fname, ' ', p.lname) AS passenger_name,
+        COUNT(b.t_id) AS trips_made,
+        COALESCE(ts.total_spent, 0) AS total_amount_spent,
+        fd.station_name AS most_frequent_destination
+      FROM 
+        "Passenger" p
+      LEFT JOIN 
+        "Passenger Trip" b ON p.id = b.p_id
+      LEFT JOIN 
+        TotalSpending ts ON p.id = ts.passenger_id
+      LEFT JOIN 
+        FrequentDestinations fd ON p.id = fd.passenger_id
+      WHERE 
+        fd.destination_count = (
+          SELECT MAX(destination_count)
+          FROM FrequentDestinations
+          WHERE passenger_id = p.id
+        )
+      GROUP BY 
+        p.id, p.fname, p.lname, fd.station_name, ts.total_spent
+      ORDER BY 
+        ts.total_spent ASC, passenger_name;  -- First order by total amount spent, then by name
+    `);
+
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching passenger details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Please try again later.",
+    });
+  }
+};
+
+exports.getManagerDetails = async (req, res) => {
+  try {
+    const result = await pool.query(`
+SELECT 
+    CONCAT(m.fname, ' ', m.lname) AS manager_name,
+    COUNT(t.trip_id) AS trips_managed,
+    COUNT(DISTINCT d.ssn) AS drivers_managed,  -- Count distinct drivers for each manager
+    AVG(pt.rate) AS avg_driver_rating  -- Average rating of all drivers under the manager
+FROM 
+    "Manager" m
+LEFT JOIN 
+    "Station" s ON m.ssn = s.m_ssn  -- Link manager to the station
+LEFT JOIN 
+    "Trip" t ON t.source_station = s.station_id  -- Link trips to the station
+LEFT JOIN 
+    "Driver" d ON d.s_id = s.station_id  -- Link drivers to the station they work for
+LEFT JOIN 
+    "Passenger Trip" pt ON t.trip_id = pt.t_id  -- Link to get ratings from Passenger Trip
+GROUP BY 
+    m.ssn, m.fname, m.lname
+ORDER BY 
+    manager_name;
+
+    `);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    console.error("Error fetching manager details:", error);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
