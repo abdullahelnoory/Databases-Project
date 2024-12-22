@@ -22,9 +22,10 @@ const Passenger_rep = () => {
       .get("http://localhost:6969/report/passenger-average-age")
       .then((response) => {
         const data = response.data;
-        console.log(response.data);
         if (data && data.average_age !== undefined) {
           setAvgAge(data.average_age);
+        } else {
+          setAvgAge(null); // Set null if no average age data
         }
       })
       .catch((error) => {
@@ -42,6 +43,8 @@ const Passenger_rep = () => {
             no_of_trips: parseInt(item.trips, 10), // Convert to integer
           }));
           setPassengerTripsData(processedData);
+        } else {
+          setPassengerTripsData([]); // Set empty array if no data
         }
       })
       .catch((error) => {
@@ -59,6 +62,8 @@ const Passenger_rep = () => {
             total_spent: parseFloat(item.total_expense), // Convert to float for consistent numeric representation
           }));
           setPassengerSpentData(processedData);
+        } else {
+          setPassengerSpentData([]); // Set empty array if no data
         }
       })
       .catch((error) => {
@@ -85,7 +90,7 @@ const Passenger_rep = () => {
           {avgAge} years
         </div>
       ) : (
-        <p>Loading average age...</p>
+        <p>No data available</p>
       )}
 
       <h2>Passenger Trips</h2>
@@ -101,7 +106,7 @@ const Passenger_rep = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading trips data...</p>
+        <p>No data available</p>
       )}
 
       <h2>Passenger Spending</h2>
@@ -117,7 +122,7 @@ const Passenger_rep = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading spending data...</p>
+        <p>No data available</p>
       )}
     </div>
   );

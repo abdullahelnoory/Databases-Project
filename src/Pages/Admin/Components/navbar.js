@@ -40,6 +40,11 @@ export default function NavbarA() {
           Admin
         </a>
         <ul className="nav-links">
+        <li>
+            <Link className="nav-btn" to="/admin/hireManagers">
+              Hire Managers
+            </Link>
+          </li>
           <li>
             <Link className="nav-btn" to="/admin/stations">
               Stations

@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 const TotalProfitChart = () => {
-  const [managerData, setManagerData] = useState([]);  // Correct variable name for state
+  const [managerData, setManagerData] = useState([]); // Correct variable name for state
 
   useEffect(() => {
     axios
@@ -24,11 +24,14 @@ const TotalProfitChart = () => {
             manager: item.manager,
             total_finance: item.total_finance,
           }));
-          setManagerData(transformedData);  // Correct state name here
+          setManagerData(transformedData); // Correct state name here
+        } else {
+          setManagerData([]); // If no data, set empty array
         }
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
+        setManagerData([]); // If there is an error, set empty array
       });
   }, []);
 
@@ -36,17 +39,20 @@ const TotalProfitChart = () => {
     <div>
       <h2>Manager Net Profit</h2>
 
-      {/* Chart */}
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={managerData}>  {/* Use managerData instead of data */}
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="manager" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="total_finance" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
+      {managerData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={managerData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="manager" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="total_finance" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <p>No data available</p>
+      )}
     </div>
   );
 };

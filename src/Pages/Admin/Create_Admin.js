@@ -57,6 +57,7 @@ export default function CreateAdmin() {
           job: "Manager",
           ssn: "",
         });
+        window.location.reload();
       } else {
         setMessage({
           type: "error",

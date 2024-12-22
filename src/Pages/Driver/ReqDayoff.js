@@ -96,7 +96,7 @@ export default function ReqDayoff() {
           </form>
 
           {testState.valid ? (
-            <div className="response-popUp"> FAILURE Wrong Date</div>
+            <div className="response-popUp"> Failure Wrong Date</div>
           ) : null}
 
           {testState.error ? (
@@ -104,7 +104,7 @@ export default function ReqDayoff() {
           ) : null}
 
           {testState.final ? (
-            <div className="response-popUp"> Suceess Date</div>
+            <div className="response-popUp">  We will send you a response</div>
           ) : null}
 
           <div

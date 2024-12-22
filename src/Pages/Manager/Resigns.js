@@ -3,14 +3,14 @@ import DataTable, { createTheme } from "react-data-table-component";
 import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
-function RequestStatus() {
+function Resigns() {
   const userID = sessionStorage.getItem("ssn");
   let [statusState, setStatusState] = useState([]);
   useEffect(() => {
     (async () => {
       try {
         const result = await fetch(
-          "http://localhost:6969/manager/getLostStatus",
+          "http://localhost:6969/manager/getResignedDrivers",
           {
             method: "POST",
             headers: {
@@ -29,60 +29,18 @@ function RequestStatus() {
   }, []);
 
   const columns = [
-    {
-      name: "Trip Id",
-      cell: (row) => row.tripid,
-    },
-    {
-      name: "Source",
-      cell: (row) => (
-        <NavLink
-          to="/manager/Station"
-          className="links"
-          state={{ value: row.sourceid }}
-        >
-          {row.sourcestationname}
-        </NavLink>
-      ),
-    },
-    {
-      name: "Destination",
-      cell: (row) => (
-        <NavLink
-          to="/manager/Station"
-          className="links"
-          state={{ value: row.destinationid }}
-        >
-          {row.destinationstationname}
-        </NavLink>
-      ),
-    },
 
-    {
-      name: "Price",
-      selector: (row) => row.price,
-      // maxWidth: "100px",
-      sortable: true,
-    },
+
+
+
     {
       name: "Date",
       selector: (row) => row.date.slice(0, 10),
     },
+ 
     {
-      name: "EstimatedTime (hr)",
-      selector: (row) => row.estimated_time,
-    },
-    {
-      name: "Item",
-      selector: (row) => row.item,
-    },
-    {
-      name: "quantity",
-      selector: (row) => row.quantity,
-    },
-    {
-      name: "description",
-      selector: (row) => row.description,
+      name: "Reason",
+      selector: (row) => row.reason,
     },
     {
       name: "Driver",
@@ -90,9 +48,9 @@ function RequestStatus() {
         <NavLink
           to="/manager/Driver"
           className="links"
-          state={{ value: row.driverssn }}
+          state={{ value: row.d_ssn }}
         >
-          {row.driverfirstname}
+          {row.d_fname}
         </NavLink>
       ),
     },
@@ -154,21 +112,18 @@ function RequestStatus() {
     <div style={{ height: "fit-content" }}>
       <div className="containerrr">
         <DataTable
-          title=" Lost Items Status"
+          title=" Resigns"
           columns={columns}
           data={statusState}
           theme="solarized"
-          // selectableRows
           fixedHeader
           pagination
           customStyles={customStyles}
           paginationPerPage={6}
-          //   expandableRows
-          //   expandableRowsComponent={ExpandedComponent}
         />
       </div>
     </div>
   );
 }
 
-export default RequestStatus;
+export default Resigns;

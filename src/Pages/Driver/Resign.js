@@ -21,7 +21,7 @@ export default function Resigon() {
       });
       const resultInjson = await result.json();
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error Resign :", error);
     }
     setReasonState("");
     window.location.reload();
@@ -65,7 +65,7 @@ export default function Resigon() {
             style={{ alignSelf: "center" }}
           >
             {" "}
-            Send Request
+            Resign
           </button>
         </form>
       </Popup>

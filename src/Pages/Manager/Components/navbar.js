@@ -115,6 +115,20 @@ const Navbar = () => {
               }
             }}
             className="nav-btn"
+            to="/manager/Resigns"
+            style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
+          >
+            Resigns
+          </Link>
+        </li>
+        <li>
+          <Link
+            onClick={(e) => {
+              if (!isVerified) {
+                e.preventDefault();
+              }
+            }}
+            className="nav-btn"
             to="/manager/requests"
             style={{ pointerEvents: isVerified ? 'auto' : 'none', opacity: isVerified ? 1 : 0.5 }}
           >

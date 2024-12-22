@@ -209,7 +209,7 @@
   .formm1fail,
   .formmsucc {
     display: none; /* starts out with a display of none so it can be changed to block on click */
-    background-color: rgba(143, 22, 143, 0.5);
+    background-color: rgba(193, 192, 193, 0.9);
     height: 100vh;
     width: 100vw;
     position: fixed;
@@ -233,4 +233,6 @@
   .formmsucc {
     z-index: 5;
   }
-  
+  .krVyvO{
+    z-index: 1;
+  }

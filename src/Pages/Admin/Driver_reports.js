@@ -32,10 +32,13 @@ const Driver_report = () => {
 
           // Set the processed data for the BarChart
           setDriverTripsData(processedData);
+        } else {
+          setDriverTripsData([]); // Set empty array if no data
         }
       })
       .catch((error) => {
         console.error("Error fetching driver trips data:", error);
+        setDriverTripsData([]); // Set empty array in case of error
       });
 
     // Fetch private trips
@@ -52,17 +55,20 @@ const Driver_report = () => {
           }));
 
           setDriverTripsDataprivate(processedData);
+        } else {
+          setDriverTripsDataprivate([]); // Set empty array if no data
         }
       })
       .catch((error) => {
         console.error("Error fetching driver trips data:", error);
+        setDriverTripsDataprivate([]); // Set empty array in case of error
       });
   }, []);
 
   return (
     <div>
       <h2>Driver Trips Count (Non-Private)</h2>
-      {driverTripsData.length > 0 && (
+      {driverTripsData.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={driverTripsData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -73,10 +79,12 @@ const Driver_report = () => {
             <Bar dataKey="trips" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
+      ) : (
+        <p>No data available for non-private trips.</p>
       )}
 
       <h2>Driver Trips Count (Private)</h2>
-      {driverTripsDataprivate.length > 0 && (
+      {driverTripsDataprivate.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={driverTripsDataprivate}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -87,6 +95,8 @@ const Driver_report = () => {
             <Bar dataKey="trips" fill="#8884d8" />
           </BarChart>
         </ResponsiveContainer>
+      ) : (
+        <p>No data available for private trips.</p>
       )}
     </div>
   );

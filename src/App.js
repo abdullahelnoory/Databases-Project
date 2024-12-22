@@ -29,8 +29,7 @@ import DriverRep from './Pages/Admin/Driver_reports.js';
 import PassengerReport from './Pages/Admin/Passenger_report.js';
 import Profile from "./Pages/Driver/Components/Profile";
 import ManagerReport from './Pages/Admin/Manager_report.js';
-import LostStatus from"./Pages/Manager/LostStatus.js"
-
+import LostStatus from"./Pages/Manager/LostStatus.js";
 import PassengerHome from './Pages/Passenger/Components/Profile.js';
 import PassengerProfile from './Pages/Passenger/Components/Profile.js';
 import MyTrips from './Pages/Passenger/MyTrips.js';
@@ -48,6 +47,8 @@ import ProfileSettings from './Pages/ProfileSettings.js';
 import ManegerialReport from './Pages/Admin/Manegerial_report.js';
 // import Profile_Settings from './Pages/Manager/Profile_Settings.js';
 import DetailedReport from './Pages/Admin/Detaiel_report.js'
+import Resigns from './Pages/Manager/Resigns.js';
+import HireManager from './Pages/Admin/Components/HireManager.js';
 
 
 function App() {
@@ -75,6 +76,7 @@ function App() {
             <Route path="/admin/Reports/Passengers" element={<PassengerReport/>} />
             <Route path="/admin/Reports/Managerial" element={<ManegerialReport/>} />
             <Route path="/admin/Reports/Detailed" element={<DetailedReport/>} />
+            <Route path="/admin/hireManagers" element={<HireManager/>} />
           </Route>
 
           <Route element={<PrivateRoute requiredRole="Manager" />}>
@@ -90,6 +92,7 @@ function App() {
             <Route path="manager/LostStatus" element={<LostStatus/>} />
             <Route path="manager/Driver" element={<Drivers/>} />
             <Route path="manager/Station" element={<Station/>} />
+            <Route path="manager/Resigns" element={<Resigns/>} />
             
           </Route>
 

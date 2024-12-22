@@ -20,7 +20,7 @@ export default function Manager() {
         });
 
         const data = await response.json();
-
+console.log(data);
         if (data.success) {
           setManagerProfile(data);
           setIsVerified(data.data.verified_by ? true : false);

@@ -96,9 +96,9 @@ export default function Areq() {
   
 
     const selectedRequests = selectedRowIds.map((id) => rows.find((row) => row.ssn === id)); // Use ssn to find the request
-
+   
     selectedRequests.forEach((Request) => {
-      fetch('http://localhost:6969/admin/reject-request', {
+      fetch('http://localhost:6969/admin/reject', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,6 +117,8 @@ export default function Areq() {
             setErrorMessage('Failed to Reject Request');
             setSuccessMessage('');
           }
+          window.location.reload();
+         
         })
         .catch((error) => {
           console.error('Error Rejecting Request:', error);

@@ -5,9 +5,9 @@ import React from "react";
 function AllTrips() {
   let [checkNumPassenger, setCheckNumPassenger] = useState({
     trip_id: null,
-    num: null,
+    num: 0,
   });
-  let [validfetches, setValidfetches]=useState(false);
+  let [numOfSeats, setNumOfSeats] = useState(null);
   // let [reqState, setReqState] = useState(false);
   const userssn = sessionStorage.getItem("ssn");
   let tripData = {
@@ -44,7 +44,11 @@ function AllTrips() {
     {
       name: "number of passengers",
       selector: (row) =>
-        `${row.status === "accepted" ? "" : checkNumPassenger.num}`,
+        `${
+          row.status === "accepted"
+            ? ""
+            : `${checkNumPassenger.num} /${numOfSeats} `
+        }`,
     },
     {
       name: "Start",
@@ -98,7 +102,6 @@ function AllTrips() {
       name: "Date",
       selector: (row) => row.date.slice(0, 10),
     },
-
 
     {
       name: "Reject",
@@ -170,37 +173,22 @@ function AllTrips() {
     },
   ];
 
-useEffect(() => {
+  useEffect(() => {
+    const eventSource = new EventSource(
+      `http://localhost:6969/passenger/events?trip_id=${checkNumPassenger.trip_id}`
+    );
+    eventSource.onmessage = (event) => {
+      const newData = JSON.parse(event.data);
+      console.log(checkNumPassenger, newData);
+      setCheckNumPassenger({ ...checkNumPassenger, num: newData.count });
 
-
-      const fetchData = async () => {
-      try {
-        const result = await fetch(
-          "http://localhost:6969/driver/get-passengers-number",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ trip_id: checkNumPassenger.trip_id }),
-          }
-        );
-        const resultInjson = await result.json();
-
-        setCheckNumPassenger({...checkNumPassenger, num: resultInjson.data.count})
-      } catch (error) {
-        console.error(error);
-      }
+      // Update your state here
     };
 
-    if(validfetches === true)
-      fetchData();
-    else return;
-
-  }, [checkNumPassenger]);
-
-
-
+    return () => {
+      eventSource.close();
+    };
+  }, [checkNumPassenger.trip_id]);
 
   let [recievedData, setRecievedData] = useState([]);
   let [recievedAcceptedData, setRecievedAcceptedData] = useState([]);
@@ -230,7 +218,6 @@ useEffect(() => {
     let newData = [...recievedAcceptedData];
     newData.push({ ...Row, status: "accepted" });
     setRecievedAcceptedData(newData);
-
   }
 
   const handleStartTrip = async (sendData) => {
@@ -261,17 +248,14 @@ useEffect(() => {
         body: JSON.stringify({ trip_id: sendData.trip_id }),
       });
       const resultInjson = await result.json();
-
     } catch (error) {
       console.error("Error adding user:", error);
     }
   };
 
   function HandleStart(Row) {
-
     let filteredData;
     let flag = false;
-
 
     if (Row.status === "accepted") {
       filteredData = recievedAcceptedData.map((row) => {
@@ -279,16 +263,14 @@ useEffect(() => {
         else {
           if (row.status === "ongoing") {
             flag = true;
-
           }
         }
- 
+
         return { ...row };
       });
       if (!flag) {
+        // Filter out the row by
 
-        // Filter out the row by 
-        setValidfetches(true);
         setCheckNumPassenger({
           ...checkNumPassenger,
           trip_id: Row.trip_id,
@@ -300,7 +282,7 @@ useEffect(() => {
         (row) => row.trip_id !== Row.trip_id
       ); // Filter out the row by id
       tripData.Status = "started";
-      setValidfetches(false);
+
       setCheckNumPassenger({
         ...checkNumPassenger,
         trip_id: null,
@@ -313,7 +295,7 @@ useEffect(() => {
       tripData.trip_id = Row.trip_id;
       handleStartTrip(tripData);
       setRecievedAcceptedData(filteredData);
-     // Update state to remove the deleted row
+      // Update state to remove the deleted row
     }
   }
 
@@ -356,23 +338,24 @@ useEffect(() => {
         });
         const resultInjson = await result.json();
         setRecievedData(resultInjson.tripsidle);
-        setRecievedAcceptedData(resultInjson.tripsaccepted);
-        resultInjson.tripsaccepted.map((ele)=>{
-          if(ele.status === "ongoing")
-          {
-            setValidfetches(true);
-            setCheckNumPassenger({...checkNumPassenger,trip_id:ele.trip_id});
+        console.log(resultInjson.number_of_seats);
+        setNumOfSeats(resultInjson.number_of_seats);
+        const newData = resultInjson.tripsaccepted.map((ele) => {
+          if (ele.status === "ongoing") {
+            setCheckNumPassenger({
+              ...checkNumPassenger,
+              trip_id: ele.trip_id,
+            });
           }
-          return {...ele}
-        },)
-
-
+          return { ...ele };
+        });
+        console.log(newData);
+        setRecievedAcceptedData(newData);
       } catch (error) {
         console.error(error);
       }
     })();
   }, []);
-
 
   // createTheme creates a new theme named solarized that overrides the build in dark theme
   createTheme(

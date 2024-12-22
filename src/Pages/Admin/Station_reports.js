@@ -54,6 +54,7 @@ const Station_report = () => {
       .get("http://localhost:6969/report/average-station-salary")
       .then((response) => {
         const data = response.data.data;
+        console.log(response);
         if (data && data.length > 0) {
           const processedData = data.map((item) => ({
             station_name: item.station_name, ////
@@ -73,7 +74,7 @@ const Station_report = () => {
         if (data && data.length > 0) {
           const processedData = data.map((item) => ({
             station_name: item.station_name, ////
-           visits: parseFloat(item.visit_count), // Ensure it's a number
+            visits: parseFloat(item.visit_count), // Ensure it's a number
           }));
           setMostVisitedStations(processedData);
         }
@@ -98,7 +99,7 @@ const Station_report = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p style={{ textAlign: "center" }}>Loading trips data...</p>
+        <p style={{ textAlign: "center" }}>No data available</p>
       )}
 
       <h2 style={{ textAlign: "center", marginTop: "40px" }}>
@@ -116,11 +117,11 @@ const Station_report = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p style={{ textAlign: "center" }}>Loading ratings data...</p>
+        <p style={{ textAlign: "center" }}> No data available</p>
       )}
 
       <h2>Station Average Salary</h2>
-      {stationSalaryData.length > 0 && (
+      {stationSalaryData.length > 0 ? (
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={stationSalaryData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -131,6 +132,8 @@ const Station_report = () => {
             <Bar dataKey="avg_salary" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
+      ) : (
+        <p style={{ textAlign: "center" }}>No data available</p>
       )}
 
       <h2>Most Visited Stations</h2>
@@ -146,9 +149,7 @@ const Station_report = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p style={{ textAlign: "center" }}>
-          Loading most visited stations data...
-        </p>
+        <p style={{ textAlign: "center" }}>No data available</p>
       )}
     </div>
   );

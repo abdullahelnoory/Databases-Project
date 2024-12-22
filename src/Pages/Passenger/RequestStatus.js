@@ -24,6 +24,7 @@ function RequestStatus() {
           }
         );
         const resultInjson = await result.json();
+        console.log(resultInjson);
         setStatusState(resultInjson.data);
       } catch (error) {
         console.error(error);

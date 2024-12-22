@@ -108,7 +108,7 @@ const ManagerialReport = () => {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading user distribution data...</p>
+        <p>No data available</p>
       )}
 
       {/* Managers Per Location Section */}
@@ -125,7 +125,7 @@ const ManagerialReport = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading manager data...</p>
+        <p>No data available</p>
       )}
 
       {/* Drivers Per Location Section */}
@@ -142,7 +142,7 @@ const ManagerialReport = () => {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <p>Loading driver data...</p>
+        <p>No data available</p>
       )}
     </div>
   );
