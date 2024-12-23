@@ -1,6 +1,7 @@
 # 🚍 SwiftRoute: Your Smart Transportation Solution  
 
-We all face challenges when it comes to transportation—whether it's finding the best route, booking a trip, or checking the availability of trips at stations. SwiftRoute is here to solve those problems! 😊  
+We all face challenges when it comes to transportation—whether it's finding the best route, booking a trip, or checking the availability of trips at stations. SwiftRoute is here to solve those problems! 
+(●’◡’●)  
 
 ## 🌟 What We Offer  
 
